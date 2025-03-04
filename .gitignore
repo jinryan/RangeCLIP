@@ -1,0 +1,15 @@
+.vscode
+data
+src/__pycache__
+.ipynb_checkpoints
+training
+validation
+testing
+*__pycache__*
+trained_models
+trained_detection
+output
+checkpoints
+*.DS_Store
+*.pt
+rcvenv
