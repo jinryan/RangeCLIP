@@ -3,7 +3,6 @@ Generate pseudo ground truth for range map object detection
 by using YOLO to perform object detection on corresponding images
 '''
 
-
 from ultralytics import YOLO
 import os, sys, argparse
 from tqdm import tqdm
@@ -33,10 +32,9 @@ def generate_pseudo_ground_truth():
 
     batch_size = args.batch_size
     num_batches = math.ceil(len(image_paths) / batch_size)
-    
+
     if args.classes_path:
         categories = data_utils.get_categories_from_vild_json_file(args.classes_path)
-        
         model.set_classes(categories)
 
     print(f"Processing {len(image_paths)} images in {num_batches} batches of {batch_size}...")
@@ -44,19 +42,30 @@ def generate_pseudo_ground_truth():
     with tqdm(total=len(image_paths), desc="Processing images", unit="img") as pbar:
         for i in range(0, len(image_paths), batch_size):
             batch = image_paths[i:i + batch_size]
-            
-            model.predict(
+
+            # Run YOLO inference without auto-saving
+            results = model.predict(
                 source=batch, 
-                save_txt=True, 
-                project=args.output_path, 
-                name="yolo_world_detection_labels", 
-                exist_ok=True,
+                save_txt=False,  # Prevent automatic saving
                 verbose=False,
                 save_conf=True
             )
 
+            for img_path, result in zip(batch, results):
+                # Compute relative path from original image directory
+                rel_path = os.path.relpath(img_path, start=os.path.commonpath(image_paths))
+                label_path = os.path.join(args.output_path, os.path.splitext(rel_path)[0] + ".txt")
+
+                # Ensure the output directory exists
+                os.makedirs(os.path.dirname(label_path), exist_ok=True)
+
+                # Write detections manually
+                with open(label_path, "w") as f:
+                    for box in result.boxes:
+                        cls, x, y, w, h, conf = int(box.cls), box.xywhn[0][0], box.xywhn[0][1], box.xywhn[0][2], box.xywhn[0][3], box.conf[0]
+                        f.write(f"{cls} {x} {y} {w} {h} {conf}\n")
+
             pbar.update(len(batch))
-            
             pbar.set_description(f"Processed {i + len(batch)}/{len(image_paths)} images")
 
     print("Inference completed.")
