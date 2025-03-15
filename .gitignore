@@ -13,3 +13,4 @@ checkpoints
 *.DS_Store
 *.pt
 rcvenv
+*.ipynb

@@ -1,3 +1,9 @@
+'''
+Generate pseudo ground truth for range map object detection
+by using YOLO to perform object detection on corresponding images
+'''
+
+
 from ultralytics import YOLO
 import os, sys, argparse
 from tqdm import tqdm
@@ -7,17 +13,18 @@ import utils.src.data_utils as data_utils
 
 parser = argparse.ArgumentParser()
 
-parser.add_argument('--model_path', type=str, required=False, help='path to model')
-parser.add_argument('--image_paths', type=str, required=True, help='path to txt file that includes the paths to all the images')
-parser.add_argument('--output_path', type=str, required=True, help='output for labels')
+parser.add_argument('--model_path', type=str, required=False, help='path to YOLO model (.pt)')
+parser.add_argument('--image_paths', type=str, required=True, help='path to txt file that includes the paths to all the images (.txt)')
+parser.add_argument('--output_path', type=str, required=True, help='output directory for labels')
 parser.add_argument('--start', type=int, required=False, help='start index')
 parser.add_argument('--end', type=int, required=False, help='end index')
 parser.add_argument('--batch_size', type=int, default=16, help='batch size for inference')
+parser.add_argument('--classes_path', type=str, required=False, help='path to file that includes all the classes')
 
 args = parser.parse_args()
 
 def generate_pseudo_ground_truth():
-    model = YOLO(args.model_path if args.model_path else "yolo11m.pt")
+    model = YOLO(args.model_path if args.model_path else "yolov8m-world.pt")
 
     image_paths = data_utils.read_paths(args.image_paths)
     start_idx = args.start if args.start is not None else 0
@@ -26,6 +33,11 @@ def generate_pseudo_ground_truth():
 
     batch_size = args.batch_size
     num_batches = math.ceil(len(image_paths) / batch_size)
+    
+    if args.classes_path:
+        categories = data_utils.get_categories_from_vild_json_file(args.classes_path)
+        
+        model.set_classes(categories)
 
     print(f"Processing {len(image_paths)} images in {num_batches} batches of {batch_size}...")
 
@@ -37,10 +49,10 @@ def generate_pseudo_ground_truth():
                 source=batch, 
                 save_txt=True, 
                 project=args.output_path, 
-                name="detection_labels", 
+                name="yolo_world_detection_labels", 
                 exist_ok=True,
-                batch=batch_size, 
-                verbose=False
+                verbose=False,
+                save_conf=True
             )
 
             pbar.update(len(batch))

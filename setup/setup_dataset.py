@@ -1,3 +1,7 @@
+'''
+Extract training image and ground truth dataset
+'''
+
 import glob, os, sys
 sys.path.insert(0, os.getcwd())
 import utils.src.data_utils as data_utils

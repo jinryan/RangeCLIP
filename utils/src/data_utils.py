@@ -1,6 +1,28 @@
 import os
 import numpy as np
 from PIL import Image
+import json
+
+def read_file(filepath):
+    """
+    Returns string content from file
+
+    Args:
+      path : str
+        path to file where data will be stored
+    """
+    data = ""
+    with open(filepath, "r") as f:
+        data = f.read()
+
+    return data
+
+def parse_json(json_string, ignore_keys=[]):
+    data = json.loads(json_string)
+    for ignore_key in ignore_keys:
+        data.pop(ignore_key, None)
+  
+    return data
 
 
 def read_paths(filepath, prefix=None):
@@ -132,3 +154,9 @@ def write_paths(filepath, paths):
     with open(filepath, "w") as o:
         for idx in range(len(paths)):
             o.write(paths[idx] + "\n")
+
+def get_categories_from_vild_json_file(filepath):
+    json_data = read_file(filepath)
+    categories_dict = parse_json(json_data, ignore_keys=['annotations', 'info', 'licenses', 'images'])
+    categories = [category['name'] for category in categories_dict['categories']]
+    return categories
