@@ -17,14 +17,13 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--image_paths', type=str, required=True, help='path to txt file that includes the paths to all the images (.txt)')
 parser.add_argument('--depth_paths', type=str, required=True, help='path to txt file that includes the paths to all the depth maps (.txt)')
 parser.add_argument('--label_path', type=str, required=True, help='path to labels')
-parser.add_argument('--categories_path', type=str, required=True, help='path to lvis category json file')
 parser.add_argument('--output_path', type=str, required=True, help='output directory for patches')
 parser.add_argument('--batch_size', type=int, default=16, help='batch size for inference')
 parser.add_argument('--top_k_classes', type=int, default=5, help='for each batch, we select top k most confident classes')
-parser.add_argument('--classes_path', type=str, required=False, help='path to file that includes all the classes')
+parser.add_argument('--classes_path', type=str, required=False, help='path to lvis file that includes all the classes')
 
 args = parser.parse_args()
-categories = data_utils.get_categories_from_vild_json_file(args.categories_path)
+categories = data_utils.get_categories_from_vild_json_file(args.classes_path)
 
 def get_detected_objects(detection_path):
     '''
@@ -55,6 +54,40 @@ def get_detected_objects(detection_path):
     except (FileNotFoundError, IndexError) as e:
         print(f"Error processing detection file {detection_path}: {e}")
         return []
+
+def get_balanced_top_k_classes(detected_objects_batch, k):
+    '''
+    Balance between high confidence scores and frequency of detection
+    '''
+    class_stats = {}
+    
+    # Process all detected objects in the batch
+    for obj_list in detected_objects_batch:
+        for obj in obj_list:
+            class_name = obj['class']
+            conf = obj['conf']
+            
+            if class_name not in class_stats:
+                class_stats[class_name] = {
+                    'count': 0,
+                    'total_conf': 0,
+                    'max_conf': 0
+                }
+            
+            class_stats[class_name]['count'] += 1
+            class_stats[class_name]['total_conf'] += conf
+            class_stats[class_name]['max_conf'] = max(conf, class_stats[class_name]['max_conf'])
+    
+    # Calculate average confidence and a combined score
+    for class_name, stats in class_stats.items():
+        stats['avg_conf'] = stats['total_conf'] / stats['count']
+        
+        # Combined score: balance between frequency and confidence
+        # You can adjust the weights (0.4 and 0.6) to favor frequency or confidence
+        stats['score'] = (0.4 * (stats['count'] / len(detected_objects_batch))) + (0.6 * stats['max_conf'])
+    
+    sorted_classes = sorted(class_stats.items(), key=lambda x: x[1]['score'], reverse=True)
+    return [class_name for class_name, _ in sorted_classes[:k]]
 
 def get_top_k_confident_classes(detected_objects_batch, k):
     '''
@@ -97,6 +130,7 @@ def generate_cropped_patches():
     # Create output directories if they don't exist
     image_crop_output_path = os.path.join(args.output_path, 'images')
     depth_crop_output_path = os.path.join(args.output_path, 'depth')
+
     os.makedirs(image_crop_output_path, exist_ok=True)
     os.makedirs(depth_crop_output_path, exist_ok=True)
     
@@ -109,11 +143,17 @@ def generate_cropped_patches():
         print(f"Error: Number of images ({len(image_paths)}) doesn't match number of depth maps ({len(depth_paths)})")
         return
     
+    if len(image_paths) != len(set(image_paths)):
+        print(f"Duplicate images")
+        return
+    
     batch_size = min(args.batch_size, len(image_paths))
     num_batches = math.ceil(len(image_paths) / batch_size)
     
     # Output images will be indexed
     num_sample_each_class = {}
+    
+    image_base_path = os.path.commonpath(image_paths)
     
     # Process images in batches
     with tqdm(total=len(image_paths), desc="Processing images", unit="img") as pbar:
@@ -127,11 +167,10 @@ def generate_cropped_patches():
             
             # Construct detection paths based on image names
             detection_batch_paths = []
-            image_base_path = os.path.commonpath(image_batch_paths)
+            
             for img_path in image_batch_paths:
                 rel_path = os.path.relpath(img_path, start=image_base_path)
-                detection_filename = os.path.join(args.output_path, os.path.splitext(rel_path)[0] + ".txt")
-                detection_path = os.path.join(args.label_path, detection_filename)
+                detection_path = os.path.join(args.label_path, os.path.splitext(rel_path)[0] + ".txt")
                 detection_batch_paths.append(detection_path)
             
             # Get all detected objects in a batch
@@ -148,7 +187,7 @@ def generate_cropped_patches():
                 })
             
             # Find top k classes across the entire batch
-            top_k_classes = get_top_k_confident_classes(detected_objects_batch, args.top_k_classes)
+            top_k_classes = get_balanced_top_k_classes(detected_objects_batch, args.top_k_classes)
             
             # Process each image in the batch
             for data in batch_data:
@@ -166,12 +205,15 @@ def generate_cropped_patches():
                     scene_image = Image.open(img_path)
                     scene_depth = Image.open(depth_path)
                     
+                    width = scene_image.width
+                    height = scene_image.height
+                    
                     # Process each object
                     for obj in relevant_objects:
                         detected_class = obj['class']
                         
                         # Calculate crop coordinates
-                        x, y, w, h = obj['x'], obj['y'], obj['w'], obj['h']
+                        x, y, w, h = obj['x'] * width, obj['y'] * height, obj['w'] * width, obj['h'] * height
                         left = int(x - w / 2.0)
                         top = int(y - h / 2.0)
                         right = int(x + w / 2.0)
