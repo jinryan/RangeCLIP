@@ -127,8 +127,8 @@ def augment_image(image,
     do_random_contrast = valid_augmentation(random_contrast, -1, 1)
     do_random_hue = valid_augmentation(random_hue, -0.5, 0.5)
     do_random_saturation = valid_augmentation(random_saturation, -1, 1)
-    do_random_horizontal_flip = 'horizontal' in random_flip_type
-    do_random_vertical_flip = 'vertical' in random_flip_type
+    do_random_horizontal_flip = random_flip_type and 'horizontal' in random_flip_type
+    do_random_vertical_flip = random_flip_type and 'vertical' in random_flip_type
 
     '''
     Perform data augmentation

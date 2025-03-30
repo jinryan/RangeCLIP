@@ -7,7 +7,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-import net_utils
+from . import net_utils
 
 class DepthEncoder(torch.nn.Module):
     """
@@ -38,7 +38,8 @@ class DepthEncoder(torch.nn.Module):
                  embedding_dim=256,
                  weight_initializer='kaiming_uniform',
                  activation_func='leaky_relu',
-                 use_batch_norm=True):
+                 use_batch_norm=False,
+                 use_instance_norm=True):
         super(DepthEncoder, self).__init__()
         
         # Reuse the original ResNetEncoder initialization logic
@@ -67,7 +68,8 @@ class DepthEncoder(torch.nn.Module):
             stride=2,
             weight_initializer=weight_initializer,
             activation_func=activation_func,
-            use_batch_norm=use_batch_norm)
+            use_batch_norm=use_batch_norm,
+            use_instance_norm=use_instance_norm,)
 
         self.max_pool = torch.nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
 
@@ -84,7 +86,8 @@ class DepthEncoder(torch.nn.Module):
                     stride=stride,
                     weight_initializer=weight_initializer,
                     activation_func=activation_func,
-                    use_batch_norm=use_batch_norm
+                    use_batch_norm=use_batch_norm,
+                    use_instance_norm=use_instance_norm
                 )
                 block_group.append(block)
                 in_channels = n_filter * 4 if use_bottleneck else n_filter
@@ -132,7 +135,36 @@ class DepthEncoder(torch.nn.Module):
         total_loss = (loss_a + loss_b) / 2
         
         return total_loss
+    
+    def save_encoder(self, checkpoint_path, step, optimizer):
+        checkpoint = {
+            'train_step': step
+        }
         
+        if isinstance(self, torch.nn.DataParallel):
+            checkpoint['encoder'] = self.module.state_dict()
+        else:
+            checkpoint['encoder'] = self.state_dict()
+        
+        if optimizer is not None:
+            checkpoint['optimizer'] = optimizer.state_dict()
+        
+        torch.save(checkpoint, checkpoint_path)
+    
+    def restore_encoder(self, restore_path, device, optimizer=None):
+        checkpoint = torch.load(restore_path, map_location=device)
+        
+        if isinstance(self, torch.nn.DataParallel):
+            self.module.load_state_dict(checkpoint['encoder'])  # Corrected line
+        else:
+            self.load_state_dict(checkpoint['encoder'])
+        
+        if optimizer is not None and 'optimizer' in checkpoint.keys():
+            optimizer.load_state_dict(checkpoint['optimizer'])
+        
+        train_step = checkpoint.get('train_step', 0)
+        
+        return train_step, optimizer if optimizer else None
 
 class TextEncoder(nn.Module):
     def __init__(self, clip_model):
@@ -166,7 +198,17 @@ class ImageEncoder(nn.Module):
             param.requires_grad = False
     
     def forward(self, image):
+        # Ensure input is on the same device as the model
+        image = image.to(self.clip_model.device)
+        
+        # Ensure input is float tensor
+        image = image.float()
+        
         inputs = self.clip_processor(images=image, return_tensors="pt")
+        
+        # Move inputs to the same device as the model
+        inputs = {k: v.to(self.clip_model.device) for k, v in inputs.items()}
+        
         image_embedding = self.clip_model.get_image_features(**inputs)
         return F.normalize(image_embedding, dim=-1)
     

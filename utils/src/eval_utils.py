@@ -1,21 +1,35 @@
-'''
-Author: Alex Wong <alexw@cs.ucla.edu>
-
-If you use this code, please cite the following paper:
-
-A. Wong, and S. Soatto. Unsupervised Depth Completion with Calibrated Backprojection Layers.
-https://arxiv.org/pdf/2108.10531.pdf
-
-@inproceedings{wong2021unsupervised,
-  title={Unsupervised Depth Completion with Calibrated Backprojection Layers},
-  author={Wong, Alex and Soatto, Stefano},
-  booktitle={Proceedings of the IEEE/CVF International Conference on Computer Vision},
-  pages={12747--12756},
-  year={2021}
-}
-'''
 import numpy as np
 
+def info_nce(src, tgt, temperature=0.1):
+    """
+    Compute InfoNCE loss between source and target embeddings
+    
+    Args:
+        src : numpy[float32]
+            source embeddings
+        tgt : numpy[float32]
+            target embeddings
+        temperature : float, optional
+            Temperature parameter to scale similarities (default: 0.1)
+    
+    Returns:
+        float : InfoNCE loss
+    """
+    cosine_similarities = np.dot(src, tgt.T)
+    scaled_similarities = cosine_similarities / temperature
+    
+    exp_similarities = np.exp(scaled_similarities)
+    softmax_probs = exp_similarities / np.sum(exp_similarities, axis=1, keepdims=True)
+    
+    batch_size = src.shape[0]
+    diagonal_mask = np.eye(batch_size, dtype=bool)
+    
+    positive_log_probs = -np.log(softmax_probs[diagonal_mask])
+    
+    loss = np.mean(positive_log_probs)
+    
+    return loss
+    
 
 def root_mean_sq_err(src, tgt):
     '''
