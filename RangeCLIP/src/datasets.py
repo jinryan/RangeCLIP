@@ -3,31 +3,10 @@ import cv2, torch
 import torchvision.transforms.functional as TF
 from PIL import Image
 import random
-
+import os
+import pandas as pd
 
 class ImageDepthDataset(torch.utils.data.Dataset):
-    '''
-    Dataset for fetching:
-        (1) ground truth image
-        (2) depth maps
-
-    Arg(s):
-        image_paths : list[str]
-            list of paths to images
-        resize_shape : list[int]
-            tuple of (n_height, n_width)
-        augmentation_random_brightness : list[float]
-            range of brightness adjustment
-        augmentation_random_contrast : list[float]
-            range of contrast adjustment
-        augmentation_random_hue : list[float]
-            range of hue adjustment between -0.5 to 0.5
-        augmentation_random_saturation : list[float]
-            range of saturation adjustment
-        augmentation_random_flip_type : list[str]
-            horizontal and vertical flip
-    '''
-
     def __init__(self,
                  image_paths,
                  depth_paths,
@@ -87,8 +66,51 @@ class ImageDepthDataset(torch.utils.data.Dataset):
 
     def __len__(self):
         return self.n_sample
+    
+    
 
+class ImageDepthTextDataset(torch.utils.data.Dataset):
+    def __init__(self, metadata_file, root_dir, labels_dir, transform=None):
+        """
+        Args:
+            metadata_file (string): Path to the metadata CSV file.
+            root_dir (string): Directory with all the image, depth, and label files.
+            transform (callable, optional): Optional transform to be applied on a sample.
+        """
+        self.metadata = pd.read_csv(metadata_file)
+        self.root_dir = root_dir
+        self.transform = transform
+        
+        with open(labels_dir, 'r') as file:
+            lines = file.readlines()
 
+        self.labels = ['a depth map of ' + line.strip() for line in lines]
+
+    def __len__(self):
+        return len(self.metadata)
+
+    def __getitem__(self, idx):
+        img_path = os.path.join(self.root_dir, self.metadata.iloc[idx, 0])
+        depth_path = os.path.join(self.root_dir, self.metadata.iloc[idx, 1])
+
+        img = Image.open(img_path).convert("RGB")
+        depth = Image.open(depth_path).convert("L")
+        object_id = self.metadata.iloc[idx, 3]
+
+        if self.transform:
+            img = self.transform(img)
+            depth = self.transform(depth)
+
+        return {
+            'image': img,
+            'depth': depth,
+            'object_id': self.labels[object_id],
+        }
+    
+    def get_labels(self):
+        """Method to access all the label names."""
+        return self.labels
+        
 def valid_augmentation(arr, l_bound, u_bound):
         return arr and len(arr) == 2 and arr[0] >= l_bound and arr[1] <= u_bound and arr[0] <= arr[1] and arr[1] > l_bound
     

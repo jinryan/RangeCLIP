@@ -14,3 +14,5 @@ checkpoints
 *.pt
 rcvenv
 *.ipynb
+checkpoints_2
+setup/Playground.ipynb

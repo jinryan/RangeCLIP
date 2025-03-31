@@ -1,12 +1,9 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from transformers import CLIPModel, CLIPProcessor, CLIPTokenizer
-
-import torch
-import torch.nn as nn
-import torch.nn.functional as F
-
+from transformers import CLIPProcessor, CLIPTokenizer
+import matplotlib.pyplot as plt
+import torchvision
 from . import net_utils
 
 class DepthEncoder(torch.nn.Module):
@@ -134,7 +131,9 @@ class DepthEncoder(torch.nn.Module):
         
         total_loss = (loss_a + loss_b) / 2
         
-        return total_loss
+        loss_info = {'imce': total_loss}
+        
+        return total_loss, loss_info
     
     def save_encoder(self, checkpoint_path, step, optimizer):
         checkpoint = {
@@ -166,6 +165,45 @@ class DepthEncoder(torch.nn.Module):
         
         return train_step, optimizer if optimizer else None
 
+    def log_summary(self,
+                    summary_writer,
+                    tag,
+                    step,
+                    image,
+                    depth,
+                    scalars={},
+                    n_sample_per_summary=4):
+
+        with torch.no_grad():
+            display_summary_image = []
+
+            # Log input image
+            if image is not None:
+                input_image_summary = image[:min(len(image), n_sample_per_summary)]
+                input_image_summary = input_image_summary.to('cpu')
+                display_summary_image.append(input_image_summary)
+
+            # Log depth map with colormap
+            if depth is not None:
+                depth_summary = depth[:min(len(depth), n_sample_per_summary)]
+                depth_colored = apply_colormap(depth_summary)  # Apply colormap
+                depth_colored = depth_colored.to('cpu')
+                display_summary_image.append(depth_colored)
+
+            # Log scalars
+            for name, value in scalars.items():
+                summary_writer.add_scalar(f"{tag}_{name}", value, global_step=step)
+
+            # Log images to TensorBoard
+            if display_summary_image:
+                display_summary_image = torch.cat(display_summary_image, dim=2)  # Concatenate along width
+                summary_writer.add_image(
+                    tag,
+                    torchvision.utils.make_grid(display_summary_image, nrow=n_sample_per_summary),
+                    global_step=step)
+
+
+
 class TextEncoder(nn.Module):
     def __init__(self, clip_model):
         super().__init__()
@@ -180,7 +218,7 @@ class TextEncoder(nn.Module):
     def forward(self, text):
         inputs = self.clip_tokenizer(text, padding=True, return_tensors="pt")
         text_embedding = self.clip_model.get_text_features(**inputs)
-        return F.normalize(text_embedding, dim=-1)
+        return F.normalize(text_embedding, p=2, dim=-1)
     
     def to(self, device):
         self.clip_model.to(device)
@@ -210,8 +248,26 @@ class ImageEncoder(nn.Module):
         inputs = {k: v.to(self.clip_model.device) for k, v in inputs.items()}
         
         image_embedding = self.clip_model.get_image_features(**inputs)
-        return F.normalize(image_embedding, dim=-1)
+        return F.normalize(image_embedding, p=2, dim=-1)
     
     def to(self, device):
         self.clip_model.to(device)
         return self
+
+def apply_colormap(tensor, cmap='magma'):
+        """
+        Converts a single-channel depth map to a 3-channel color image using a colormap.
+        """
+        tensor = tensor.squeeze(1)  # Remove channel dim: N x H x W
+        tensor = tensor - tensor.min()  # Normalize to 0-1
+        tensor = tensor / (tensor.max() + 1e-8)  # Avoid division by zero
+
+        tensor_np = tensor.cpu().numpy()  # Convert to NumPy for colormap
+        colored_images = []
+
+        for i in range(tensor_np.shape[0]):
+            colored = plt.get_cmap(cmap)(tensor_np[i])[:, :, :3]  # Apply colormap and remove alpha
+            colored = torch.tensor(colored).permute(2, 0, 1)  # Convert back to Tensor (3 x H x W)
+            colored_images.append(colored)
+
+        return torch.stack(colored_images)  # Stack into (N x 3 x H x W)
