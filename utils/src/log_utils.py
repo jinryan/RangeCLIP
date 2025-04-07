@@ -57,3 +57,21 @@ def colorize(T, colormap='magma'):
 
     # Convert back to tensor
     return torch.from_numpy(color.astype(np.float32))
+
+def apply_colormap(tensor, cmap='magma'):
+        """
+        Converts a single-channel depth map to a 3-channel color image using a colormap.
+        """
+        tensor = tensor.squeeze(1)  # Remove channel dim: N x H x W
+        tensor = tensor - tensor.min()  # Normalize to 0-1
+        tensor = tensor / (tensor.max() + 1e-8)  # Avoid division by zero
+
+        tensor_np = tensor.cpu().numpy()  # Convert to NumPy for colormap
+        colored_images = []
+
+        for i in range(tensor_np.shape[0]):
+            colored = plt.get_cmap(cmap)(tensor_np[i])[:, :, :3]  # Apply colormap and remove alpha
+            colored = torch.tensor(colored).permute(2, 0, 1)  # Convert back to Tensor (3 x H x W)
+            colored_images.append(colored)
+
+        return torch.stack(colored_images)  # Stack into (N x 3 x H x W)

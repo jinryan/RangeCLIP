@@ -16,3 +16,4 @@ rcvenv
 *.ipynb
 checkpoints_2
 setup/Playground.ipynb
+checkpoints_model

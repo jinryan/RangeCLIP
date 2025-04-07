@@ -5,6 +5,7 @@ from PIL import Image
 import random
 import os
 import pandas as pd
+from torchvision.transforms import functional as F
 
 class ImageDepthDataset(torch.utils.data.Dataset):
     def __init__(self,
@@ -70,7 +71,7 @@ class ImageDepthDataset(torch.utils.data.Dataset):
     
 
 class ImageDepthTextDataset(torch.utils.data.Dataset):
-    def __init__(self, metadata_file, root_dir, labels_dir, transform=None):
+    def __init__(self, metadata_file, root_dir, labels_path, transform=None):
         """
         Args:
             metadata_file (string): Path to the metadata CSV file.
@@ -81,7 +82,7 @@ class ImageDepthTextDataset(torch.utils.data.Dataset):
         self.root_dir = root_dir
         self.transform = transform
         
-        with open(labels_dir, 'r') as file:
+        with open(labels_path, 'r') as file:
             lines = file.readlines()
 
         self.labels = ['a depth map of ' + line.strip() for line in lines]
@@ -90,22 +91,29 @@ class ImageDepthTextDataset(torch.utils.data.Dataset):
         return len(self.metadata)
 
     def __getitem__(self, idx):
-        img_path = os.path.join(self.root_dir, self.metadata.iloc[idx, 0])
-        depth_path = os.path.join(self.root_dir, self.metadata.iloc[idx, 1])
+        # img_path = os.path.join(self.root_dir, self.metadata.iloc[idx, 0])
+        # depth_path = os.path.join(self.root_dir, self.metadata.iloc[idx, 1])
+
+        img_path = self.metadata.iloc[idx, 0]
+        depth_path = self.metadata.iloc[idx, 1]
 
         img = Image.open(img_path).convert("RGB")
         depth = Image.open(depth_path).convert("L")
+        # Convert to tensor and normalize image to [0, 1]
+        img = F.to_tensor(img)
+        
+        depth = F.to_tensor(depth)
+                        
         object_id = self.metadata.iloc[idx, 3]
 
         if self.transform:
             img = self.transform(img)
             depth = self.transform(depth)
 
-        return {
-            'image': img,
-            'depth': depth,
-            'object_id': self.labels[object_id],
-        }
+        if object_id > 894 or object_id < 0:
+            print(f"At path {img_path}, {depth_path}, object id is {object_id}")
+            
+        return depth, img, object_id
     
     def get_labels(self):
         """Method to access all the label names."""

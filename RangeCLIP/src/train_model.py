@@ -14,21 +14,23 @@ import os
 import random
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 sys.path.insert(0, project_root)
-from utils.src import data_utils, eval_utils
 import datasets
 from utils.src.log_utils import log
-from utils.src.networks import DepthEncoder, ImageEncoder
-from transformers import CLIPModel
 from RangeCLIP.src.log import log_input_settings, log_loss_func_settings, log_network_settings, log_system_settings, log_training_settings
 from RangeCLIP.src.model import DepthClipModel
+
+torch.cuda.empty_cache()
+
 
 parser = argparse.ArgumentParser()
 
 # Training and validation input filepaths
-parser.add_argument('--train_image_path',
-    type=str, required=True, help='Path to list of training image paths')
-parser.add_argument('--train_depth_path',
-    type=str, default=None, help='Path to list of training depth paths')
+parser.add_argument('--dataset_path',
+    type=str, required=True, help='Path to dataset')
+parser.add_argument('--metadata_path',
+    type=str, required=True, help='Path to dataset metadata')
+parser.add_argument('--labels_path',
+    type=str, required=True, help='Path to dataset labels')
 
 # Batch parameters
 parser.add_argument('--batch_size',
@@ -93,9 +95,13 @@ parser.add_argument('--n_thread',
 
 args = parser.parse_args()
 
+def contains_nan(tensor):
+    return torch.isnan(tensor).any().item()
+
 def train_depth_clip_model(
         root_dir,
         metadata_file,
+        labels_path,
         batch_size,
         n_height,
         n_width,
@@ -143,7 +149,7 @@ def train_depth_clip_model(
         None: Model checkpoints and logs are saved to disk
     """
     # Set up device
-    device = _setup_device(device)
+    device = setup_device(device)
     
     # Set up directories for checkpoints and logs
     model_checkpoint_path, log_path, event_path = setup_checkpoint_and_event_paths(
@@ -163,22 +169,27 @@ def train_depth_clip_model(
     # Prepare data loaders
     resize_shape = (n_height, n_width)
     train_dataloader, val_dataloader, n_train_step, candidate_labels = setup_dataloaders(
-        root_dir, metadata_file, resize_shape, 
-        augmentations, learning_schedule, batch_size, n_thread
+        root_dir, metadata_file, labels_path, resize_shape, 
+        batch_size, n_thread, n_epoch
     )
     
     model = DepthClipModel(depth_encoder_type, clip_model_name, device)
     
     # Set up optimizer and learning rate scheduler
-    optimizer, scheduler = _setup_optimizer_and_scheduler(
+    optimizer, scheduler = setup_optimizer_and_scheduler(
         model.parameters(), learning_rates, w_weight_decay, 
         scheduler_type, learning_schedule
     )
     
     # Restore model if specified
-    start_step = train_step = _restore_model_if_needed(
-        model, restore_path_model, optimizer, learning_rates, device
+    start_step = train_step = 0
+    
+    restore_model_if_needed(
+        model, restore_path_model, None
     )
+    
+    for param_group in optimizer.param_groups:
+        param_group['lr'] = learning_rates[0]
     
     # Configure model for training
     model.train()
@@ -186,7 +197,7 @@ def train_depth_clip_model(
         model = nn.DataParallel(model)
     
     # Log configuration settings
-    _log_configuration(
+    log_configuration(
         log_path, metadata_file, 
         batch_size, n_height, n_width,
         depth_encoder_type, model.parameters(),
@@ -209,62 +220,114 @@ def train_depth_clip_model(
     
     # Main training loop
     for epoch in range(1, n_epoch + 1):
+        # At the start of each iteration
+        print(f"GPU memory allocated: {torch.cuda.memory_allocated(device) / 1e9:.2f} GB")
+        print(f"GPU memory reserved: {torch.cuda.memory_reserved(device) / 1e9:.2f} GB")
+        print(f"Max memory allocated: {torch.cuda.max_memory_allocated(device) / 1e9:.2f} GB")
+        
+        total_loss = 0
         for batch in tqdm.tqdm(train_dataloader, desc=f'{epoch}/{n_epoch}'):
             train_step += 1
 
-            # Process batch
-            depth, image, label = _prepare_batch(batch, device)
             
-            # Forward pass
-            depth_embedding = model(depth, candidate_labels)
-            
-            # Compute loss
-            loss, loss_info = model.module.compute_loss(depth_embedding, image, candidate_labels, label)
-            
-            # Backward pass and optimization
-            optimizer.zero_grad()
-            loss.backward()
-            optimizer.step()
+            try:
+                # Unpack batch to device
+                depth_maps, images, label_indices = prepare_batch(batch, device)
+                
+                labels = [candidate_labels[i-1] for i in label_indices]
+                
+                if contains_nan(depth_maps) or contains_nan(images):
+                    print(f"Depth maps contain NaN: {contains_nan(depth_maps)}")
+                    print(f"Images contain NaN: {contains_nan(images)}")
+                            
+                batch_size = depth_maps.shape[0]
+                
+                # Get loss values for embedding quality evaluation
+                loss, loss_info = model.module.compute_loss(
+                    depth_maps=depth_maps,
+                    images=images,
+                    labels=labels,
+                    w_text=0.8
+                )
+                
+                total_loss += loss
+                
+                # print(f"Loss: {loss_info}")
+                                        
+                # Backward pass and optimization
+                optimizer.zero_grad()
+                
+                if torch.isnan(loss) or torch.isinf(loss):
+                    print("Loss is NaN or Inf, skipping batch")
+                    continue
+                loss.backward()
+                
+                total_norm = 0
+                for p in model.parameters():
+                    if p.grad is not None:
+                        param_norm = p.grad.detach().data.norm(2)
+                        total_norm += param_norm.item() ** 2
+                total_norm = total_norm ** 0.5
+                # print(f"Gradient norm: {total_norm}")
+                # Add after loss.backward() but before optimizer.step()
+                torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
+                optimizer.step()
+            except Exception as e:
+                print(f"Runtime error {e}")
+                print(f"Error type: {type(e)}")
+                print(f"Error message: {str(e)}")
+                print(f"Error details: {repr(e)}")
+                import traceback
+                traceback.print_exc()
+                if "CUBLAS_STATUS" in str(e):
+                    print(f"CUDA error encountered: {e}")
+                    print("Attempting to recover...")
+                    torch.cuda.empty_cache()
+                    # Skip this batch
+                    continue
             
             # Logging and validation
             if (train_step % n_step_per_summary) == 0:
-                _log_training_summary(
+                log_training_summary(
                     model, train_summary_writer, train_step,
-                    image, depth, loss_info, batch_size, n_sample_per_summary
+                    images, depth_maps, labels, loss_info, batch_size, n_sample_per_summary
                 )
                 
                 # Validate model
                 with torch.no_grad():
-                    model.eval()
+                    model.module.eval()
                     best_results, _ = validate_model(
                         model, candidate_labels, val_dataloader,
                         train_step, best_results, device,
                         val_summary_writer, n_sample_per_summary, log_path
                     )
-                    model.train()
+                    model.module.train()
             
             # Save checkpoints
             if (train_step % n_step_per_checkpoint) == 0:
-                _save_checkpoint_and_log_progress(
+                save_checkpoint_and_log_progress(
                     model, model_checkpoint_path, train_step,
                     n_train_step, start_step, loss.item(),
                     time_start, log_path, optimizer
                 )
         
+        log(f"Total loss: {total_loss}", log_path)
+        
         # Update learning rate scheduler
-        _update_scheduler(scheduler, scheduler_type, model, val_dataloader, train_step,
+        update_scheduler(scheduler, scheduler_type, model, candidate_labels,
+                         val_dataloader, train_step,
                          best_results, device, val_summary_writer,
                          n_sample_per_summary, log_path)
     
     # Save final model
-    _save_checkpoint_and_log_progress(
+    save_checkpoint_and_log_progress(
         model, model_checkpoint_path, train_step,
         n_train_step, train_step - n_train_step, loss.item(),
         time_start, log_path, optimizer
     )
 
 
-def _setup_device(device):
+def setup_device(device):
     """
     Set up and validate the computing device.
     
@@ -278,7 +341,7 @@ def _setup_device(device):
     device = 'cuda' if device in ['gpu', 'cuda'] and torch.cuda.is_available() else 'cpu'
     return torch.device(device)
 
-def _setup_optimizer_and_scheduler(parameters, learning_rates, w_weight_decay, 
+def setup_optimizer_and_scheduler(parameters, learning_rates, w_weight_decay, 
                                  scheduler_type, learning_schedule):
     """
     Set up optimizer and learning rate scheduler.
@@ -332,34 +395,29 @@ def _setup_optimizer_and_scheduler(parameters, learning_rates, w_weight_decay,
     return optimizer, scheduler
 
 
-def _restore_model_if_needed(depth_encoder, restore_path_model, optimizer, learning_rates, device):
+def restore_model_if_needed(model, restore_path_model, optimizer):
     """
     Restore model from checkpoint if path is provided.
     
     Args:
-        depth_encoder: The depth encoder model
+        model: The depth encoder model
         restore_path_model (str): Path to restore model from
         optimizer: The optimizer
         learning_rates (list): Learning rates
-        device (torch.device): The device
         
     Returns:
         int: Starting step (0 for new training, restored step for continuing)
     """
     if restore_path_model is not None:
-        start_step, optimizer = depth_encoder.restore_encoder(
-            restore_path_model, device, optimizer=optimizer)
-        
-        # Reset learning rate to initial value
-        for param_group in optimizer.param_groups:
-            param_group['lr'] = learning_rates[0]
+        start_step, optimizer = model.restore_model(
+            restore_path_model, optimizer=optimizer)
     else:
         start_step = 0
         
     return start_step
 
 
-def _log_configuration(log_path, train_image_path, batch_size, n_height, n_width,
+def log_configuration(log_path, train_image_path, batch_size, n_height, n_width,
                      model_architecture, parameters_model, n_batch, n_train_sample, n_train_step,
                      learning_rates, learning_schedule, scheduler_type, w_weight_decay,
                      checkpoint_path, n_step_per_checkpoint, summary_event_path,
@@ -422,30 +480,22 @@ def _log_configuration(log_path, train_image_path, batch_size, n_height, n_width
     )
 
 
-def _prepare_batch(batch, device):
-    """
-    Prepare a batch of data by moving it to the appropriate device.
+def prepare_batch(batch, device):
+    depth, image, label = batch
     
-    Args:
-        batch: A batch of data (depth, image)
-        device (torch.device): The device to move data to
-        
-    Returns:
-        tuple: (depth, image) on the target device
-    """
-    depth, image = batch
     depth = depth.to(device)
     image = image.to(device)
-    return depth, image
+    
+    return depth, image, label
 
 
-def _log_training_summary(depth_encoder, summary_writer, step, image, depth, 
+def log_training_summary(model, summary_writer, step, image, depth, text, 
                         loss_info, batch_size, n_sample_per_summary):
     """
     Log training summary to tensorboard.
     
     Args:
-        depth_encoder: The depth encoder model
+        model: The model
         summary_writer: Tensorboard summary writer
         step (int): Current training step
         image: Batch of images
@@ -454,25 +504,26 @@ def _log_training_summary(depth_encoder, summary_writer, step, image, depth,
         batch_size (int): Batch size
         n_sample_per_summary (int): Number of samples to visualize
     """
-    depth_encoder.module.log_summary(
+    model.module.log_summary(
         summary_writer=summary_writer,
         tag='train',
         step=step,
         image=image,
         depth=depth,
+        text=text,
         scalars=loss_info,
         n_sample_per_summary=min(batch_size, n_sample_per_summary)
     )
 
 
-def _save_checkpoint_and_log_progress(depth_encoder, model_checkpoint_path, train_step,
+def save_checkpoint_and_log_progress(model, model_checkpoint_path, train_step,
                                     n_train_step, start_step, loss_value,
                                     time_start, log_path, optimizer):
     """
     Save model checkpoint and log training progress.
     
     Args:
-        depth_encoder: The depth encoder model
+        model: The model
         model_checkpoint_path (str): Path to save checkpoint
         train_step (int): Current training step
         n_train_step (int): Total number of training steps
@@ -495,12 +546,12 @@ def _save_checkpoint_and_log_progress(depth_encoder, model_checkpoint_path, trai
         log_path
     )
 
-    depth_encoder.module.save_encoder(
+    model.module.save_model(
         model_checkpoint_path.format(train_step), train_step, optimizer
     )
 
 
-def _update_scheduler(scheduler, scheduler_type, depth_encoder, image_encoder,
+def update_scheduler(scheduler, scheduler_type, model, candidate_labels,
                     val_dataloader, train_step, best_results, device,
                     val_summary_writer, n_sample_per_summary, log_path):
     """
@@ -509,7 +560,7 @@ def _update_scheduler(scheduler, scheduler_type, depth_encoder, image_encoder,
     Args:
         scheduler: The learning rate scheduler
         scheduler_type (str): Type of scheduler
-        depth_encoder: The depth encoder model
+        model: The depth encoder model
         image_encoder: The image encoder model
         val_dataloader: Validation data loader
         train_step (int): Current training step
@@ -521,124 +572,159 @@ def _update_scheduler(scheduler, scheduler_type, depth_encoder, image_encoder,
     """
     if scheduler_type == 'reduce_on_plateau':
         # For ReduceLROnPlateau, pass the validation loss
-        depth_encoder.eval()
+        model.module.eval()
         _, val_imce_loss = validate_model(
-            depth_encoder, image_encoder, val_dataloader,
+            model, candidate_labels, val_dataloader,
             train_step, best_results, device,
             val_summary_writer, n_sample_per_summary, log_path
         )
-        depth_encoder.train()
+        model.module.train()
         
         scheduler.step(val_imce_loss)
     else:
         scheduler.step()
 
 def validate_model(model,
-                     candidate_labels,
-                    dataloader,
-                    step,
-                    best_results,
-                    device,
-                    summary_writer,
-                    n_sample_per_summary=4,
-                    log_path=None):
-
-    n_sample = len(dataloader)
-    imce = np.zeros(n_sample)
-    mae = np.zeros(n_sample)
-    rmse = np.zeros(n_sample)
-
+                  candidate_labels,
+                  dataloader,
+                  step,
+                  best_results,
+                  device,
+                  summary_writer,
+                  n_sample_per_summary=4,
+                  log_path=None):
+    """
+    Validate the model on a dataset.
+    
+    Args:
+        model: The DepthClipModel to validate
+        candidate_labels: List of text labels for classification
+        dataloader: DataLoader for validation data
+        step: Current training step
+        best_results: Dictionary containing best validation results so far
+        device: Device to run validation on
+        summary_writer: TensorBoard summary writer
+        n_sample_per_summary: Number of samples to log to TensorBoard
+        log_path: Path to log results to
+        
+    Returns:
+        best_results: Updated best_results dictionary
+        accuracy: Classification accuracy on validation set
+    """
+    model.eval()  # Set model to evaluation mode
+    
+    n_sample = 0
+    correct_predictions = 0
+    
+    # Metrics for embedding quality
+    total_loss = 0.0
+    
     image_summary = []
     depth_summary = []
-
-    for idx, batch in enumerate(dataloader):
-
-        # Unpack batch
-        depth, image, label = batch
-
-        # Move noisy image to device
-        image = image.to(device)
-        depth = depth.to(device)
-        label = label.to(device)
-
-        # Forward through the network, return_all_outputs=False
-        depth_embedding = model(depth)
-        image_embedding = image_encoder(image)
-        
-        # Collect samples for Tensorboard display
-        if (idx % (n_sample // n_sample_per_summary)) == 0 and summary_writer is not None:
-            image_summary.append(image)
-            depth_summary.append(depth)
-
-        # Move output image to CPU and convert output and ground truth to numpy to validate
-        depth_embedding = depth_embedding.detach().cpu().numpy()
-        image_embedding = image_embedding.detach().cpu().numpy()
-
-
-        # Compute evaluation metrics using eval_utils
-        imce[idx] = eval_utils.info_nce(depth_embedding, image_embedding)
-        mae[idx] = eval_utils.mean_abs_err(depth_embedding, image_embedding)
-        rmse[idx] = eval_utils.root_mean_sq_err(depth_embedding, image_embedding)
-        
-
-    # Compute mean scores
-    mae = mae.mean()
-    rmse = rmse.mean()
-    imce = imce.mean()
-
-    # Log to lists of inputs, outputs, ground truth summaries to Tensorboard
-    # Concatenate lists along batch dimension, create dictionary with metrics as keys and scores as value
-    # for logging into Tensorboard
-    if summary_writer is not None:
-        depth_encoder.module.log_summary(
+    text_summary = []
+    
+    with torch.no_grad():  # Disable gradient computation for validation
+        for idx, batch in enumerate(dataloader):
+            # Unpack batch to device
+            depth_maps, images, label_indices = prepare_batch(batch, device)
+            
+            labels = [candidate_labels[i-1] for i in label_indices]
+            
+                        
+            batch_size = depth_maps.shape[0]
+            
+            # Get loss values for embedding quality evaluation
+            loss, loss_info = model.module.compute_loss(
+                depth_maps=depth_maps,
+                images=images,
+                labels=labels,
+                w_text=0.8
+            )
+            
+            # Accumulate losses
+            total_loss += loss.item() * batch_size
+            
+            # For classification accuracy, run prediction on each depth map
+            for i in range(batch_size):
+                single_depth = depth_maps[i:i+1]  # Get single sample with batch dimension
+                predicted_class, confidence = model.predict(single_depth, candidate_labels)
+                
+                if predicted_class == label_indices[i].item():
+                    correct_predictions += 1
+            
+            # Collect samples for TensorBoard display
+            if (idx % max(1, len(dataloader) // n_sample_per_summary)) == 0 and summary_writer is not None:
+                image_summary.append(images[:min(batch_size, n_sample_per_summary)])
+                depth_summary.append(depth_maps[:min(batch_size, n_sample_per_summary)])
+                
+                # Add text descriptions
+                batch_text = [candidate_labels[i-1] for i in label_indices[:min(batch_size, n_sample_per_summary)]]
+                text_summary.extend(batch_text)
+    
+    # Compute average metrics
+    avg_loss = total_loss / n_sample
+    accuracy = correct_predictions / n_sample if n_sample > 0 else 0.0
+    
+    # Log to TensorBoard
+    if summary_writer is not None and image_summary and depth_summary:
+        model.log_summary(
             summary_writer=summary_writer,
             tag='val',
             step=step,
-            image=torch.cat(image_summary, dim=0),
-            depth=torch.cat(depth_summary, dim=0),
-            scalars={'MAE': mae, 'RMSE': rmse, 'InfoNCE': imce},
+            image=torch.cat(image_summary, dim=0) if image_summary else None,
+            depth=torch.cat(depth_summary, dim=0) if depth_summary else None,
+            text=text_summary if text_summary else None,
+            scalars={
+                'Loss': avg_loss,
+                'Accuracy': accuracy
+            }
         )
-
+    
     # Print validation results to console
-    log('Validation results:', log_path)
-    log('{:>8}  {:>8}  {:>8}'.format(
-        'Step', 'MAE', 'RMSE'),
-        log_path)
-    log('{:8}  {:8.3f}  {:8.3f}'.format(
-        step, mae, rmse),
-        log_path)
-
-    # If the model improves over all results on both metrics by 2nd decimal
-    improved = best_results['mae'] > mae and best_results['rmse'] > rmse and best_results['imce'] > imce
-
-
-    # Update best results
+    if log_path:
+        log('Validation results:', log_path)
+        log('{:>8}  {:>8}  {:>10}'.format(
+            'Step', 'Loss', 'Accuracy'),
+            log_path)
+        log('{:8}  {:8.4f}  {:10.4f}'.format(
+            step, avg_loss, accuracy),
+            log_path)
+    
+    # Check if model improved
+    improved = False
+    
+    # For initial run when best_results might be empty
+    if 'accuracy' not in best_results or best_results['accuracy'] < accuracy:
+        improved = True
+    
+    # Update best results if improved
     if improved:
         best_results['step'] = step
-        best_results['mae'] = mae
-        best_results['rmse'] = rmse
-        best_results['imce'] = imce
-
-    log('Best results:', log_path)
-    log('{:>8}  {:>8}  {:>8}  {:>8}'.format(
-        'Step', 'MAE', 'RMSE', 'InfoMCE'),
-        log_path)
-    log('{:8}  {:8.3f}  {:8.3f}  {:8.3f}'.format(
-        best_results['step'],
-        best_results['mae'],
-        best_results['rmse'],
-        best_results['imce']), log_path)
-
-    return best_results, imce
+        best_results['loss'] = avg_loss
+        best_results['accuracy'] = accuracy
+    
+    if log_path:
+        log('Best results:', log_path)
+        log('{:>8}  {:>8}  {:>10}'.format(
+            'Step', 'Loss', 'Accuracy'),
+            log_path)
+        log('{:8}  {:8.4f}  {:12.4f}  {:12.4f}  {:10.4f}'.format(
+            best_results['step'],
+            best_results['loss'],
+            best_results['accuracy']), 
+            log_path)
+    
+    return best_results, accuracy
 
 
     
     
-def setup_dataloaders(root_dir, metadata_file, resize_shape, batch_size, n_thread, n_epoch):
+def setup_dataloaders(root_dir, metadata_file, labels_path, resize_shape, batch_size, n_thread, n_epoch):
     resize_transform = transforms.Resize(resize_shape)
     
     full_dataset = datasets.ImageDepthTextDataset(metadata_file=metadata_file,
                                                   root_dir=root_dir,
+                                                  labels_path=labels_path,
                                                   transform=resize_transform)
     
     # Use provided seed or generate a random one
@@ -706,8 +792,10 @@ if __name__ == '__main__':
     assert len(args.learning_rates) == len(args.learning_schedule)
     set_global_seed()
 
-    train_depth_clip_model(train_image_path=args.train_image_path,
-          train_depth_path=args.train_depth_path,
+    train_depth_clip_model(
+          root_dir=args.dataset_path,
+          metadata_file=args.metadata_path,
+          labels_path=args.labels_path,
           # Batch settings
           batch_size=args.batch_size,
           n_height=args.n_height,

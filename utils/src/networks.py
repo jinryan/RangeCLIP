@@ -5,6 +5,7 @@ from transformers import CLIPProcessor, CLIPTokenizer
 import matplotlib.pyplot as plt
 import torchvision
 from . import net_utils
+from .log_utils import apply_colormap
 
 class DepthEncoder(torch.nn.Module):
     """
@@ -36,7 +37,7 @@ class DepthEncoder(torch.nn.Module):
                  weight_initializer='kaiming_uniform',
                  activation_func='leaky_relu',
                  use_batch_norm=False,
-                 use_instance_norm=True):
+                 use_instance_norm=False):
         super(DepthEncoder, self).__init__()
         
         # Reuse the original ResNetEncoder initialization logic
@@ -205,11 +206,12 @@ class DepthEncoder(torch.nn.Module):
 
 
 class TextEncoder(nn.Module):
-    def __init__(self, clip_model):
+    def __init__(self, clip_model, device):
         super().__init__()
         
         self.clip_model = clip_model
         self.clip_tokenizer = CLIPTokenizer.from_pretrained(clip_model.config._name_or_path)
+        self.device = device
         
         # Freeze parameters
         for param in self.clip_model.text_model.parameters():
@@ -217,7 +219,9 @@ class TextEncoder(nn.Module):
     
     def forward(self, text):
         inputs = self.clip_tokenizer(text, padding=True, return_tensors="pt")
+        inputs = {key: val.to(self.device) for key, val in inputs.items()}
         text_embedding = self.clip_model.get_text_features(**inputs)
+        
         return F.normalize(text_embedding, p=2, dim=-1)
     
     def to(self, device):
@@ -235,14 +239,8 @@ class ImageEncoder(nn.Module):
         for param in self.clip_model.vision_model.parameters():
             param.requires_grad = False
     
-    def forward(self, image):
-        # Ensure input is on the same device as the model
-        image = image.to(self.clip_model.device)
-        
-        # Ensure input is float tensor
-        image = image.float()
-        
-        inputs = self.clip_processor(images=image, return_tensors="pt")
+    def forward(self, image):        
+        inputs = self.clip_processor(images=image, return_tensors="pt", do_rescale=False)
         
         # Move inputs to the same device as the model
         inputs = {k: v.to(self.clip_model.device) for k, v in inputs.items()}
@@ -254,20 +252,3 @@ class ImageEncoder(nn.Module):
         self.clip_model.to(device)
         return self
 
-def apply_colormap(tensor, cmap='magma'):
-        """
-        Converts a single-channel depth map to a 3-channel color image using a colormap.
-        """
-        tensor = tensor.squeeze(1)  # Remove channel dim: N x H x W
-        tensor = tensor - tensor.min()  # Normalize to 0-1
-        tensor = tensor / (tensor.max() + 1e-8)  # Avoid division by zero
-
-        tensor_np = tensor.cpu().numpy()  # Convert to NumPy for colormap
-        colored_images = []
-
-        for i in range(tensor_np.shape[0]):
-            colored = plt.get_cmap(cmap)(tensor_np[i])[:, :, :3]  # Apply colormap and remove alpha
-            colored = torch.tensor(colored).permute(2, 0, 1)  # Convert back to Tensor (3 x H x W)
-            colored_images.append(colored)
-
-        return torch.stack(colored_images)  # Stack into (N x 3 x H x W)
