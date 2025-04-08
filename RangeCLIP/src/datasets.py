@@ -82,8 +82,8 @@ class ImageDepthTextDataset(torch.utils.data.Dataset):
         img = self.image_transform(img)
         depth = self.depth_transform(depth)
                         
-        object_id = self.metadata.iloc[idx, 3] - 1 # 1-based indexing
-            
+        object_id = self.metadata.iloc[idx, 2] - 1 # 1-based indexing
+        object_id = torch.tensor(object_id)
         return {
             'depth': depth,
             'image': img,

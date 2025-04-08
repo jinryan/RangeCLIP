@@ -209,7 +209,7 @@ class DepthClipModel(nn.Module):
         loss_d_i = F.cross_entropy(sim_d_i, targets)
         
         if torch.isnan(loss_d_i) or torch.isinf(loss_d_i) or loss_d_i < 1e-10:
-            print(f"WARNING: Problematic depth-image loss value: {loss_d_i.item()}")
+            print(f"WARNING: Problematic depth-image loss value: {loss_d_i.item()}\nsim_d_i: {sim_d_i.item()}\ntargets: {targets.item()}")
             loss_d_i = torch.tensor(1.0, requires_grad=True, device=self.device)  # Safe fallback
         
         loss = w_text * loss_d_t + (1 - w_text) * loss_d_i
@@ -228,15 +228,15 @@ class DepthClipModel(nn.Module):
         return loss, loss_info
         
     
-    def parameters(self):
-        '''
-        Returns the list of parameters in the model
+    # def parameters(self):
+    #     '''
+    #     Returns the list of parameters in the model
 
-        Returns:
-            list[torch.Tensor[float32]] : list of parameters
-        '''
+    #     Returns:
+    #         list[torch.Tensor[float32]] : list of parameters
+    #     '''
 
-        return list(self.depth_encoder.parameters()) + list(self.text_encoder.parameters()) + list(self.image_encoder.parameters())
+    #     return list(self.depth_encoder.parameters()) + list(self.text_encoder.parameters()) + list(self.image_encoder.parameters())
 
     def train(self):
         '''
