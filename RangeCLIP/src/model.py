@@ -1,4 +1,5 @@
 import os, sys
+from typing import Optional, List, Tuple
 import torch, torchvision
 sys.path.insert(0, os.getcwd())
 from utils.src.networks import DepthEncoder, TextEncoder, ImageEncoder
@@ -87,7 +88,6 @@ class DepthClipModel(nn.Module):
         except:
             raise ValueError(f'Unsupported CLIP model {clip_model_name}')
         
-        # Store the encoders
         if depth_encoder_type == 'resnet':
             self.depth_encoder = DepthEncoder(n_layer=18,
                                               input_channels=1,
@@ -104,35 +104,43 @@ class DepthClipModel(nn.Module):
         self.text_encoder.to(self.device)
         self.image_encoder.to(self.device)
         
-        # Learnable temperature parameter for scaling logits
+        # For scaling logits
         self.temperature = nn.Parameter(torch.tensor(temperature))
         
-    def forward(self, depth_map, class_descriptions, image=None):
+    def forward(
+        self,
+        depth_map: torch.Tensor,
+        class_descriptions: Optional[List[str]] = None,
+        image: Optional[torch.Tensor] = None
+    ) -> Tuple[torch.Tensor, Optional[torch.Tensor], Optional[torch.Tensor]]:
         """
         Forward pass: Handles both training (with images) and inference (depth + text only).
         
         Args:
             depth_map (Tensor): Depth input (batch, 1, H, W)
-            class_descriptions (List[str]): List of text class descriptions
+            class_descriptions (List[str], optional): List of text class descriptions
             image (Tensor, optional): RGB image (batch, 3, H, W). Default is None for inference.
         
         Returns:
             depth_embedding (Tensor): Depth feature embedding
-            text_embeddings (Tensor): Class description embeddings
-            image_embedding (Tensor, optional): Image feature embedding (only during training)
+            text_embeddings (Tensor, optional): Class description embeddings
+            image_embedding (Tensor, optional): Image feature embedding
         """
-        depth_embedding = self.depth_encoder(depth_map)  # Always compute depth embedding
         
-        text_embeddings = self.text_encoder(class_descriptions)  # Always compute text embeddings
+        if image is not None and image.size(0) != depth_map.size(0):
+            raise ValueError("Batch size mismatch between depth_map and image.")
         
-        if torch.isnan(depth_embedding).any() or torch.isinf(depth_embedding).any():
-            print("NaN or Inf detected in depth embeddings")
+        depth_embedding = self.depth_encoder(depth_map)
+        
+        text_embeddings = None
+        image_embedding = None
+        if class_descriptions is not None:
+            text_embeddings = self.text_encoder(class_descriptions)
 
-        if image is not None:  # Training mode: also compute image embeddings
+        if image is not None:
             image_embedding = self.image_encoder(image)
-            return depth_embedding, image_embedding, text_embeddings
-        else:  # Inference mode: Only return depth & text embeddings
-            return depth_embedding, text_embeddings
+            
+        return depth_embedding, text_embeddings, image_embedding
 
 
     def predict(self, depth_map, class_descriptions):
@@ -141,7 +149,7 @@ class DepthClipModel(nn.Module):
         
         Args:
             depth_map (Tensor): Depth map input (1, 1, H, W)
-            class_descriptions (List[str]): List of text class descriptions
+            candidate_labels (List[str]): List of text class descriptions
         
         Returns:
             predicted_class (int): Index of the predicted class
@@ -159,186 +167,66 @@ class DepthClipModel(nn.Module):
 
             return predicted_class.item(), confidence_scores.max().item()
 
-    def compute_loss(self, depth_maps, images, labels, w_text=0.5):
-        """
-        Compute contrastive loss aligning depth with text & depth with image.
-        Handles batch processing for improved contrastive learning.
+    def compute_trimodal_loss(self,
+                     depth_embeddings,
+                     image_embeddings,
+                     candidate_labels,
+                     ground_truth_indices,
+                     w_text=0.8):
         
-        Args:
-            depth_maps (Tensor): Batch of depth maps (batch_size, 1, H, W)
-            images (Tensor): Batch of RGB images (batch_size, 3, H, W)
-            class_descriptions (List[str]): List of all possible class descriptions
-            ground_truth_indices (Tensor): Ground truth indices for each example in batch
-            w_text (float): Weight for text loss (depth-to-image loss weight will be 1-w_text)
-            
-        Returns:
-            loss (Tensor): Combined contrastive loss
-            loss_info (dict): Dictionary containing loss components
-        """
-        batch_size = depth_maps.shape[0]
+        batch_size = depth_embeddings.shape[0]
+        text_embeddings = self.text_encoder(candidate_labels)
         
-        try:
-            # Get normalized embeddings for all modalities
-            if images is not None:
-                depth_embeddings, image_embeddings, text_embeddings = self.forward(
-                    depth_maps, labels, images
-                )
-            else:
-                depth_embeddings, text_embeddings = self.forward(
-                    depth_maps, labels
-                )
-                
-            check_extreme(depth_embeddings, 'depth embedding')
-            check_extreme(text_embeddings, 'text embedding')
-            # Depth-to-Text Contrastive Loss (InfoNCE)
-            # Calculate similarity with numerical stability check
-            sim_d_t = torch.matmul(depth_embeddings, text_embeddings.T)
-            check_extreme(sim_d_t, 'sim_d_t')
-            # Check similarity values
-
-            # Apply temperature with a safety check
-            temp_value = self.temperature.exp().item()
-            if temp_value < 1e-10 or temp_value > 1e10:
-                print(f"WARNING: Extreme temperature value: {temp_value}")
-                # Use a safe default instead
-                sim_d_t = sim_d_t / 0.07  # Common default temperature
-            else:
-                sim_d_t = sim_d_t / self.temperature.exp()
-            
-            check_extreme(sim_d_t, 'post temp sim_d_t')
-            
-            # Cross entropy loss with ground truth indices
-            try:
-                gt = torch.arange(batch_size, device='cuda:0')
-
-                loss_d_t = F.cross_entropy(sim_d_t, gt)
-                # print(f"======= Loss is {loss_d_t} ========")
-                
-                # Check if loss is valid
-                if torch.isnan(loss_d_t) or torch.isinf(loss_d_t) or loss_d_t < 1e-10:
-                    print(f"WARNING: Problematic depth-text loss value: {loss_d_t.item()}\nsim_d_t: {sim_d_t}\n\nground_truth: {ground_truth_indices}")
-                    loss_d_t = torch.tensor(1.0, requires_grad=True, device=self.device)  # Safe fallback
-            except Exception as e:
-                print(f"ERROR in cross entropy calculation: {e}\nsim_d_t: {sim_d_t}\n\nground_truth: {ground_truth_indices}")
-                print(f"sim_d_t shape: {sim_d_t}, ground_truth_indices shape: {ground_truth_indices.shape}")
-                loss_d_t = torch.tensor(1.0, requires_grad=True, device=self.device)  # Safe fallback
-            
-            loss_info = {}
-            
-            if images is not None:
-                # Calculate similarity between all pairs of depth and image embeddings
-                sim_d_i = torch.matmul(depth_embeddings, image_embeddings.T)
-                
-                check_extreme(sim_d_i, 'sim_d_i')
-                # Check similarity values
-                if torch.isnan(sim_d_i).any() or torch.isinf(sim_d_i).any():
-                    print("WARNING: NaN or Inf values in depth-image similarity matrix")
-                    sim_d_i = torch.zeros_like(sim_d_i)
-                
-                # Apply temperature with safety check
-                sim_d_i = sim_d_i / self.temperature.exp()
-                check_extreme(sim_d_i, 'post temp sim_d_i')
-                
-                # Check modified similarity values
-                if torch.isnan(sim_d_i).any() or torch.isinf(sim_d_i).any():
-                    print("WARNING: NaN or Inf values after temperature scaling (d-i)")
-                    sim_d_i = torch.zeros_like(sim_d_i)
-                
-                try:
-                    # InfoNCE loss - each depth map should match with its corresponding image
-                    targets = torch.arange(batch_size, device=self.device)
-                    loss_d_i = F.cross_entropy(sim_d_i, targets)
-                    
-                    # Check if loss is valid
-                    if torch.isnan(loss_d_i) or torch.isinf(loss_d_i) or loss_d_i < 1e-10:
-                        print(f"WARNING: Problematic depth-image loss value: {loss_d_i.item()}")
-                        loss_d_i = torch.tensor(1.0, requires_grad=True, device=self.device)  # Safe fallback
-                except Exception as e:
-                    print(f"ERROR in depth-image cross entropy calculation: {e}")
-                    loss_d_i = torch.tensor(1.0, requires_grad=True, device=self.device)  # Safe fallback
-                    
-                loss_info['loss_d_i'] = loss_d_i.item()
-                # Combine losses with stability check
-                loss = w_text * loss_d_t + (1 - w_text) * loss_d_i
-            else:
-                loss = loss_d_t
-            
-            # Final safety check
-            if torch.isnan(loss) or torch.isinf(loss) or loss < 1e-10:
-                print(f"WARNING: Final loss problematic: {loss.item() if not torch.isnan(loss) else 'NaN'}")
-                return torch.tensor(1.0, requires_grad=True, device=self.device), {'loss_d_i': 1.0, 'loss': 1.0, 'loss_d_t': 1.0}
-            
-            loss_info['loss'] = loss.item()
-            loss_info['loss_d_t'] = loss_d_t.item()
-            
-            # print(f"Ground truth indices: {ground_truth_indices}\n")
-            return loss, loss_info
-            
-        except Exception as e:
-            check_extreme(sim_d_t, 'sim_d_t_exception')
-            print(f"Error type: {type(e)}")
-            print(f"Error message: {str(e)}")
-            print(f"Error details: {repr(e)}")
-            import traceback
-            traceback.print_exc()
-            # Return safe values that can be backpropagated
-            return torch.tensor(1.0, requires_grad=True, device=self.device), {'loss_d_i': 1.0, 'loss': 1.0, 'loss_d_t': 1.0}
-    
-    def compute_loss2(self, depth_maps, images, class_descriptions, ground_truth_indices, w_text=0.5):
-        """
-        Compute contrastive loss aligning depth with text & depth with image.
-        Handles batch processing for improved contrastive learning.
+        check_extreme(depth_embeddings, 'Depth Embeddings')
+        check_extreme(text_embeddings, 'Text Embeddings')
+        check_extreme(image_embeddings, 'Image Embeddings')
         
-        Args:
-            depth_maps (Tensor): Batch of depth maps (batch_size, 1, H, W)
-            images (Tensor): Batch of RGB images (batch_size, 3, H, W)
-            class_descriptions (List[str]): List of all possible class descriptions
-            ground_truth_indices (Tensor): Ground truth class indices for each example in batch
-            w_text (float): Weight for text loss (depth-to-image loss weight will be 1-w_text)
+        # Loss between depth and text
+        sim_d_t = torch.matmul(depth_embeddings, text_embeddings.T)
+        check_extreme(sim_d_t, 'sim_d_t')
+        
+        temp_value = self.temperature.exp().item()
+        
+        if temp_value < 1e-10 or temp_value > 1e10:
+            print(f"WARNING: Extreme temperature value: {temp_value}")
+        
+        sim_d_t = sim_d_t / self.temperature.exp()
+        check_extreme(sim_d_t, 'post temp sim_d_t')
+        
+        loss_d_t = F.cross_entropy(sim_d_t, ground_truth_indices)
+        
+        if torch.isnan(loss_d_t) or torch.isinf(loss_d_t) or loss_d_t < 1e-10:
+            print(f"WARNING: Problematic depth-text loss value: {loss_d_t.item()}\nsim_d_t: {sim_d_t}\n\nground_truth: {ground_truth_indices}")
+            loss_d_t = torch.tensor(1.0, requires_grad=True, device=self.device)  # Safe fallback
             
-        Returns:
-            loss (Tensor): Combined contrastive loss
-            loss_d_t (Tensor): Depth-to-text loss component
-            loss_d_i (Tensor): Depth-to-image loss component
-        """
-        batch_size = depth_maps.shape[0]
+        # Loss between depth and image
+        sim_d_i = torch.matmul(depth_embeddings, image_embeddings.T)
+        check_extreme(sim_d_i, 'sim_d_i')
+        sim_d_i = sim_d_i / self.temperature.exp()
+        check_extreme(sim_d_i, 'post temp sim_d_i')
         
-        # Get normalized embeddings for all modalities
-        if images is not None:
-            depth_embeddings, image_embeddings, text_embeddings = self.forward(
-                depth_maps, class_descriptions, images
-            )
-        else:
-            depth_embeddings, text_embeddings = self.forward(
-                depth_maps, class_descriptions, images
-            )
-            
-        # Depth-to-Text Contrastive Loss (InfoNCE)
-        # Calculate similarity between each depth embedding and all text embeddings
-        sim_d_t = torch.matmul(depth_embeddings, text_embeddings.T) / self.temperature.exp()
+        targets = torch.arange(batch_size, device=self.device)
+        loss_d_i = F.cross_entropy(sim_d_i, targets)
         
-        # Cross entropy loss with ground truth indices
-        loss_d_t = F.cross_entropy(sim_d_t, ground_truth_indices.to(self.device))
+        if torch.isnan(loss_d_i) or torch.isinf(loss_d_i) or loss_d_i < 1e-10:
+            print(f"WARNING: Problematic depth-image loss value: {loss_d_i.item()}")
+            loss_d_i = torch.tensor(1.0, requires_grad=True, device=self.device)  # Safe fallback
         
-        loss_info = {}
-        
-        if images is not None:
-            # Calculate similarity between all pairs of depth and image embeddings
-            sim_d_i = torch.matmul(depth_embeddings, image_embeddings.T) / self.temperature.exp()
-            
-            # InfoNCE loss - each depth map should match with its corresponding image
-            loss_d_i = F.cross_entropy(sim_d_i, torch.arange(batch_size, device=self.device))
-            loss_info['loss_d_i'] = loss_d_i.item()
-            # Combine losses
-            loss = w_text * loss_d_t + (1 - w_text) * loss_d_i
-        else:
-            loss = loss_d_t
-        
-        loss_info['loss'] = loss.item()
-        loss_info['loss_d_t'] = loss_d_t.item()
+        loss = w_text * loss_d_t + (1 - w_text) * loss_d_i
+        loss_info = {'loss_d_i': loss_d_i.item(), 'loss_d_t': loss_d_t.item(), 'loss': loss.item()}
         
         return loss, loss_info
-    
+        
+        
+    def compute_bimodal_loss(self, depth_embeddings, other_embeddings):
+        batch_size = depth_embeddings.shape[0]
+        logits = torch.matmul(F.normalize(depth_embeddings, dim=-1),
+                      F.normalize(other_embeddings, dim=-1).T) / self.temperature.exp()
+        targets = torch.arange(batch_size, device=self.device)
+        loss = F.cross_entropy(logits, targets)
+        loss_info = {"loss": loss}
+        return loss, loss_info
+        
     
     def parameters(self):
         '''

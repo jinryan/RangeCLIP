@@ -67,9 +67,20 @@ class ImageDepthDataset(torch.utils.data.Dataset):
 
     def __len__(self):
         return self.n_sample
-    
-    
 
+class TaggedDataset(torch.utils.data.Dataset):
+    def __init__(self, dataset, tag):
+        self.dataset = dataset
+        self.tag = tag  # "labeled" or "unlabeled"
+
+    def __getitem__(self, idx):
+        sample = self.dataset[idx]
+        sample['__tag__'] = self.tag
+        return sample
+
+    def __len__(self):
+        return len(self.dataset)
+    
 class ImageDepthTextDataset(torch.utils.data.Dataset):
     def __init__(self, metadata_file, root_dir, labels_path, transform=None):
         """

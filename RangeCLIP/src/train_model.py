@@ -220,35 +220,36 @@ def train_depth_clip_model(
     
     # Main training loop
     for epoch in range(1, n_epoch + 1):
-        # At the start of each iteration
-        print(f"GPU memory allocated: {torch.cuda.memory_allocated(device) / 1e9:.2f} GB")
-        print(f"GPU memory reserved: {torch.cuda.memory_reserved(device) / 1e9:.2f} GB")
-        print(f"Max memory allocated: {torch.cuda.max_memory_allocated(device) / 1e9:.2f} GB")
-        
         total_loss = 0
         for batch in tqdm.tqdm(train_dataloader, desc=f'{epoch}/{n_epoch}'):
             train_step += 1
 
-            
             try:
                 # Unpack batch to device
+                # We are guaranteed depth and images but not necessarily labels
                 depth_maps, images, label_indices = prepare_batch(batch, device)
-                
-                labels = [candidate_labels[i-1] for i in label_indices]
-                
-                if contains_nan(depth_maps) or contains_nan(images):
-                    print(f"Depth maps contain NaN: {contains_nan(depth_maps)}")
-                    print(f"Images contain NaN: {contains_nan(images)}")
                             
                 batch_size = depth_maps.shape[0]
                 
-                # Get loss values for embedding quality evaluation
-                loss, loss_info = model.module.compute_loss(
-                    depth_maps=depth_maps,
-                    images=images,
-                    labels=labels,
-                    w_text=0.8
+                depth_embeddings, _, image_embeddings = model.forward(
+                    depth_map=depth_maps,
+                    image=images
                 )
+                
+                if candidate_labels != None:
+                    # Get loss values for embedding quality evaluation
+                    loss, loss_info = model.module.compute_trimodal_loss(
+                        depth_embeddings=depth_embeddings,
+                        image_embeddings=image_embeddings,
+                        candidate_labels=candidate_labels,
+                        ground_truth_indices=label_indices,
+                        w_text=0.8
+                    )
+                else:
+                    loss, loss_info = model.module.compute_bimodal_loss(
+                        depth_embeddings=depth_embeddings,
+                        other_embeddings=image_embeddings
+                    )
                 
                 total_loss += loss
                 
@@ -262,14 +263,14 @@ def train_depth_clip_model(
                     continue
                 loss.backward()
                 
+                # Gradient clipping
                 total_norm = 0
                 for p in model.parameters():
                     if p.grad is not None:
                         param_norm = p.grad.detach().data.norm(2)
                         total_norm += param_norm.item() ** 2
                 total_norm = total_norm ** 0.5
-                # print(f"Gradient norm: {total_norm}")
-                # Add after loss.backward() but before optimizer.step()
+                
                 torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
                 optimizer.step()
             except Exception as e:
@@ -290,7 +291,7 @@ def train_depth_clip_model(
             if (train_step % n_step_per_summary) == 0:
                 log_training_summary(
                     model, train_summary_writer, train_step,
-                    images, depth_maps, labels, loss_info, batch_size, n_sample_per_summary
+                    images, depth_maps, label_indices, loss_info, batch_size, n_sample_per_summary
                 )
                 
                 # Validate model
