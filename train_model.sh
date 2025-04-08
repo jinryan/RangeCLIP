@@ -11,10 +11,10 @@ n_height=256
 n_width=256
 depth_encoder_type="resnet"
 clip_model_name="openai/clip-vit-base-patch32"
-learning_rates=(2e-4 1e-4 5e-5 1e-5 5e-6)
-learning_schedule=(10 20 30 35 40)
-scheduler_type="cosine_annealing"
-w_weight_decay=0
+learning_rates=(2e-4 1e-4 5e-5 1e-5)
+learning_schedule=(10 20 30 35)
+scheduler_type="multi_step"
+w_weight_decay=1e-4
 
 # Checkpoint & logging
 checkpoint_path="checkpoints"

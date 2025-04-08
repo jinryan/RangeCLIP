@@ -1,4 +1,3 @@
-
 from torchvision import transforms
 import torch
 import datasets
@@ -14,10 +13,6 @@ def setup_dataloaders(labeled_metadata_file,
     
     image_transform = transforms.Compose([
         transforms.Resize(resize_shape),
-        # transforms.Normalize(
-        #     mean=[0.48145466, 0.4578275, 0.40821073],
-        #     std=[0.26862954, 0.26130258, 0.27577711]
-        # )
     ])
     
     def depth_transform_fn(depth_tensor):
@@ -51,7 +46,7 @@ def setup_dataloaders(labeled_metadata_file,
     
     generator = torch.Generator().manual_seed(42)
     l_train_dataset, l_val_dataset = torch.utils.data.random_split(labeled_dataset, [0.8, 0.2], generator=generator)
-    u_train_dataset, u_val_dataset = torch.utils.data.random_split(unlabeled_dataset, [0.8, 0.2], generator=generator)
+    u_train_dataset, u_val_dataset, _ = torch.utils.data.random_split(unlabeled_dataset, [0.08, 0.02, 0.9], generator=generator)
     
     
     def custom_collate(batch):

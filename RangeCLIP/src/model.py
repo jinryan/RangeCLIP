@@ -158,7 +158,8 @@ class DepthClipModel(nn.Module):
         self.eval()  # Set model to evaluation mode
 
         with torch.no_grad():
-            depth_embedding, text_embeddings = self(depth_map, class_descriptions)  # No image input
+            depth_embedding, text_embeddings, _ = self(depth_map=depth_map,
+                                                    class_descriptions=class_descriptions)  # No image input
 
             # Compute similarity
             logits = torch.matmul(depth_embedding, text_embeddings.T) / self.temperature.exp()
@@ -209,7 +210,9 @@ class DepthClipModel(nn.Module):
         loss_d_i = F.cross_entropy(sim_d_i, targets)
         
         if torch.isnan(loss_d_i) or torch.isinf(loss_d_i) or loss_d_i < 1e-10:
-            print(f"WARNING: Problematic depth-image loss value: {loss_d_i.item()}\nsim_d_i: {sim_d_i.item()}\ntargets: {targets.item()}")
+            print(f"WARNING: Problematic depth-image loss value: {loss_d_i.item()}")
+            print(f"sim_d_i: {sim_d_i.detach().cpu()}")
+            print(f"targets: {targets.detach().cpu()}")
             loss_d_i = torch.tensor(1.0, requires_grad=True, device=self.device)  # Safe fallback
         
         loss = w_text * loss_d_t + (1 - w_text) * loss_d_i

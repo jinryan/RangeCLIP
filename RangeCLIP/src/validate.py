@@ -1,6 +1,7 @@
 import torch
 import sys
 import os
+import tqdm
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 sys.path.insert(0, project_root)
 from utils.src.log_utils import log
@@ -36,7 +37,8 @@ def validate_model(model,
         best_results: Updated best_results dictionary
         accuracy: Classification accuracy on validation set
     """
-    model.eval()  # Set model to evaluation mode
+    print("Entering Validation")
+    unwrap_model(model).eval()  # Set model to evaluation mode
     
     
     # Metrics for embedding quality
@@ -49,23 +51,26 @@ def validate_model(model,
     correct_predictions = 0
     total_predictions = 0
     with torch.no_grad():  # Disable gradient computation for validation
-        for idx, batch in enumerate(dataloader):
+        for idx, batch in tqdm.tqdm(enumerate(dataloader), desc='Validation', total=len(dataloader)):
             # Unpack batch to device
             labeled_batch = batch['labeled']
             unlabeled_batch = batch['unlabeled']
             
-            if not labeled_batch.get('image') and not unlabeled_batch.get('image'):
+            has_labeled_images = 'image' in labeled_batch and labeled_batch['image'].size(0) > 1
+            has_unlabeled_images = 'image' in unlabeled_batch and unlabeled_batch['image'].size(0) > 1
+
+            if not has_labeled_images and not has_unlabeled_images:
                 print(f"[Validation] Warning: Empty batch at index {idx}. Skipping.")
                 continue  # Skip this iteration
             
-            if labeled_batch.get('image') is not None and len(labeled_batch['image']) > 0:  # Check if there are any labeled samples
-                labeled_images = labeled_batch['image'].to(device)          # shape: [B_l, C, H, W]
-                labeled_depths = labeled_batch['depth'].to(device)          # shape: [B_l, 1, H, W]
-                labeled_ground_truth_indices = labeled_batch['id'] .to(device)
+            if has_labeled_images:
+                labeled_images = labeled_batch['image'].to(device)
+                labeled_depths = labeled_batch['depth'].to(device)
+                labeled_ground_truth_indices = labeled_batch['id'].to(device)
                 
                 for i in range(len(labeled_depths)):
                     single_depth = labeled_depths[i:i+1]  # Shape: [1, 1, H, W]
-                    predicted_class, confidence = model.predict(single_depth.to(device), candidate_labels)
+                    predicted_class, confidence = unwrap_model(model).predict(single_depth.to(device), candidate_labels)
 
                     true_class = labeled_ground_truth_indices[i].item()
 
@@ -93,9 +98,9 @@ def validate_model(model,
                 print(f"[Validation] No labeled data in batch at index {idx}. Skipping labeled loss.")
 
                 
-            if unlabeled_batch.get('image') is not None and len(unlabeled_batch['image']) > 0:  # Check if there are any unlabeled samples
-                unlabeled_images = unlabeled_batch['image'].to(device)        # shape: [B_u, C, H, W]
-                unlabeled_depths = unlabeled_batch['depth'].to(device)        # shape: [B_u, N, 1, H, W]
+            if has_unlabeled_images:
+                unlabeled_images = unlabeled_batch['image'].to(device)
+                unlabeled_depths = unlabeled_batch['depth'].to(device)
 
 
                 # Repeat RGB image for each patch
@@ -149,7 +154,6 @@ def validate_model(model,
         summary_texts = text_summary
 
         log_training_summary(
-            model=model,
             train_summary_writer=summary_writer,
             train_step=step,
             labeled_images=summary_images,

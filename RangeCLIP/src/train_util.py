@@ -179,7 +179,7 @@ def train_depth_clip_model(
             try:
                 labeled_batch = batch['labeled']
                 unlabeled_batch = batch['unlabeled']
-                if labeled_batch.get('image') is not None and len(labeled_batch['image']) > 0:  # Check if there are any labeled samples
+                if 'image' in labeled_batch and labeled_batch['image'].size(0) > 1:
                     labeled_images = labeled_batch['image'].to(device)          # shape: [B_l, C, H, W]
                     labeled_depths = labeled_batch['depth'].to(device)          # shape: [B_l, 1, H, W]
                     labeled_ground_truth_indices = labeled_batch['id'].to(device)

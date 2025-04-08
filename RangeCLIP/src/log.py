@@ -272,31 +272,39 @@ def log_training_summary(
 
         # Labeled image
         if labeled_images is not None and len(labeled_images) > 0:
-            labeled_images_vis = labeled_images[:n_sample_per_summary].cpu()
-            display_images.append(labeled_images_vis)
+            for i in range(min(n_sample_per_summary, labeled_images.shape[0])):
+                display_images.append(labeled_images[i].cpu())
 
         # Labeled depth
         if labeled_depths is not None and len(labeled_depths) > 0:
             labeled_depths_vis = labeled_depths[:n_sample_per_summary]
             labeled_depths_colored = apply_colormap(labeled_depths_vis)
-            display_images.append(labeled_depths_colored)
+            for i in range(labeled_depths_colored.shape[0]):
+                display_images.append(labeled_depths_colored[i])
 
         # Unlabeled depth
         if unlabeled_depths is not None and len(unlabeled_depths) > 0:
-            # Select 1 patch per example (e.g., first patch)
-            B, N, _, H, W = unlabeled_depths.shape
-            patches = unlabeled_depths[:, 0]  # [B, 1, H, W]
+            B, N, H, W = unlabeled_depths.shape
+            patches = unlabeled_depths[:, 0].unsqueeze(1)  # [B, 1, H, W]
             patches = patches[:n_sample_per_summary]
             patches_colored = apply_colormap(patches)
-            display_images.append(patches_colored)
+            for i in range(patches_colored.shape[0]):
+                display_images.append(patches_colored[i])
+
 
         # Unlabeled image (optional, but good to track RGB reference)
         if unlabeled_images is not None and len(unlabeled_images) > 0:
             unlabeled_images_vis = unlabeled_images[:n_sample_per_summary].cpu()
-            display_images.append(unlabeled_images_vis)
+            for i in range(unlabeled_images_vis.shape[0]):
+                display_images.append(unlabeled_images_vis[i])
 
+
+        
         # Log concatenated image strip
         if display_images:
+            for i, img in enumerate(display_images):
+                assert img.ndim == 3 and img.shape[0] == 3, f"Image {i} shape mismatch: {img.shape}"
+                
             grid = make_grid(torch.cat(display_images, dim=2), nrow=n_sample_per_summary)  # concat width-wise
             train_summary_writer.add_image('train/visual_summary', grid, global_step=train_step)
 
