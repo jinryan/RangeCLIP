@@ -213,7 +213,7 @@ class DepthClipModel(nn.Module):
             loss_d_i = torch.tensor(1.0, requires_grad=True, device=self.device)  # Safe fallback
         
         loss = w_text * loss_d_t + (1 - w_text) * loss_d_i
-        loss_info = {'loss_d_i': loss_d_i.item(), 'loss_d_t': loss_d_t.item(), 'loss': loss.item()}
+        loss_info = {'loss_d_i': loss_d_i.item(), 'loss_d_t': loss_d_t.item(), 'trimodal_loss': loss.item()}
         
         return loss, loss_info
         
@@ -224,7 +224,7 @@ class DepthClipModel(nn.Module):
                       F.normalize(other_embeddings, dim=-1).T) / self.temperature.exp()
         targets = torch.arange(batch_size, device=self.device)
         loss = F.cross_entropy(logits, targets)
-        loss_info = {"loss": loss}
+        loss_info = {"bimodal_loss": loss}
         return loss, loss_info
         
     
@@ -321,47 +321,3 @@ class DepthClipModel(nn.Module):
             checkpoint['optimizer'] = optimizer.state_dict()
         
         torch.save(checkpoint, checkpoint_path)
-
-    def log_summary(self,
-                summary_writer,
-                tag,
-                step,
-                image,
-                depth,
-                text,
-                scalars={},
-                n_sample_per_summary=4):
-
-        with torch.no_grad():
-            display_summary_image = []
-
-            # Log input image
-            if image is not None:
-                input_image_summary = image[:min(len(image), n_sample_per_summary)]
-                input_image_summary = input_image_summary.to('cpu')
-                display_summary_image.append(input_image_summary)
-
-            # Log depth map with colormap
-            if depth is not None:
-                depth_summary = depth[:min(len(depth), n_sample_per_summary)]
-                depth_colored = apply_colormap(depth_summary)  # Apply colormap
-                depth_colored = depth_colored.to('cpu')
-                display_summary_image.append(depth_colored)
-
-            # Log scalars
-            for name, value in scalars.items():
-                summary_writer.add_scalar(f"{tag}_{name}", value, global_step=step)
-
-            # Log text to TensorBoard
-            if text is not None:
-                # Create a concatenated string of the text for each sample
-                text_summary = "\n".join([f"{i+1}: {t}" for i, t in enumerate(text[:min(len(text), n_sample_per_summary)])])
-                summary_writer.add_text(f"{tag}_text", text_summary, global_step=step)
-
-            # Log images to TensorBoard
-            if display_summary_image:
-                display_summary_image = torch.cat(display_summary_image, dim=2)  # Concatenate along width
-                summary_writer.add_image(
-                    tag,
-                    torchvision.utils.make_grid(display_summary_image, nrow=n_sample_per_summary),
-                    global_step=step)

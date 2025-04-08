@@ -25,10 +25,10 @@ torch.cuda.empty_cache()
 parser = argparse.ArgumentParser()
 
 # Training and validation input filepaths
-parser.add_argument('--dataset_path',
-    type=str, required=True, help='Path to dataset')
-parser.add_argument('--metadata_path',
-    type=str, required=True, help='Path to dataset metadata')
+parser.add_argument('--labeled_metadata_path',
+    type=str, required=True, help='Path to labeled dataset metadata.csv')
+parser.add_argument('--unlabeled_metadata_path',
+    type=str, required=True, help='Path to unlabeled dataset metadata.csv')
 parser.add_argument('--labels_path',
     type=str, required=True, help='Path to dataset labels')
 
@@ -53,20 +53,6 @@ parser.add_argument('--scheduler_type',
     type=str, default='multi_step', help='Options: multi_step, cosine_annealing, reduce_on_plateau')
 parser.add_argument('--learning_schedule',
     nargs='+', type=int, default=[10, 20, 30, 35], help='Space delimited list to change learning rate')
-
-# Photometric data augmentations
-parser.add_argument('--augmentation_random_brightness',
-    nargs='+', type=float, default=[-1, -1], help='Range of brightness adjustments for augmentation, if does not contain -1, apply random brightness')
-parser.add_argument('--augmentation_random_contrast',
-    nargs='+', type=float, default=[-1, -1], help='Range of contrast adjustments for augmentation, if does not contain -1, apply random contrast')
-parser.add_argument('--augmentation_random_hue',
-    nargs='+', type=float, default=[-1, -1], help='Range of hue adjustments for augmentation, if does not contain -1, apply random hue')
-parser.add_argument('--augmentation_random_saturation',
-    nargs='+', type=float, default=[-1, -1], help='Range of saturation adjustments for augmentation, if does not contain -1, apply random saturation')
-
-# Geometric data augmentations
-parser.add_argument('--augmentation_random_flip_type',
-    nargs='+', type=str, default=['none'], help='Random flip type for data augmentation: horizontal, vertical')
 
 # Loss settings
 parser.add_argument('--w_weight_decay',
@@ -95,18 +81,20 @@ parser.add_argument('--n_thread',
 
 args = parser.parse_args()
 
+def unwrap_model(model):
+    return model.module if hasattr(model, "module") else model
+
 def contains_nan(tensor):
     return torch.isnan(tensor).any().item()
 
 def train_depth_clip_model(
-        root_dir,
-        metadata_file,
+        labeled_metadata_path,
+        unlabeled_metadata_path,
         labels_path,
         batch_size,
         n_height,
         n_width,
         depth_encoder_type,
-        augmentations,
         learning_rates,
         learning_schedule,
         scheduler_type,
@@ -169,8 +157,13 @@ def train_depth_clip_model(
     # Prepare data loaders
     resize_shape = (n_height, n_width)
     train_dataloader, val_dataloader, n_train_step, candidate_labels = setup_dataloaders(
-        root_dir, metadata_file, labels_path, resize_shape, 
-        batch_size, n_thread, n_epoch
+        labeled_metadata_file=labeled_metadata_path,
+        unlabeled_metadata_file=unlabeled_metadata_path,
+        labels_path=labels_path,
+        resize_shape=resize_shape, 
+        batch_size=batch_size,
+        n_thread=n_thread,
+        n_epoch=n_epoch
     )
     
     model = DepthClipModel(depth_encoder_type, clip_model_name, device)
@@ -182,11 +175,10 @@ def train_depth_clip_model(
     )
     
     # Restore model if specified
-    start_step = train_step = 0
-    
-    restore_model_if_needed(
-        model, restore_path_model, None
-    )
+    train_step, optimizer = restore_model_if_needed(model, restore_path_model, optimizer)
+    start_step = train_step
+
+
     
     for param_group in optimizer.param_groups:
         param_group['lr'] = learning_rates[0]
@@ -198,7 +190,7 @@ def train_depth_clip_model(
     
     # Log configuration settings
     log_configuration(
-        log_path, metadata_file, 
+        log_path, labeled_metadata_path, unlabeled_metadata_path, 
         batch_size, n_height, n_width,
         depth_encoder_type, model.parameters(),
         batch_size, len(train_dataloader.dataset), n_train_step,
@@ -223,46 +215,61 @@ def train_depth_clip_model(
         total_loss = 0
         for batch in tqdm.tqdm(train_dataloader, desc=f'{epoch}/{n_epoch}'):
             train_step += 1
-
+            
             try:
-                # Unpack batch to device
-                # We are guaranteed depth and images but not necessarily labels
-                depth_maps, images, label_indices = prepare_batch(batch, device)
-                            
-                batch_size = depth_maps.shape[0]
-                
-                depth_embeddings, _, image_embeddings = model.forward(
-                    depth_map=depth_maps,
-                    image=images
-                )
-                
-                if candidate_labels != None:
-                    # Get loss values for embedding quality evaluation
-                    loss, loss_info = model.module.compute_trimodal_loss(
-                        depth_embeddings=depth_embeddings,
-                        image_embeddings=image_embeddings,
+                labeled_batch = batch['labeled']
+                unlabeled_batch = batch['unlabeled']
+                if labeled_batch.get('image') is not None and len(labeled_batch['image']) > 0:  # Check if there are any labeled samples
+                    labeled_images = labeled_batch['image'].to(device)          # shape: [B_l, C, H, W]
+                    labeled_depths = labeled_batch['depth'].to(device)          # shape: [B_l, 1, H, W]
+                    labeled_ground_truth_indices = labeled_batch['id']                       # list of strings
+
+                    # Compute embeddings
+                    depth_embed_l, _, image_embed_l = model.forward(
+                        depth_map=labeled_depths,
+                        image=labeled_images
+                    )
+
+                    labeled_loss, loss_info_labeled = unwrap_model(model).compute_trimodal_loss(
+                        depth_embeddings=depth_embed_l,
+                        image_embeddings=image_embed_l,
                         candidate_labels=candidate_labels,
-                        ground_truth_indices=label_indices,
+                        ground_truth_indices=labeled_ground_truth_indices,
                         w_text=0.8
                     )
                 else:
-                    loss, loss_info = model.module.compute_bimodal_loss(
-                        depth_embeddings=depth_embeddings,
-                        other_embeddings=image_embeddings
+                    labeled_loss = 0
+                    loss_info_labeled = {}
+                    
+                if unlabeled_batch.get('image') is not None and len(unlabeled_batch['image']) > 0:  # Check if there are any unlabeled samples
+                    unlabeled_images = unlabeled_batch['image'].to(device)        # shape: [B_u, C, H, W]
+                    unlabeled_depths = unlabeled_batch['depth'].to(device)        # shape: [B_u, N, 1, H, W]
+
+
+                    # Repeat RGB image for each patch
+
+                    depth_embed_u, _, image_embed_u = model.forward(
+                        depth_map=unlabeled_depths,
+                        image=unlabeled_images
                     )
+
+                    unsup_loss, loss_info_unsup = unwrap_model(model).compute_bimodal_loss(
+                        depth_embeddings=depth_embed_u,
+                        other_embeddings=image_embed_u
+                    )
+                else:
+                    unsup_loss = 0
+                    loss_info_unsup = {}
+                    
+                # Combine losses
+                if labeled_loss != 0 and unsup_loss != 0:
+                    loss = labeled_loss + unsup_loss
+                else:
+                    loss = labeled_loss or unsup_loss  # whichever is nonzero
                 
-                total_loss += loss
-                
-                # print(f"Loss: {loss_info}")
-                                        
-                # Backward pass and optimization
-                optimizer.zero_grad()
-                
-                if torch.isnan(loss) or torch.isinf(loss):
-                    print("Loss is NaN or Inf, skipping batch")
-                    continue
+                loss_info = {**loss_info_labeled, **loss_info_unsup}
+
                 loss.backward()
-                
                 # Gradient clipping
                 total_norm = 0
                 for p in model.parameters():
@@ -273,6 +280,10 @@ def train_depth_clip_model(
                 
                 torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
                 optimizer.step()
+                optimizer.zero_grad()
+
+                total_loss += loss.item()
+            
             except Exception as e:
                 print(f"Runtime error {e}")
                 print(f"Error type: {type(e)}")
@@ -290,19 +301,26 @@ def train_depth_clip_model(
             # Logging and validation
             if (train_step % n_step_per_summary) == 0:
                 log_training_summary(
-                    model, train_summary_writer, train_step,
-                    images, depth_maps, label_indices, loss_info, batch_size, n_sample_per_summary
+                    train_summary_writer,
+                    train_step,
+                    labeled_images,
+                    labeled_depths,
+                    labeled_ground_truth_indices,
+                    unlabeled_images,
+                    unlabeled_depths,
+                    loss_info,
+                    n_sample_per_summary
                 )
                 
                 # Validate model
                 with torch.no_grad():
-                    model.module.eval()
+                    unwrap_model(model).eval()
                     best_results, _ = validate_model(
                         model, candidate_labels, val_dataloader,
                         train_step, best_results, device,
                         val_summary_writer, n_sample_per_summary, log_path
                     )
-                    model.module.train()
+                    unwrap_model(model).train()
             
             # Save checkpoints
             if (train_step % n_step_per_checkpoint) == 0:
@@ -415,10 +433,10 @@ def restore_model_if_needed(model, restore_path_model, optimizer):
     else:
         start_step = 0
         
-    return start_step
+    return start_step, optimizer
 
 
-def log_configuration(log_path, train_image_path, batch_size, n_height, n_width,
+def log_configuration(log_path, labeled_metadata_path, unlabeled_metadata_path, batch_size, n_height, n_width,
                      model_architecture, parameters_model, n_batch, n_train_sample, n_train_step,
                      learning_rates, learning_schedule, scheduler_type, w_weight_decay,
                      checkpoint_path, n_step_per_checkpoint, summary_event_path,
@@ -432,7 +450,8 @@ def log_configuration(log_path, train_image_path, batch_size, n_height, n_width,
     """
     # Log input paths
     log('Training input paths:', log_path)
-    log(train_image_path, log_path)
+    log(labeled_metadata_path, log_path)
+    log(unlabeled_metadata_path, log_path)
 
     # Log batch settings
     log_input_settings(
@@ -481,40 +500,84 @@ def log_configuration(log_path, train_image_path, batch_size, n_height, n_width,
     )
 
 
-def prepare_batch(batch, device):
-    depth, image, label = batch
-    
-    depth = depth.to(device)
-    image = image.to(device)
-    
-    return depth, image, label
+import torch
+import torchvision
+from torchvision.utils import make_grid
 
+def apply_colormap(depth_tensor):
+    """Apply colormap to a batch of depth maps for visualization."""
+    import matplotlib.pyplot as plt
+    import numpy as np
 
-def log_training_summary(model, summary_writer, step, image, depth, text, 
-                        loss_info, batch_size, n_sample_per_summary):
+    # Normalize to 0–1
+    depth_tensor = (depth_tensor - depth_tensor.min()) / (depth_tensor.max() - depth_tensor.min() + 1e-8)
+    depth_tensor = depth_tensor.squeeze(1)  # [B, H, W]
+
+    # Apply colormap per sample
+    depth_colored = []
+    for i in range(depth_tensor.size(0)):
+        depth_np = depth_tensor[i].cpu().numpy()
+        depth_cm = plt.get_cmap('plasma')(depth_np)[:, :, :3]  # Drop alpha
+        depth_cm_tensor = torch.tensor(depth_cm).permute(2, 0, 1).float()  # [3, H, W]
+        depth_colored.append(depth_cm_tensor)
+
+    return torch.stack(depth_colored)  # [B, 3, H, W]
+
+def log_training_summary(
+        train_summary_writer,
+        train_step,
+        labeled_images,
+        labeled_depths,
+        labeled_ground_truth_indices,
+        unlabeled_images,
+        unlabeled_depths,
+        loss_info,
+        n_sample_per_summary
+    ):
     """
-    Log training summary to tensorboard.
-    
-    Args:
-        model: The model
-        summary_writer: Tensorboard summary writer
-        step (int): Current training step
-        image: Batch of images
-        depth: Batch of depth maps
-        loss_info: Loss information
-        batch_size (int): Batch size
-        n_sample_per_summary (int): Number of samples to visualize
+    Log training summary to TensorBoard.
     """
-    model.module.log_summary(
-        summary_writer=summary_writer,
-        tag='train',
-        step=step,
-        image=image,
-        depth=depth,
-        text=text,
-        scalars=loss_info,
-        n_sample_per_summary=min(batch_size, n_sample_per_summary)
-    )
+    with torch.no_grad():
+        display_images = []
+
+        # Labeled image
+        if labeled_images is not None and len(labeled_images) > 0:
+            labeled_images_vis = labeled_images[:n_sample_per_summary].cpu()
+            display_images.append(labeled_images_vis)
+
+        # Labeled depth
+        if labeled_depths is not None and len(labeled_depths) > 0:
+            labeled_depths_vis = labeled_depths[:n_sample_per_summary]
+            labeled_depths_colored = apply_colormap(labeled_depths_vis)
+            display_images.append(labeled_depths_colored)
+
+        # Unlabeled depth
+        if unlabeled_depths is not None and len(unlabeled_depths) > 0:
+            # Select 1 patch per example (e.g., first patch)
+            B, N, _, H, W = unlabeled_depths.shape
+            patches = unlabeled_depths[:, 0]  # [B, 1, H, W]
+            patches = patches[:n_sample_per_summary]
+            patches_colored = apply_colormap(patches)
+            display_images.append(patches_colored)
+
+        # Unlabeled image (optional, but good to track RGB reference)
+        if unlabeled_images is not None and len(unlabeled_images) > 0:
+            unlabeled_images_vis = unlabeled_images[:n_sample_per_summary].cpu()
+            display_images.append(unlabeled_images_vis)
+
+        # Log concatenated image strip
+        if display_images:
+            grid = make_grid(torch.cat(display_images, dim=2), nrow=n_sample_per_summary)  # concat width-wise
+            train_summary_writer.add_image('train/visual_summary', grid, global_step=train_step)
+
+        # Log scalar loss values
+        for name, val in loss_info.items():
+            train_summary_writer.add_scalar(f'train/loss_{name}', val, global_step=train_step)
+
+        # Log text labels
+        if labeled_ground_truth_indices is not None and len(labeled_ground_truth_indices) > 0:
+            text_summary = "\n".join([f"{i+1}: {t}" for i, t in enumerate(labeled_ground_truth_indices[:n_sample_per_summary])])
+            train_summary_writer.add_text('train/labels', text_summary, global_step=train_step)
 
 
 def save_checkpoint_and_log_progress(model, model_checkpoint_path, train_step,
@@ -547,7 +610,7 @@ def save_checkpoint_and_log_progress(model, model_checkpoint_path, train_step,
         log_path
     )
 
-    model.module.save_model(
+    unwrap_model(model).save_model(
         model_checkpoint_path.format(train_step), train_step, optimizer
     )
 
@@ -573,13 +636,13 @@ def update_scheduler(scheduler, scheduler_type, model, candidate_labels,
     """
     if scheduler_type == 'reduce_on_plateau':
         # For ReduceLROnPlateau, pass the validation loss
-        model.module.eval()
+        unwrap_model(model).eval()
         _, val_imce_loss = validate_model(
             model, candidate_labels, val_dataloader,
             train_step, best_results, device,
             val_summary_writer, n_sample_per_summary, log_path
         )
-        model.module.train()
+        unwrap_model(model).train()
         
         scheduler.step(val_imce_loss)
     else:
@@ -614,8 +677,6 @@ def validate_model(model,
     """
     model.eval()  # Set model to evaluation mode
     
-    n_sample = 0
-    correct_predictions = 0
     
     # Metrics for embedding quality
     total_loss = 0.0
@@ -624,63 +685,121 @@ def validate_model(model,
     depth_summary = []
     text_summary = []
     
+    correct_predictions = 0
+    total_predictions = 0
     with torch.no_grad():  # Disable gradient computation for validation
         for idx, batch in enumerate(dataloader):
             # Unpack batch to device
-            depth_maps, images, label_indices = prepare_batch(batch, device)
+            labeled_batch = batch['labeled']
+            unlabeled_batch = batch['unlabeled']
             
-            labels = [candidate_labels[i-1] for i in label_indices]
+            if not labeled_batch.get('image') and not unlabeled_batch.get('image'):
+                print(f"[Validation] Warning: Empty batch at index {idx}. Skipping.")
+                continue  # Skip this iteration
             
-                        
-            batch_size = depth_maps.shape[0]
-            
-            # Get loss values for embedding quality evaluation
-            loss, loss_info = model.module.compute_loss(
-                depth_maps=depth_maps,
-                images=images,
-                labels=labels,
-                w_text=0.8
-            )
-            
-            # Accumulate losses
-            total_loss += loss.item() * batch_size
-            
-            # For classification accuracy, run prediction on each depth map
-            for i in range(batch_size):
-                single_depth = depth_maps[i:i+1]  # Get single sample with batch dimension
-                predicted_class, confidence = model.predict(single_depth, candidate_labels)
+            if labeled_batch.get('image') is not None and len(labeled_batch['image']) > 0:  # Check if there are any labeled samples
+                labeled_images = labeled_batch['image'].to(device)          # shape: [B_l, C, H, W]
+                labeled_depths = labeled_batch['depth'].to(device)          # shape: [B_l, 1, H, W]
+                labeled_ground_truth_indices = labeled_batch['id']                       # list of strings
                 
-                if predicted_class == label_indices[i].item():
-                    correct_predictions += 1
+                for i in range(len(labeled_depths)):
+                    single_depth = labeled_depths[i:i+1]  # Shape: [1, 1, H, W]
+                    predicted_class, confidence = model.predict(single_depth.to(device), candidate_labels)
+
+                    true_class = labeled_ground_truth_indices[i].item()
+
+                    if predicted_class == true_class:
+                        correct_predictions += 1
+
+                    total_predictions += 1
+                    
+                # Compute embeddings
+                depth_embed_l, _, image_embed_l = model.forward(
+                    depth_map=labeled_depths,
+                    image=labeled_images
+                )
+
+                labeled_loss, loss_info_labeled = unwrap_model(model).compute_trimodal_loss(
+                    depth_embeddings=depth_embed_l,
+                    image_embeddings=image_embed_l,
+                    candidate_labels=candidate_labels,
+                    ground_truth_indices=labeled_ground_truth_indices,
+                    w_text=0.8
+                )
+            else:
+                labeled_loss = 0
+                loss_info_labeled = {}
+                print(f"[Validation] No labeled data in batch at index {idx}. Skipping labeled loss.")
+
+                
+            if unlabeled_batch.get('image') is not None and len(unlabeled_batch['image']) > 0:  # Check if there are any unlabeled samples
+                unlabeled_images = unlabeled_batch['image'].to(device)        # shape: [B_u, C, H, W]
+                unlabeled_depths = unlabeled_batch['depth'].to(device)        # shape: [B_u, N, 1, H, W]
+
+
+                # Repeat RGB image for each patch
+
+                depth_embed_u, _, image_embed_u = model.forward(
+                    depth_map=unlabeled_depths,
+                    image=unlabeled_images
+                )
+
+                unsup_loss, loss_info_unsup = unwrap_model(model).compute_bimodal_loss(
+                    depth_embeddings=depth_embed_u,
+                    other_embeddings=image_embed_u
+                )
+            else:
+                unsup_loss = 0
+                loss_info_unsup = {}
+                
+            # Combine losses
+            if labeled_loss != 0 and unsup_loss != 0:
+                loss = labeled_loss + unsup_loss
+            else:
+                loss = labeled_loss or unsup_loss  # whichever is nonzero
+            
+            loss_info = {**loss_info_labeled, **loss_info_unsup}
+            total_loss += loss.item()
+
             
             # Collect samples for TensorBoard display
             if (idx % max(1, len(dataloader) // n_sample_per_summary)) == 0 and summary_writer is not None:
-                image_summary.append(images[:min(batch_size, n_sample_per_summary)])
-                depth_summary.append(depth_maps[:min(batch_size, n_sample_per_summary)])
-                
-                # Add text descriptions
-                batch_text = [candidate_labels[i-1] for i in label_indices[:min(batch_size, n_sample_per_summary)]]
-                text_summary.extend(batch_text)
+                n = min(len(labeled_images), n_sample_per_summary)
+
+                # Collect image and depth examples
+                image_summary.append(labeled_images[:n].cpu())
+                depth_summary.append(labeled_depths[:n].cpu())
+
+                batch_texts = [candidate_labels[i] for i in labeled_ground_truth_indices[:n]]
+
+                text_summary.extend(batch_texts)
     
     # Compute average metrics
-    avg_loss = total_loss / n_sample
-    accuracy = correct_predictions / n_sample if n_sample > 0 else 0.0
+    avg_loss = total_loss / len(dataloader)
+    val_accuracy = correct_predictions / (total_predictions + 1e-8)
+    print(f"[Validation] Accuracy: {val_accuracy:.4f}")
+    summary_writer.add_scalar("val/accuracy", val_accuracy, global_step=step)
     
     # Log to TensorBoard
-    if summary_writer is not None and image_summary and depth_summary:
-        model.log_summary(
-            summary_writer=summary_writer,
-            tag='val',
-            step=step,
-            image=torch.cat(image_summary, dim=0) if image_summary else None,
-            depth=torch.cat(depth_summary, dim=0) if depth_summary else None,
-            text=text_summary if text_summary else None,
-            scalars={
-                'Loss': avg_loss,
-                'Accuracy': accuracy
-            }
+    # Concatenate for logging
+    if image_summary and depth_summary:
+        summary_images = torch.cat(image_summary, dim=0)
+        summary_depths = torch.cat(depth_summary, dim=0)
+        summary_texts = text_summary
+
+        log_training_summary(
+            model=model,
+            train_summary_writer=summary_writer,
+            train_step=step,
+            labeled_images=summary_images,
+            labeled_depths=summary_depths,
+            labeled_ground_truth_indices=summary_texts,
+            unlabeled_images=None,
+            unlabeled_depths=None,
+            loss_info=loss_info,
+            n_sample_per_summary=n_sample_per_summary
         )
-    
+        
     # Print validation results to console
     if log_path:
         log('Validation results:', log_path)
@@ -688,67 +807,141 @@ def validate_model(model,
             'Step', 'Loss', 'Accuracy'),
             log_path)
         log('{:8}  {:8.4f}  {:10.4f}'.format(
-            step, avg_loss, accuracy),
+            step, avg_loss, val_accuracy),
             log_path)
     
     # Check if model improved
     improved = False
     
     # For initial run when best_results might be empty
-    if 'accuracy' not in best_results or best_results['accuracy'] < accuracy:
+    if 'accuracy' not in best_results or best_results['accuracy'] < val_accuracy:
         improved = True
     
     # Update best results if improved
     if improved:
         best_results['step'] = step
         best_results['loss'] = avg_loss
-        best_results['accuracy'] = accuracy
+        best_results['accuracy'] = val_accuracy
     
     if log_path:
         log('Best results:', log_path)
         log('{:>8}  {:>8}  {:>10}'.format(
             'Step', 'Loss', 'Accuracy'),
             log_path)
-        log('{:8}  {:8.4f}  {:12.4f}  {:12.4f}  {:10.4f}'.format(
+        log('{:8}  {:8.4f}  {:10.4f}'.format(
             best_results['step'],
             best_results['loss'],
-            best_results['accuracy']), 
-            log_path)
+            best_results['accuracy']), log_path)
+
     
-    return best_results, accuracy
+    return best_results, val_accuracy
 
 
     
     
-def setup_dataloaders(root_dir, metadata_file, labels_path, resize_shape, batch_size, n_thread, n_epoch):
-    resize_transform = transforms.Resize(resize_shape)
+def setup_dataloaders(labeled_metadata_file,
+                      unlabeled_metadata_file,
+                      labels_path,
+                      resize_shape,
+                      batch_size,
+                      n_thread,
+                      n_epoch):
     
-    full_dataset = datasets.ImageDepthTextDataset(metadata_file=metadata_file,
-                                                  root_dir=root_dir,
+    image_transform = transforms.Compose([
+        transforms.Resize(resize_shape),
+        transforms.Normalize(
+            mean=[0.48145466, 0.4578275, 0.40821073],
+            std=[0.26862954, 0.26130258, 0.27577711]
+        )
+    ])
+    
+    def depth_transform_fn(depth_tensor):
+        # Resize depth map
+        resized = transforms.functional.resize(depth_tensor, resize_shape)
+        
+        min_val = resized.min()
+        max_val = resized.max()
+        
+        # If depth is uniform, return zero tensor or normalized to 0.5 (optional)
+        if (max_val - min_val).abs() < 1e-6:
+            return torch.zeros_like(resized)  # or torch.full_like(resized, 0.5)
+        
+        normalized = (resized - min_val) / (max_val - min_val)
+        return normalized
+
+    depth_transform = depth_transform_fn
+        
+    labeled_dataset = datasets.ImageDepthTextDataset(metadata_file=labeled_metadata_file,
                                                   labels_path=labels_path,
-                                                  transform=resize_transform)
+                                                  image_transform=image_transform,
+                                                  depth_transform=depth_transform)
     
-    # Use provided seed or generate a random one
-    generator = torch.Generator()
-    train_dataset, val_dataset = torch.utils.data.random_split(full_dataset, [0.8, 0.2], generator=generator)
+    unlabeled_dataset = datasets.ImageDepthDataset(metadata_file=unlabeled_metadata_file,
+                                                   image_transform=image_transform,
+                                                   depth_transform=depth_transform)
+    labels = labeled_dataset.get_labels()
+    
+    labeled_dataset = datasets.TaggedDataset(labeled_dataset, tag='labeled')
+    unlabeled_dataset = datasets.TaggedDataset(unlabeled_dataset, tag='unlabeled')
+    
+    generator = torch.Generator().manual_seed(42)
+    l_train_dataset, l_val_dataset = torch.utils.data.random_split(labeled_dataset, [0.8, 0.2], generator=generator)
+    u_train_dataset, u_val_dataset = torch.utils.data.random_split(unlabeled_dataset, [0.8, 0.2], generator=generator)
+    
+    
+    def custom_collate(batch):
+        labeled = {'image': [], 'depth': [], 'id': []}
+        unlabeled = {'image': [], 'depth': []}
 
-    train_dataloader = DataLoader(train_dataset,
-                                                   batch_size=batch_size,
-                                                   shuffle=True,
-                                                   num_workers=n_thread)
+        for sample in batch:
+            tag = sample.pop('__tag__')
+
+            if tag == 'labeled':
+                labeled['image'].append(sample['image'])
+                labeled['depth'].append(sample['depth'])
+                labeled['id'].append(sample['id'])
+
+            elif tag == 'unlabeled':
+                unlabeled['image'].append(sample['image'])
+                unlabeled['depth'].append(sample['depth'])
+
+        # Convert lists to tensors where applicable
+        if labeled['image']:
+            labeled['image'] = torch.stack(labeled['image'])
+            labeled['depth'] = torch.stack(labeled['depth'])
+            # labeled['text'] stays as list of strings
+
+        if unlabeled['image']:
+            unlabeled['image'] = torch.stack(unlabeled['image'])
+            unlabeled['depth'] = torch.stack(unlabeled['depth'])  # shape: [B, N, ...]
+        
+        return {'labeled': labeled, 'unlabeled': unlabeled}
+
+    train_dataset = torch.utils.data.ConcatDataset([l_train_dataset, u_train_dataset])
+    val_dataset = torch.utils.data.ConcatDataset([l_val_dataset, u_val_dataset])
+    
+
+    train_loader = DataLoader(
+        train_dataset,
+        batch_size=batch_size,
+        shuffle=True,
+        collate_fn=custom_collate,
+        num_workers=n_thread
+    )
     
     # More accurate calculation of train steps
     n_train_samples = len(train_dataset)
     n_train_steps = ((n_train_samples + batch_size - 1) // batch_size) * n_epoch
     
-    val_dataloader = DataLoader(val_dataset,
-                                                 batch_size=batch_size,
-                                                 shuffle=False,  # Changed to False for validation
-                                                 num_workers=n_thread)
+    val_loader = DataLoader(val_dataset,
+                                batch_size=batch_size,
+                                collate_fn=custom_collate,
+                                shuffle=False,
+                                num_workers=n_thread)
     
-    labels = full_dataset.get_labels()
     
-    return train_dataloader, val_dataloader, n_train_steps, labels
+    
+    return train_loader, val_loader, n_train_steps, labels
     
     
     
@@ -794,8 +987,8 @@ if __name__ == '__main__':
     set_global_seed()
 
     train_depth_clip_model(
-          root_dir=args.dataset_path,
-          metadata_file=args.metadata_path,
+          labeled_metadata_path=args.labeled_metadata_path,
+          unlabeled_metadata_path=args.unlabeled_metadata_path,
           labels_path=args.labels_path,
           # Batch settings
           batch_size=args.batch_size,
@@ -808,15 +1001,6 @@ if __name__ == '__main__':
           learning_rates=args.learning_rates,
           learning_schedule=args.learning_schedule,
           scheduler_type=args.scheduler_type,
-          # Photometric data augmentations
-          augmentations={
-            "random_brightness": args.augmentation_random_brightness,
-            "random_contrast": args.augmentation_random_contrast,
-            "random_hue": args.augmentation_random_hue,
-            "random_saturation": args.augmentation_random_saturation,
-            # Geometric data augmentations
-            "random_flip_type": args.augmentation_random_flip_type,
-          },
           # Loss function settings
           w_weight_decay=args.w_weight_decay,
           # Checkpoint settings
