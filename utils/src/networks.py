@@ -3,7 +3,6 @@ import torch.nn as nn
 import torch.nn.functional as F
 from transformers import CLIPProcessor, CLIPTokenizer
 import matplotlib.pyplot as plt
-import torchvision
 from . import net_utils
 from .log_utils import apply_colormap
 
@@ -123,18 +122,6 @@ class DepthEncoder(torch.nn.Module):
         # L2 normalize the embedding
         return F.normalize(embedding, p=2, dim=1)
     
-    def compute_loss(self, output_embedding, ground_truth_embedding, temperature=0.1):
-        cosine_similarity = output_embedding @ ground_truth_embedding.t() / temperature
-        
-        labels = torch.arange(output_embedding.size(0), device=output_embedding.device)
-        loss_a = F.cross_entropy(cosine_similarity, labels)
-        loss_b = F.cross_entropy(cosine_similarity.t(), labels)
-        
-        total_loss = (loss_a + loss_b) / 2
-        
-        loss_info = {'imce': total_loss}
-        
-        return total_loss, loss_info
     
     def save_encoder(self, checkpoint_path, step, optimizer):
         checkpoint = {
@@ -166,42 +153,7 @@ class DepthEncoder(torch.nn.Module):
         
         return train_step, optimizer if optimizer else None
 
-    def log_summary(self,
-                    summary_writer,
-                    tag,
-                    step,
-                    image,
-                    depth,
-                    scalars={},
-                    n_sample_per_summary=4):
-
-        with torch.no_grad():
-            display_summary_image = []
-
-            # Log input image
-            if image is not None:
-                input_image_summary = image[:min(len(image), n_sample_per_summary)]
-                input_image_summary = input_image_summary.to('cpu')
-                display_summary_image.append(input_image_summary)
-
-            # Log depth map with colormap
-            if depth is not None:
-                depth_summary = depth[:min(len(depth), n_sample_per_summary)]
-                depth_colored = apply_colormap(depth_summary)  # Apply colormap
-                depth_colored = depth_colored.to('cpu')
-                display_summary_image.append(depth_colored)
-
-            # Log scalars
-            for name, value in scalars.items():
-                summary_writer.add_scalar(f"{tag}_{name}", value, global_step=step)
-
-            # Log images to TensorBoard
-            if display_summary_image:
-                display_summary_image = torch.cat(display_summary_image, dim=2)  # Concatenate along width
-                summary_writer.add_image(
-                    tag,
-                    torchvision.utils.make_grid(display_summary_image, nrow=n_sample_per_summary),
-                    global_step=step)
+    
 
 
 
@@ -216,8 +168,11 @@ class TextEncoder(nn.Module):
         # Freeze parameters
         for param in self.clip_model.text_model.parameters():
             param.requires_grad = False
+        
+        self.clip_model.eval()
     
     def forward(self, text):
+        self.clip_model.eval()
         inputs = self.clip_tokenizer(text, padding=True, return_tensors="pt")
         inputs = {key: val.to(self.device) for key, val in inputs.items()}
         text_embedding = self.clip_model.get_text_features(**inputs)
@@ -238,8 +193,11 @@ class ImageEncoder(nn.Module):
         # Freeze parameters
         for param in self.clip_model.vision_model.parameters():
             param.requires_grad = False
-    
-    def forward(self, image):        
+            
+        self.clip_model.eval()
+        
+    def forward(self, image):
+        self.clip_model.eval()
         inputs = self.clip_processor(images=image, return_tensors="pt", do_rescale=False)
         
         # Move inputs to the same device as the model

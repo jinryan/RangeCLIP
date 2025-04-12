@@ -11,9 +11,9 @@ Weight settings:
 n_parameter=163301218
 
 Training settings:
-n_sample=37736  n_epoch=35  n_step=41300
+n_sample=33897  n_epoch=35  n_step=37100
 scheduler type: multi_step
-scheduler: multi_step, learning_schedule=[0-11790 : 0.0002, 11790-23580 : 0.0001, 23580-35370 : 5e-05, 35370-41265 : 1e-05]
+scheduler: multi_step, learning_schedule=[0-10590 : 0.0002, 10590-21180 : 0.0001, 21180-31770 : 5e-05, 31770-37065 : 1e-05]
 
 Loss function settings:
 w_weight_decay=1.0e-04
@@ -31,4 +31,752 @@ Hardware settings:
 device=cuda
 n_thread=4
 
+Getting CLIP Baseline Performance (image/text)
+
+Top Failed GT Classes (CLIP Baseline):
+  a depth map of wall: 972 incorrect predictions
+  a depth map of floor: 492 incorrect predictions
+  a depth map of picture: 450 incorrect predictions
+  a depth map of chair: 290 incorrect predictions
+  a depth map of cabinet: 274 incorrect predictions
+  a depth map of table: 197 incorrect predictions
+  a depth map of bottle: 173 incorrect predictions
+  a depth map of paper: 146 incorrect predictions
+  a depth map of counter: 137 incorrect predictions
+  a depth map of box: 127 incorrect predictions
+a depth map of unknown: 76 total
+a depth map of picture: 482 total
+a depth map of chair: 440 total
+a depth map of cabinet: 362 total
+a depth map of wall: 972 total
+a depth map of sofa: 136 total
+a depth map of mouse: 10 total
+a depth map of books: 175 total
+a depth map of spice bottle: 6 total
+a depth map of desk: 115 total
+a depth map of person: 45 total
+a depth map of ceiling: 126 total
+a depth map of jar: 38 total
+a depth map of stove: 26 total
+a depth map of step stool: 1 total
+a depth map of lamp: 111 total
+a depth map of candlestick: 26 total
+a depth map of window: 125 total
+a depth map of floor: 507 total
+a depth map of bathtub: 15 total
+a depth map of pillow: 154 total
+a depth map of blinds: 70 total
+a depth map of alarm clock: 11 total
+a depth map of door knob: 11 total
+a depth map of box: 140 total
+a depth map of bookshelf: 83 total
+a depth map of toaster oven: 9 total
+a depth map of bag: 100 total
+a depth map of printer: 18 total
+a depth map of floor mat: 64 total
+a depth map of refridgerator: 25 total
+a depth map of toy car: 1 total
+a depth map of bed: 102 total
+a depth map of counter: 138 total
+a depth map of toy bin: 1 total
+a depth map of table: 217 total
+a depth map of clothes: 81 total
+a depth map of light: 102 total
+a depth map of paper rack: 1 total
+a depth map of hanger: 3 total
+a depth map of flower: 17 total
+a depth map of bowl: 47 total
+a depth map of shoe: 18 total
+a depth map of shelves: 86 total
+a depth map of door: 120 total
+a depth map of wine rack: 1 total
+a depth map of paper: 146 total
+a depth map of magazine: 15 total
+a depth map of sink: 47 total
+a depth map of speaker: 19 total
+a depth map of throw: 4 total
+a depth map of vase: 25 total
+a depth map of toilet: 14 total
+a depth map of faucet handle: 14 total
+a depth map of bottle: 182 total
+a depth map of cup: 67 total
+a depth map of fan: 11 total
+a depth map of pen: 9 total
+a depth map of sign: 1 total
+a depth map of air conditioner: 6 total
+a depth map of faucet: 39 total
+a depth map of bin: 17 total
+a depth map of towel rod: 13 total
+a depth map of plate: 14 total
+a depth map of monitor: 37 total
+a depth map of plant: 38 total
+a depth map of electrical outlet: 33 total
+a depth map of flower pot: 9 total
+a depth map of headboard: 25 total
+a depth map of ladel: 3 total
+a depth map of oven: 16 total
+a depth map of television: 31 total
+a depth map of dishwasher: 18 total
+a depth map of railing: 3 total
+a depth map of towel: 45 total
+a depth map of stove burner: 4 total
+a depth map of toothbrush holder: 5 total
+a depth map of deoderant: 5 total
+a depth map of basket: 20 total
+a depth map of security camera: 1 total
+a depth map of coffee table: 22 total
+a depth map of telephone: 20 total
+a depth map of stapler: 7 total
+a depth map of book: 121 total
+a depth map of serving dish: 1 total
+a depth map of mirror: 37 total
+a depth map of console controller: 1 total
+a depth map of placemat: 18 total
+a depth map of container: 19 total
+a depth map of clock: 14 total
+a depth map of medal: 5 total
+a depth map of fireplace: 7 total
+a depth map of calculator: 1 total
+a depth map of dresser: 39 total
+a depth map of pipe: 18 total
+a depth map of carton: 1 total
+a depth map of dvds: 6 total
+a depth map of stool: 15 total
+a depth map of air duct: 5 total
+a depth map of tennis racket: 2 total
+a depth map of night stand: 33 total
+a depth map of notebook: 6 total
+a depth map of ruler: 2 total
+a depth map of book holder: 1 total
+a depth map of tape dispenser: 5 total
+a depth map of drawer handle: 4 total
+a depth map of candelabra: 2 total
+a depth map of excercise machine: 2 total
+a depth map of stuffed animal: 16 total
+a depth map of map: 2 total
+a depth map of dog: 3 total
+a depth map of shower curtain: 6 total
+a depth map of tv stand: 6 total
+a depth map of clothing dryer: 1 total
+a depth map of comforter: 3 total
+a depth map of waffle maker: 1 total
+a depth map of apple: 5 total
+a depth map of necklace holder: 2 total
+a depth map of wire: 16 total
+a depth map of light switch: 6 total
+a depth map of backpack: 14 total
+a depth map of kitchen island: 13 total
+a depth map of column: 21 total
+a depth map of quilt: 1 total
+a depth map of remote control: 17 total
+a depth map of plant pot: 11 total
+a depth map of coffee machine: 8 total
+a depth map of cutting board: 10 total
+a depth map of blanket: 20 total
+a depth map of keyboard: 19 total
+a depth map of wall decoration: 14 total
+a depth map of scale: 1 total
+a depth map of candle: 11 total
+a depth map of button: 1 total
+a depth map of tissue box: 21 total
+a depth map of range hood: 9 total
+a depth map of curtain: 43 total
+a depth map of sheet: 1 total
+a depth map of hat: 9 total
+a depth map of blackboard: 6 total
+a depth map of laptop: 10 total
+a depth map of iron box: 1 total
+a depth map of drawer: 15 total
+a depth map of whiteboard: 9 total
+a depth map of flatbed scanner: 1 total
+a depth map of garbage bin: 29 total
+a depth map of sculpture: 20 total
+a depth map of drying rack: 9 total
+a depth map of stereo: 8 total
+a depth map of doll: 15 total
+a depth map of barrel: 3 total
+a depth map of spice rack: 2 total
+a depth map of ottoman: 11 total
+a depth map of cable box: 2 total
+a depth map of board: 3 total
+a depth map of broom: 4 total
+a depth map of figurine: 1 total
+a depth map of rug: 7 total
+a depth map of chandelier: 6 total
+a depth map of toy truck: 1 total
+a depth map of microwave: 18 total
+a depth map of salt shaker: 2 total
+a depth map of garbage bag: 2 total
+a depth map of mail shelf: 1 total
+a depth map of bench: 5 total
+a depth map of toilet plunger: 1 total
+a depth map of knob: 4 total
+a depth map of show piece: 2 total
+a depth map of sponge: 7 total
+a depth map of blender: 1 total
+a depth map of binder: 2 total
+a depth map of tea kettle: 6 total
+a depth map of tree sculpture: 1 total
+a depth map of purse: 3 total
+a depth map of crib: 4 total
+a depth map of bunk bed: 2 total
+a depth map of rolled carpet: 1 total
+a depth map of guitar: 2 total
+a depth map of knife: 5 total
+a depth map of tupperware: 2 total
+a depth map of laundry basket: 5 total
+a depth map of ironing board: 2 total
+a depth map of cell phone: 3 total
+a depth map of mantle: 1 total
+a depth map of toy: 18 total
+a depth map of hair brush: 2 total
+a depth map of electric toothbrush: 2 total
+a depth map of kitchen utensil: 2 total
+a depth map of glass: 5 total
+a depth map of pool table: 2 total
+a depth map of cork board: 12 total
+a depth map of toothbrush: 7 total
+a depth map of decorative dish: 2 total
+a depth map of ball: 4 total
+a depth map of thermostat: 1 total
+a depth map of room divider: 6 total
+a depth map of piano bench: 5 total
+a depth map of squeeze tube: 6 total
+a depth map of piano: 5 total
+a depth map of scenary: 1 total
+a depth map of pot: 2 total
+a depth map of papers: 1 total
+a depth map of suitcase: 5 total
+a depth map of spot light: 3 total
+a depth map of tray: 19 total
+a depth map of knife rack: 7 total
+a depth map of headphones: 3 total
+a depth map of tag: 3 total
+a depth map of water fountain: 1 total
+a depth map of frying pan: 4 total
+a depth map of air vent: 10 total
+a depth map of toilet paper: 6 total
+a depth map of avocado: 3 total
+a depth map of machine: 4 total
+a depth map of ornamental item: 2 total
+a depth map of pencil: 4 total
+a depth map of microphone stand: 1 total
+a depth map of watch: 1 total
+a depth map of lego: 1 total
+a depth map of car: 1 total
+a depth map of grill: 1 total
+a depth map of spoon: 1 total
+a depth map of treadmill: 5 total
+a depth map of wire rack: 1 total
+a depth map of heater: 4 total
+a depth map of bicycle: 2 total
+a depth map of mask: 10 total
+a depth map of garlic: 1 total
+a depth map of camera: 2 total
+a depth map of trophy: 8 total
+a depth map of walkie talkie: 2 total
+a depth map of desk mat: 1 total
+a depth map of glass dish: 1 total
+a depth map of sink protector: 1 total
+a depth map of bulb: 2 total
+a depth map of toiletries bag: 1 total
+a depth map of folder: 7 total
+a depth map of hot water heater: 1 total
+a depth map of cordless telephone: 1 total
+a depth map of dog bowl: 4 total
+a depth map of baby chair: 1 total
+a depth map of luggage rack: 1 total
+a depth map of light bulb: 2 total
+a depth map of canister: 1 total
+a depth map of cat: 1 total
+a depth map of classroom board: 4 total
+a depth map of computer: 12 total
+a depth map of motion camera: 1 total
+a depth map of fruit: 1 total
+a depth map of makeup brush: 2 total
+a depth map of sleeping bag: 1 total
+a depth map of usb drive: 1 total
+a depth map of decorative egg: 1 total
+a depth map of dish scrubber: 3 total
+a depth map of corkscrew: 1 total
+a depth map of napkin: 2 total
+a depth map of mezuza: 2 total
+a depth map of poster case: 3 total
+a depth map of stairs: 1 total
+a depth map of paper towel: 9 total
+a depth map of clothing iron: 2 total
+a depth map of globe: 4 total
+a depth map of toy box: 1 total
+a depth map of bucket: 4 total
+a depth map of urn: 3 total
+a depth map of hand sculpture: 1 total
+a depth map of plastic box: 2 total
+a depth map of shofar: 1 total
+a depth map of hand weight: 1 total
+a depth map of decorative platter: 6 total
+a depth map of pitcher: 6 total
+a depth map of toy sofa: 1 total
+a depth map of spatula: 1 total
+a depth map of bookrack: 1 total
+a depth map of shaver: 1 total
+a depth map of sheet music: 6 total
+a depth map of glass ware: 1 total
+a depth map of ladder: 2 total
+a depth map of decorative plate: 5 total
+a depth map of cologne: 2 total
+a depth map of plastic cup of coffee: 1 total
+a depth map of headband: 1 total
+a depth map of clothing washer: 1 total
+a depth map of dvd player: 6 total
+a depth map of wine glass: 2 total
+a depth map of cd: 1 total
+a depth map of pepper grinder: 2 total
+a depth map of toy house: 1 total
+a depth map of wine bottle: 2 total
+a depth map of wardrobe: 1 total
+a depth map of contact lens case: 1 total
+a depth map of water purifier: 1 total
+a depth map of bedding package: 1 total
+a depth map of foosball table: 1 total
+a depth map of jersey: 3 total
+a depth map of toothpaste holder: 1 total
+a depth map of toothpaste: 4 total
+a depth map of clothing drying rack: 1 total
+a depth map of glove: 1 total
+a depth map of chessboard: 3 total
+a depth map of tricycle: 2 total
+a depth map of cannister: 1 total
+a depth map of napkin holder: 2 total
+a depth map of shower pipe: 1 total
+a depth map of luggage: 1 total
+a depth map of fax machine: 1 total
+a depth map of ipod: 1 total
+a depth map of business cards: 1 total
+a depth map of bar of soap: 1 total
+a depth map of decorative bottle: 1 total
+a depth map of dish rack: 1 total
+a depth map of tissue: 1 total
+a depth map of ping pong table: 1 total
+a depth map of folders: 1 total
+a depth map of shopping baskets: 1 total
+a depth map of clothing hanger: 1 total
+a depth map of lamp shade: 1 total
+a depth map of fruit platter: 2 total
+a depth map of dolly: 2 total
+a depth map of tea cannister: 1 total
+a depth map of shoe rack: 1 total
+a depth map of toy rectangle: 1 total
+a depth map of file: 3 total
+a depth map of duster: 2 total
+a depth map of water dispenser: 1 total
+a depth map of container of skin cream: 1 total
+a depth map of decanter: 1 total
+a depth map of storage bin: 1 total
+a depth map of envelopes: 1 total
+a depth map of lunch bag: 1 total
+a depth map of toilet paper holder: 1 total
+a depth map of shower cap: 1 total
+a depth map of paper weight: 2 total
+a depth map of yarmulka: 2 total
+a depth map of stroller: 3 total
+a depth map of table runner: 1 total
+a depth map of suger jar: 1 total
+a depth map of scissor: 3 total
+a depth map of piece of wood: 1 total
+a depth map of potato: 1 total
+a depth map of muffins: 1 total
+a depth map of file container: 1 total
+a depth map of exit sign: 2 total
+a depth map of salt and pepper: 1 total
+a depth map of hole puncher: 1 total
+a depth map of cane: 1 total
+a depth map of lazy susan: 1 total
+a depth map of banana: 4 total
+a depth map of antenna: 2 total
+a depth map of rags: 1 total
+a depth map of squash: 1 total
+a depth map of dvd: 1 total
+a depth map of briefcase: 1 total
+a depth map of shower head: 1 total
+a depth map of cordless phone: 1 total
+a depth map of projector: 2 total
+a depth map of grapefruit: 1 total
+a depth map of utensil container: 1 total
+a depth map of ipad: 1 total
+a depth map of fire extinguisher: 1 total
+a depth map of knobs: 1 total
+a depth map of basketball: 1 total
+a depth map of pen holder: 1 total
+a depth map of sticker: 1 total
+a depth map of fruit stand: 3 total
+a depth map of tent: 1 total
+a depth map of shorts: 1 total
+a depth map of window shelf: 2 total
+a depth map of can: 2 total
+a depth map of coaster: 1 total
+a depth map of furniture: 1 total
+a depth map of radio: 1 total
+a depth map of flashlight: 1 total
+a depth map of utensil: 1 total
+a depth map of baking dish: 1 total
+a depth map of certificate: 1 total
+a depth map of music stand: 2 total
+a depth map of display platter: 1 total
+a depth map of wooden planks: 1 total
+a depth map of saucer: 1 total
+a depth map of vessels: 1 total
+a depth map of box of paper: 1 total
+a depth map of gate: 2 total
+a depth map of excercise ball: 1 total
+a depth map of chart stand: 1 total
+a depth map of manilla envelope: 1 total
+a depth map of salt container: 1 total
+a depth map of toy bottle: 1 total
+a depth map of electronic drumset: 1 total
+a depth map of bottle of contact lens solution: 1 total
+a depth map of flag: 1 total
+a depth map of chart roll: 1 total
+a depth map of jeans: 1 total
+a depth map of drum: 1 total
+a depth map of microphone: 1 total
+a depth map of id card: 1 total
+a depth map of scarf: 1 total
+a depth map of telephone cord: 1 total
+a depth map of bag of chips: 1 total
+a depth map of toy apple: 1 total
+a depth map of wire tray: 1 total
+a depth map of modem: 1 total
+a depth map of cream: 1 total
+a depth map of projector screen: 1 total
+a depth map of hot dogs: 1 total
+a depth map of doorreflection: 1 total
+a depth map of door frame: 1 total
+a depth map of soft toy: 1 total
+a depth map of mattress: 1 total
+a depth map of magazine holder: 2 total
+a depth map of american flag: 1 total
+a depth map of balloon: 1 total
+a depth map of soap dish: 1 total
+a depth map of cat cage: 1 total
+a depth map of conch shell: 1 total
+a depth map of cap stand: 1 total
+a depth map of magnet: 1 total
+a depth map of electric mixer: 1 total
+a depth map of bookend: 1 total
+a depth map of mantel: 1 total
+a depth map of butterfly sculpture: 1 total
+a depth map of mortar and pestle: 1 total
+a depth map of flask set: 1 total
+a depth map of toy phone: 1 total
+a depth map of shower base: 1 total
+a depth map of cooking pan: 1 total
+a depth map of ashtray: 1 total
+a depth map of watermellon: 1 total
+a depth map of paper cutter: 1 total
+a depth map of yoga mat: 1 total
+a depth map of vessel: 1 total
+a depth map of sock: 1 total
+a depth map of coffee bag: 1 total
+a depth map of stick: 1 total
+a depth map of ping pong racket: 1 total
+CLIP Baseline results:
+      Loss   Top-1 Acc   Top-3 Acc   Top-5 Acc
+    2.9906      0.0470      0.1164      0.1612
+Entering Validation
+
+Top Failed GT Classes:
+  a depth map of wall: 972 incorrect predictions
+  a depth map of floor: 507 incorrect predictions
+  a depth map of picture: 482 incorrect predictions
+  a depth map of chair: 440 incorrect predictions
+  a depth map of cabinet: 362 incorrect predictions
+  a depth map of table: 217 incorrect predictions
+  a depth map of bottle: 182 incorrect predictions
+  a depth map of books: 175 incorrect predictions
+  a depth map of pillow: 154 incorrect predictions
+  a depth map of paper: 146 incorrect predictions
+[Validation] Top-1 Accuracy: 0.0000 | Top-3 Accuracy: 0.0011 | Top-5 Accuracy: 0.0020
+Validation results:
+    Step        Loss   Top-1 Acc   Top-3 Acc   Top-5 Acc
+       0      4.1238      0.0000      0.0011      0.0020
+Best results:
+    Step        Loss     Top-1 Acc     Top-3 Acc     Top-5 Acc
+       0      4.1238        0.0000        0.0011        0.0020
 Begin training...
+Entering Validation
+
+Top Failed GT Classes:
+  a depth map of picture: 353 incorrect predictions
+  a depth map of chair: 350 incorrect predictions
+  a depth map of cabinet: 232 incorrect predictions
+  a depth map of wall: 231 incorrect predictions
+  a depth map of table: 211 incorrect predictions
+  a depth map of bottle: 182 incorrect predictions
+  a depth map of books: 168 incorrect predictions
+  a depth map of paper: 146 incorrect predictions
+  a depth map of pillow: 141 incorrect predictions
+  a depth map of counter: 138 incorrect predictions
+[Validation] Top-1 Accuracy: 0.1531 | Top-3 Accuracy: 0.2073 | Top-5 Accuracy: 0.2461
+Validation results:
+    Step        Loss   Top-1 Acc   Top-3 Acc   Top-5 Acc
+    1000      3.4121      0.1531      0.2073      0.2461
+Best results:
+    Step        Loss     Top-1 Acc     Top-3 Acc     Top-5 Acc
+    1000      3.4121        0.1531        0.2073        0.2461
+Step=  1000/37100  Loss=3.7361131  Time Elapsed=0.17h  Time Remaining=5.98h
+Model saved to checkpoints/checkpoints/depth_clip_model-1000.pth at step 1000
+Total loss: 4269.223356962204
+Entering Validation
+
+Top Failed GT Classes:
+  a depth map of picture: 398 incorrect predictions
+  a depth map of wall: 373 incorrect predictions
+  a depth map of cabinet: 231 incorrect predictions
+  a depth map of table: 203 incorrect predictions
+  a depth map of chair: 182 incorrect predictions
+  a depth map of bottle: 182 incorrect predictions
+  a depth map of books: 172 incorrect predictions
+  a depth map of paper: 143 incorrect predictions
+  a depth map of pillow: 141 incorrect predictions
+  a depth map of box: 140 incorrect predictions
+[Validation] Top-1 Accuracy: 0.1502 | Top-3 Accuracy: 0.2025 | Top-5 Accuracy: 0.2309
+Validation results:
+    Step        Loss   Top-1 Acc   Top-3 Acc   Top-5 Acc
+    2000      3.6265      0.1502      0.2025      0.2309
+Best results:
+    Step        Loss     Top-1 Acc     Top-3 Acc     Top-5 Acc
+    1000      3.4121        0.1531        0.2073        0.2461
+Step=  2000/37100  Loss=3.3825276  Time Elapsed=0.33h  Time Remaining=5.83h
+Model saved to checkpoints/checkpoints/depth_clip_model-2000.pth at step 2000
+Total loss: 3653.6554987430573
+Entering Validation
+
+Top Failed GT Classes:
+  a depth map of chair: 311 incorrect predictions
+  a depth map of picture: 270 incorrect predictions
+  a depth map of table: 217 incorrect predictions
+  a depth map of wall: 201 incorrect predictions
+  a depth map of bottle: 179 incorrect predictions
+  a depth map of cabinet: 151 incorrect predictions
+  a depth map of box: 140 incorrect predictions
+  a depth map of counter: 138 incorrect predictions
+  a depth map of paper: 127 incorrect predictions
+  a depth map of window: 117 incorrect predictions
+[Validation] Top-1 Accuracy: 0.2123 | Top-3 Accuracy: 0.2775 | Top-5 Accuracy: 0.3060
+Validation results:
+    Step        Loss   Top-1 Acc   Top-3 Acc   Top-5 Acc
+    3000      2.8820      0.2123      0.2775      0.3060
+Best results:
+    Step        Loss     Top-1 Acc     Top-3 Acc     Top-5 Acc
+    3000      2.8820        0.2123        0.2775        0.3060
+Step=  3000/37100  Loss=3.7683775  Time Elapsed=0.58h  Time Remaining=6.60h
+Model saved to checkpoints/checkpoints/depth_clip_model-3000.pth at step 3000
+Total loss: 3220.8586463928223
+Entering Validation
+
+Top Failed GT Classes:
+  a depth map of picture: 395 incorrect predictions
+  a depth map of chair: 213 incorrect predictions
+  a depth map of table: 186 incorrect predictions
+  a depth map of bottle: 178 incorrect predictions
+  a depth map of cabinet: 146 incorrect predictions
+  a depth map of wall: 137 incorrect predictions
+  a depth map of box: 137 incorrect predictions
+  a depth map of books: 131 incorrect predictions
+  a depth map of paper: 129 incorrect predictions
+  a depth map of counter: 124 incorrect predictions
+[Validation] Top-1 Accuracy: 0.2100 | Top-3 Accuracy: 0.2876 | Top-5 Accuracy: 0.3242
+Validation results:
+    Step        Loss   Top-1 Acc   Top-3 Acc   Top-5 Acc
+    4000      2.9906      0.2100      0.2876      0.3242
+Best results:
+    Step        Loss     Top-1 Acc     Top-3 Acc     Top-5 Acc
+    4000      2.9906        0.2100        0.2876        0.3242
+Step=  4000/37100  Loss=2.5220625  Time Elapsed=0.96h  Time Remaining=7.91h
+Model saved to checkpoints/checkpoints/depth_clip_model-4000.pth at step 4000
+Total loss: 2870.964806318283
+Entering Validation
+
+Top Failed GT Classes:
+  a depth map of picture: 253 incorrect predictions
+  a depth map of cabinet: 210 incorrect predictions
+  a depth map of table: 185 incorrect predictions
+  a depth map of wall: 149 incorrect predictions
+  a depth map of chair: 139 incorrect predictions
+  a depth map of box: 134 incorrect predictions
+  a depth map of counter: 129 incorrect predictions
+  a depth map of books: 123 incorrect predictions
+  a depth map of window: 123 incorrect predictions
+  a depth map of paper: 120 incorrect predictions
+[Validation] Top-1 Accuracy: 0.2028 | Top-3 Accuracy: 0.2935 | Top-5 Accuracy: 0.3397
+Validation results:
+    Step        Loss   Top-1 Acc   Top-3 Acc   Top-5 Acc
+    5000      3.0212      0.2028      0.2935      0.3397
+Best results:
+    Step        Loss     Top-1 Acc     Top-3 Acc     Top-5 Acc
+    5000      3.0212        0.2028        0.2935        0.3397
+Step=  5000/37100  Loss=2.5347531  Time Elapsed=1.30h  Time Remaining=8.37h
+Model saved to checkpoints/checkpoints/depth_clip_model-5000.pth at step 5000
+Total loss: 2590.8546142578125
+Entering Validation
+
+Top Failed GT Classes:
+  a depth map of picture: 421 incorrect predictions
+  a depth map of cabinet: 258 incorrect predictions
+  a depth map of bottle: 147 incorrect predictions
+  a depth map of books: 140 incorrect predictions
+  a depth map of box: 137 incorrect predictions
+  a depth map of table: 135 incorrect predictions
+  a depth map of paper: 131 incorrect predictions
+  a depth map of window: 118 incorrect predictions
+  a depth map of counter: 109 incorrect predictions
+  a depth map of book: 105 incorrect predictions
+[Validation] Top-1 Accuracy: 0.2097 | Top-3 Accuracy: 0.3085 | Top-5 Accuracy: 0.3480
+Validation results:
+    Step        Loss   Top-1 Acc   Top-3 Acc   Top-5 Acc
+    6000      3.4041      0.2097      0.3085      0.3480
+Best results:
+    Step        Loss     Top-1 Acc     Top-3 Acc     Top-5 Acc
+    6000      3.4041        0.2097        0.3085        0.3480
+Step=  6000/37100  Loss=3.1750484  Time Elapsed=1.52h  Time Remaining=7.90h
+Model saved to checkpoints/checkpoints/depth_clip_model-6000.pth at step 6000
+Total loss: 2394.4676681756973
+Entering Validation
+
+Top Failed GT Classes:
+  a depth map of picture: 472 incorrect predictions
+  a depth map of bottle: 176 incorrect predictions
+  a depth map of books: 158 incorrect predictions
+  a depth map of paper: 141 incorrect predictions
+  a depth map of pillow: 133 incorrect predictions
+  a depth map of box: 133 incorrect predictions
+  a depth map of window: 125 incorrect predictions
+  a depth map of counter: 116 incorrect predictions
+  a depth map of book: 112 incorrect predictions
+  a depth map of lamp: 111 incorrect predictions
+[Validation] Top-1 Accuracy: 0.1799 | Top-3 Accuracy: 0.2844 | Top-5 Accuracy: 0.3352
+Validation results:
+    Step        Loss   Top-1 Acc   Top-3 Acc   Top-5 Acc
+    7000      4.6980      0.1799      0.2844      0.3352
+Best results:
+    Step        Loss     Top-1 Acc     Top-3 Acc     Top-5 Acc
+    6000      3.4041        0.2097        0.3085        0.3480
+Step=  7000/37100  Loss=1.8318269  Time Elapsed=1.69h  Time Remaining=7.26h
+Model saved to checkpoints/checkpoints/depth_clip_model-7000.pth at step 7000
+Total loss: 2228.719956636429
+Entering Validation
+
+Top Failed GT Classes:
+  a depth map of picture: 248 incorrect predictions
+  a depth map of wall: 148 incorrect predictions
+  a depth map of chair: 126 incorrect predictions
+  a depth map of cabinet: 122 incorrect predictions
+  a depth map of table: 114 incorrect predictions
+  a depth map of books: 113 incorrect predictions
+  a depth map of box: 112 incorrect predictions
+  a depth map of window: 108 incorrect predictions
+  a depth map of counter: 84 incorrect predictions
+  a depth map of shelves: 82 incorrect predictions
+[Validation] Top-1 Accuracy: 0.2603 | Top-3 Accuracy: 0.3902 | Top-5 Accuracy: 0.4483
+Validation results:
+    Step        Loss   Top-1 Acc   Top-3 Acc   Top-5 Acc
+    8000      2.2447      0.2603      0.3902      0.4483
+Best results:
+    Step        Loss     Top-1 Acc     Top-3 Acc     Top-5 Acc
+    8000      2.2447        0.2603        0.3902        0.4483
+Step=  8000/37100  Loss=1.5819998  Time Elapsed=1.85h  Time Remaining=6.74h
+Model saved to checkpoints/checkpoints/depth_clip_model-8000.pth at step 8000
+Total loss: 2059.2410383820534
+Entering Validation
+
+Top Failed GT Classes:
+  a depth map of picture: 151 incorrect predictions
+  a depth map of chair: 146 incorrect predictions
+  a depth map of wall: 128 incorrect predictions
+  a depth map of bottle: 119 incorrect predictions
+  a depth map of cabinet: 114 incorrect predictions
+  a depth map of box: 109 incorrect predictions
+  a depth map of sofa: 87 incorrect predictions
+  a depth map of unknown: 75 incorrect predictions
+  a depth map of lamp: 75 incorrect predictions
+  a depth map of shelves: 74 incorrect predictions
+[Validation] Top-1 Accuracy: 0.2859 | Top-3 Accuracy: 0.4175 | Top-5 Accuracy: 0.4815
+Validation results:
+    Step        Loss   Top-1 Acc   Top-3 Acc   Top-5 Acc
+    9000      2.0874      0.2859      0.4175      0.4815
+Best results:
+    Step        Loss     Top-1 Acc     Top-3 Acc     Top-5 Acc
+    9000      2.0874        0.2859        0.4175        0.4815
+Step=  9000/37100  Loss=1.7619418  Time Elapsed=2.02h  Time Remaining=6.29h
+Model saved to checkpoints/checkpoints/depth_clip_model-9000.pth at step 9000
+Total loss: 1944.3875527977943
+Entering Validation
+
+Top Failed GT Classes:
+  a depth map of picture: 255 incorrect predictions
+  a depth map of chair: 122 incorrect predictions
+  a depth map of books: 113 incorrect predictions
+  a depth map of paper: 111 incorrect predictions
+  a depth map of box: 103 incorrect predictions
+  a depth map of sofa: 96 incorrect predictions
+  a depth map of cabinet: 87 incorrect predictions
+  a depth map of pillow: 85 incorrect predictions
+  a depth map of book: 85 incorrect predictions
+  a depth map of lamp: 82 incorrect predictions
+[Validation] Top-1 Accuracy: 0.2447 | Top-3 Accuracy: 0.3795 | Top-5 Accuracy: 0.4496
+Validation results:
+    Step        Loss   Top-1 Acc   Top-3 Acc   Top-5 Acc
+   10000      2.6512      0.2447      0.3795      0.4496
+Best results:
+    Step        Loss     Top-1 Acc     Top-3 Acc     Top-5 Acc
+    9000      2.0874        0.2859        0.4175        0.4815
+Step= 10000/37100  Loss=2.3015618  Time Elapsed=2.18h  Time Remaining=5.91h
+Model saved to checkpoints/checkpoints/depth_clip_model-10000.pth at step 10000
+Total loss: 1885.7760719060898
+Entering Validation
+
+Top Failed GT Classes:
+  a depth map of picture: 108 incorrect predictions
+  a depth map of cabinet: 91 incorrect predictions
+  a depth map of paper: 80 incorrect predictions
+  a depth map of wall: 79 incorrect predictions
+  a depth map of clothes: 75 incorrect predictions
+  a depth map of box: 73 incorrect predictions
+  a depth map of shelves: 70 incorrect predictions
+  a depth map of unknown: 67 incorrect predictions
+  a depth map of books: 60 incorrect predictions
+  a depth map of bag: 59 incorrect predictions
+[Validation] Top-1 Accuracy: 0.3422 | Top-3 Accuracy: 0.5026 | Top-5 Accuracy: 0.5706
+Validation results:
+    Step        Loss   Top-1 Acc   Top-3 Acc   Top-5 Acc
+   11000      1.6081      0.3422      0.5026      0.5706
+Best results:
+    Step        Loss     Top-1 Acc     Top-3 Acc     Top-5 Acc
+   11000      1.6081        0.3422        0.5026        0.5706
+Step= 11000/37100  Loss=1.6511971  Time Elapsed=2.34h  Time Remaining=5.56h
+Model saved to checkpoints/checkpoints/depth_clip_model-11000.pth at step 11000
+Total loss: 1526.2349429130554
+Entering Validation
+
+Top Failed GT Classes:
+  a depth map of picture: 167 incorrect predictions
+  a depth map of cabinet: 98 incorrect predictions
+  a depth map of paper: 95 incorrect predictions
+  a depth map of box: 90 incorrect predictions
+  a depth map of table: 86 incorrect predictions
+  a depth map of clothes: 75 incorrect predictions
+  a depth map of books: 75 incorrect predictions
+  a depth map of shelves: 73 incorrect predictions
+  a depth map of counter: 71 incorrect predictions
+  a depth map of book: 69 incorrect predictions
+[Validation] Top-1 Accuracy: 0.3180 | Top-3 Accuracy: 0.4708 | Top-5 Accuracy: 0.5433
+Validation results:
+    Step        Loss   Top-1 Acc   Top-3 Acc   Top-5 Acc
+   12000      1.7691      0.3180      0.4708      0.5433
+Best results:
+    Step        Loss     Top-1 Acc     Top-3 Acc     Top-5 Acc
+   11000      1.6081        0.3422        0.5026        0.5706
+Step= 12000/37100  Loss=0.8961180  Time Elapsed=2.51h  Time Remaining=5.24h
+Model saved to checkpoints/checkpoints/depth_clip_model-12000.pth at step 12000
+Total loss: 1420.3822962641716
+Entering Validation

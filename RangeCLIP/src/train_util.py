@@ -8,6 +8,7 @@ import numpy as np
 import tqdm
 import sys
 import os
+import traceback
 
 from RangeCLIP.src.model import DepthClipModel
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
@@ -71,9 +72,10 @@ def train_depth_clip_model(
     # Initialize tracking for best validation results
     best_results = {
         'step': -1,
-        'mae': np.infty,
-        'rmse': np.infty,
-        'imce': np.infty,
+        'loss': np.infty,
+        'top1_accuracy': -1,
+        'top3_accuracy': -1,
+        'top5_accuracy': -1,
     }
     
     # Calculate total number of epochs
@@ -96,12 +98,18 @@ def train_depth_clip_model(
         model = DepthClipModel(depth_encoder_type, clip_model_name, device)
     except Exception as e:
         print(f"Error loading DepthClipModel: {e}")
-        import traceback
         traceback.print_exc()
-        
-    # Set up optimizer and learning rate scheduler
+    
+    text_param_ids = {id(p) for p in model.get_text_encoder().parameters()}
+    image_param_ids = {id(p) for p in model.get_image_encoder().parameters()}
+
+    trainable_params = [
+        p for p in model.parameters()
+        if id(p) not in text_param_ids and id(p) not in image_param_ids
+    ]
+
     optimizer, scheduler = setup_optimizer_and_scheduler(
-        model.parameters(), learning_rates, w_weight_decay, 
+        trainable_params, learning_rates, w_weight_decay, 
         scheduler_type, learning_schedule
     )
     
@@ -109,8 +117,9 @@ def train_depth_clip_model(
     train_step, optimizer = restore_model_if_needed(model, restore_path_model, optimizer)
     start_step = train_step
     
-    for param_group in optimizer.param_groups:
-        param_group['lr'] = learning_rates[0]
+    if start_step == 0:
+        for param_group in optimizer.param_groups:
+            param_group['lr'] = learning_rates[0]
     
     # Configure model for training
     
@@ -120,22 +129,14 @@ def train_depth_clip_model(
     model.to(device)
     
     if isinstance(model, torch.nn.DataParallel):
-        print(f"DataParallel using {len(model.device_ids)} GPUs: {model.device_ids}")
-
-    unwrapped_model = unwrap_model(model)
-    get_clip_baseline_performance(_model=model,
-                                  candidate_labels=candidate_labels,
-                                  dataloader=val_dataloader,
-                                  summary_writer=val_summary_writer,
-                                  device=device,
-                                  log_path=log_path)
-    unwrapped_model.train()
+        print(f"DataParallel using {len(model.device_ids)} GPUs: {model.device_ids}")    
+    
     # Log configuration settings
     log_configuration(
         log_path, labeled_metadata_path, unlabeled_metadata_path, 
         batch_size, n_height, n_width,
         depth_encoder_type, model.parameters(),
-        batch_size, len(train_dataloader.dataset), n_train_step,
+        len(train_dataloader.dataset), n_train_step,
         learning_rates, learning_schedule, scheduler_type,
         w_weight_decay,
         checkpoint_path, n_step_per_checkpoint, event_path,
@@ -148,17 +149,37 @@ def train_depth_clip_model(
     train_summary_writer = SummaryWriter(event_path + '-train')
     val_summary_writer = SummaryWriter(event_path + '-val')
     
+    get_clip_baseline_performance(model=unwrap_model(model),
+                                  candidate_labels=candidate_labels,
+                                  dataloader=val_dataloader,
+                                  summary_writer=val_summary_writer,
+                                  device=device,
+                                  log_path=log_path)
+    model.eval()
+    best_results = validate_model(model=unwrap_model(model),
+                                  candidate_labels=candidate_labels,
+                                  dataloader=val_dataloader,
+                                  step=train_step,
+                                  best_results=best_results,
+                                  device=device,
+                                  summary_writer=val_summary_writer,
+                                  n_sample_per_summary=n_sample_per_summary,
+                                  max_failed_log=16,
+                                  log_path=log_path
+    )
+    model.train()
     # Begin training
     time_start = time.time()
     log('Begin training...', log_path)
     
-    text_embeddings = unwrapped_model.get_text_encoder(candidate_labels)
+    with torch.no_grad():
+        text_embeddings = unwrap_model(model).get_text_encoder()(candidate_labels).to(device)
+        
     # Main training loop
     for epoch in range(1, n_epoch + 1):
         total_loss = 0
         for batch in tqdm.tqdm(train_dataloader, desc=f'{epoch}/{n_epoch}'):
             train_step += 1
-            
             try:
                 labeled_batch = batch['labeled']
                 unlabeled_batch = batch['unlabeled']
@@ -173,7 +194,7 @@ def train_depth_clip_model(
                         image=labeled_images
                     )
 
-                    labeled_loss, loss_info_labeled = unwrapped_model.compute_trimodal_loss(
+                    labeled_loss, loss_info_labeled = unwrap_model(model).compute_trimodal_loss(
                         embedding_1=depth_embed_l,
                         embedding_2=image_embed_l,
                         embedding_3=text_embeddings,
@@ -181,7 +202,7 @@ def train_depth_clip_model(
                         w_1_2=0.2
                     )
                 else:
-                    labeled_loss = 0
+                    labeled_loss = None
                     loss_info_labeled = {}
                     
                 if unlabeled_batch.get('image') is not None and len(unlabeled_batch['image']) > 0:  # Check if there are any unlabeled samples
@@ -196,19 +217,21 @@ def train_depth_clip_model(
                         image=unlabeled_images
                     )
 
-                    unsup_loss, loss_info_unsup = unwrapped_model.compute_bimodal_loss(
+                    unsup_loss, loss_info_unsup = unwrap_model(model).compute_bimodal_loss(
                         embedding_1=depth_embed_u,
                         embedding_2=image_embed_u
                     )
                 else:
-                    unsup_loss = 0
+                    unsup_loss = None
                     loss_info_unsup = {}
                     
                 # Combine losses
-                if labeled_loss != 0 and unsup_loss != 0:
+                if labeled_loss is not None and unsup_loss is not None:
                     loss = labeled_loss + unsup_loss
+                elif labeled_loss is None and unsup_loss is None:
+                    continue
                 else:
-                    loss = labeled_loss or unsup_loss  # whichever is nonzero
+                    loss = labeled_loss if labeled_loss is not None else unsup_loss
                 
                 loss_info = {**loss_info_labeled, **loss_info_unsup}
                 loss_info['loss'] = loss.item()
@@ -217,11 +240,11 @@ def train_depth_clip_model(
                 total_norm = 0
                 for p in model.parameters():
                     if p.grad is not None:
-                        param_norm = p.grad.detach().data.norm(2)
+                        param_norm = p.grad.norm(2)
                         total_norm += param_norm.item() ** 2
                 total_norm = total_norm ** 0.5
                 
-                torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
+                torch.nn.utils.clip_grad_norm_(unwrap_model(model).parameters(), max_norm=1.0)
                 optimizer.step()
                 optimizer.zero_grad()
 
@@ -232,7 +255,7 @@ def train_depth_clip_model(
                 print(f"Error type: {type(e)}")
                 print(f"Error message: {str(e)}")
                 print(f"Error details: {repr(e)}")
-                import traceback
+                
                 traceback.print_exc()
                 if "CUBLAS_STATUS" in str(e):
                     print(f"CUDA error encountered: {e}")
@@ -257,18 +280,24 @@ def train_depth_clip_model(
                 
                 # Validate model
                 with torch.no_grad():
-                    unwrapped_model.eval()
-                    best_results = validate_model(
-                        model, candidate_labels, val_dataloader,
-                        train_step, best_results, device,
-                        val_summary_writer, n_sample_per_summary, log_path
+                    model.eval()
+                    best_results = validate_model(model=unwrap_model(model),
+                                  candidate_labels=candidate_labels,
+                                  dataloader=val_dataloader,
+                                  step=train_step,
+                                  best_results=best_results,
+                                  device=device,
+                                  summary_writer=val_summary_writer,
+                                  n_sample_per_summary=n_sample_per_summary,
+                                  max_failed_log=16,
+                                  log_path=log_path
                     )
-                    unwrapped_model.train()
+                    model.train()
             
             # Save checkpoints
             if (train_step % n_step_per_checkpoint) == 0:
                 save_checkpoint_and_log_progress(
-                    model, model_checkpoint_path, train_step,
+                    unwrap_model(model), model_checkpoint_path, train_step,
                     n_train_step, start_step, loss.item(),
                     time_start, log_path, optimizer
                 )
@@ -276,7 +305,7 @@ def train_depth_clip_model(
         log(f"Total loss: {total_loss}", log_path)
         
         # Update learning rate scheduler
-        update_scheduler(scheduler, scheduler_type, unwrapped_model, candidate_labels,
+        update_scheduler(scheduler, scheduler_type, unwrap_model(model), candidate_labels,
                          val_dataloader, train_step,
                          best_results, device, val_summary_writer,
                          n_sample_per_summary, log_path)
@@ -311,7 +340,7 @@ def restore_model_if_needed(model, restore_path_model, optimizer):
     return start_step, optimizer
 
 
-def update_scheduler(scheduler, scheduler_type, unwrapped_model, candidate_labels,
+def update_scheduler(scheduler, scheduler_type, model, candidate_labels,
                     val_dataloader, train_step, best_results, device,
                     val_summary_writer, n_sample_per_summary, log_path):
     """
@@ -332,13 +361,19 @@ def update_scheduler(scheduler, scheduler_type, unwrapped_model, candidate_label
     """
     if scheduler_type == 'reduce_on_plateau':
         # For ReduceLROnPlateau, pass the validation loss
-        unwrapped_model.eval()
-        _, val_imce_loss = validate_model(
-            model, candidate_labels, val_dataloader,
-            train_step, best_results, device,
-            val_summary_writer, n_sample_per_summary, log_path
+        model.eval()
+        _, val_imce_loss = validate_model(model=unwrap_model(model),
+                                  candidate_labels=candidate_labels,
+                                  dataloader=val_dataloader,
+                                  step=train_step,
+                                  best_results=best_results,
+                                  device=device,
+                                  summary_writer=val_summary_writer,
+                                  n_sample_per_summary=n_sample_per_summary,
+                                  max_failed_log=16,
+                                  log_path=log_path
         )
-        unwrapped_model.train()
+        model.train()
         
         scheduler.step(val_imce_loss)
     else:
@@ -375,7 +410,7 @@ def save_checkpoint_and_log_progress(model, model_checkpoint_path, train_step,
         log_path
     )
 
-    unwrapped_model.save_model(
+    unwrap_model(model).save_model(
         model_checkpoint_path.format(train_step), train_step, optimizer
     )
 

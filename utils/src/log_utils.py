@@ -75,3 +75,47 @@ def apply_colormap(tensor, cmap='magma'):
             colored_images.append(colored)
 
         return torch.stack(colored_images)  # Stack into (N x 3 x H x W)
+    
+
+def validate_tensor(tensor, name, threshold_large=1e10, threshold_small=1e-10, log_warnings=True):
+    """
+    Validates a tensor for numerical issues like NaN, Inf, or extreme values.
+
+    Args:
+        tensor: Input tensor to validate
+        name: Name of tensor for logging
+        threshold_large: Threshold for detecting extremely large values
+        threshold_small: Threshold for detecting extremely small non-zero values
+        log_warnings: Whether to log warnings
+
+    Returns:
+        bool: True if tensor has no numerical issues
+    """
+    with torch.no_grad():
+        has_nan = torch.isnan(tensor).any()
+        has_inf = torch.isinf(tensor).any()
+
+        large_values = (torch.abs(tensor) > threshold_large).sum()
+        small_values = ((torch.abs(tensor) > 0) & (torch.abs(tensor) < threshold_small)).sum()
+
+        if log_warnings and (has_nan or has_inf or large_values > 0 or small_values > 0):
+            min_val = tensor.min()
+            max_val = tensor.max()
+            mean_val = tensor.mean()
+            std_val = tensor.std()
+
+            warning_msgs = []
+            if has_nan:
+                warning_msgs.append("Contains NaN values")
+            if has_inf:
+                warning_msgs.append("Contains Inf values")
+            if large_values > 0:
+                warning_msgs.append(f"{large_values.item()} elements have abs value > {threshold_large}")
+            if small_values > 0:
+                warning_msgs.append(f"{small_values.item()} non-zero elements have abs value < {threshold_small}")
+
+            print(f"WARNING - {name}: {', '.join(warning_msgs)}")
+            print(f"Stats: min={min_val.item():.6e}, max={max_val.item():.6e}, "
+                  f"mean={mean_val.item():.6e}, std={std_val.item():.6e}")
+
+        return not (has_nan or has_inf or large_values > 0)

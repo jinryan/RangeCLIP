@@ -169,7 +169,7 @@ def log_system_settings(log_path,
     
 
 def log_configuration(log_path, labeled_metadata_path, unlabeled_metadata_path, batch_size, n_height, n_width,
-                     model_architecture, parameters_model, n_batch, n_train_sample, n_train_step,
+                     model_architecture, parameters_model, n_train_sample, n_train_step,
                      learning_rates, learning_schedule, scheduler_type, w_weight_decay,
                      checkpoint_path, n_step_per_checkpoint, summary_event_path,
                      n_step_per_summary, n_sample_per_summary,
@@ -203,7 +203,7 @@ def log_configuration(log_path, labeled_metadata_path, unlabeled_metadata_path, 
     # Log training settings
     log_training_settings(
         log_path,
-        n_batch=n_batch,
+        n_batch=batch_size,
         n_train_sample=n_train_sample,
         n_train_step=n_train_step,
         learning_rates=learning_rates,

@@ -46,7 +46,7 @@ def setup_dataloaders(labeled_metadata_file,
     
     generator = torch.Generator().manual_seed(42)
     l_train_dataset, l_val_dataset = torch.utils.data.random_split(labeled_dataset, [0.8, 0.2], generator=generator)
-    u_train_dataset, u_val_dataset, _ = torch.utils.data.random_split(unlabeled_dataset, [0.02, 0.005, 0.975], generator=generator)
+    u_train_dataset, u_val_dataset, _ = torch.utils.data.random_split(unlabeled_dataset, [0.008, 0.002, 0.99], generator=generator)
     
     
     def custom_collate(batch):
