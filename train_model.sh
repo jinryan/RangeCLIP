@@ -18,10 +18,10 @@ w_weight_decay=1e-4
 
 # Checkpoint & logging
 checkpoint_path="checkpoints"
-n_step_per_checkpoint=2000
-n_step_per_summary=5000
+n_step_per_checkpoint=1000
+n_step_per_summary=1000
 n_sample_per_summary=4
-validation_start_step=2000
+validation_start_step=5000
 
 # System
 device="gpu"
@@ -45,6 +45,5 @@ python RangeCLIP/src/train_model.py \
     --n_step_per_summary $n_step_per_summary \
     --n_sample_per_summary $n_sample_per_summary \
     --validation_start_step $validation_start_step \
-    # --restore_path_model "$restore_path_model" \
     --device "$device" \
     --n_thread $n_thread

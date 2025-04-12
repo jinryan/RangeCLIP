@@ -15,7 +15,7 @@ sys.path.insert(0, project_root)
 from RangeCLIP.src.dataloader import setup_dataloaders
 from utils.src.log_utils import log
 from RangeCLIP.src.log import log_training_summary, log_configuration
-from RangeCLIP.src.validate import validate_model
+from RangeCLIP.src.validate import validate_model, get_clip_baseline_performance
 
 def unwrap_model(model):
     return model.module if hasattr(model, "module") else model
@@ -60,34 +60,7 @@ def train_depth_clip_model(
         clip_model_name,
         device='cuda',
         n_thread=8):
-    """
-    Train a depth encoder model to learn depth representations that align with image embeddings.
     
-    Args:
-        train_image_path (str): Path to training images
-        train_depth_path (str): Path to training depth maps
-        batch_size (int): Number of samples per batch
-        n_height (int): Target height for resizing images
-        n_width (int): Target width for resizing images
-        depth_encoder_type (str): Type of encoder architecture ('resnet' supported)
-        augmentations (dict): Data augmentation settings
-        learning_rates (list): Learning rates to use during training
-        learning_schedule (list): Schedule for learning rate adjustments
-        scheduler_type (str): Type of learning rate scheduler
-        w_weight_decay (float): Weight decay coefficient for optimizer
-        checkpoint_path (str): Path to save model checkpoints
-        n_step_per_checkpoint (int): Steps between saving checkpoints
-        n_step_per_summary (int): Steps between logging summaries
-        n_sample_per_summary (int): Number of samples to visualize in summaries
-        validation_start_step (int): Step to begin validation
-        restore_path_model (str): Path to restore model from (None for new training)
-        clip_model_name (str): Name of the CLIP model to use
-        device (str): Device to use ('cuda' or 'cpu')
-        n_thread (int): Number of data loading threads
-        
-    Returns:
-        None: Model checkpoints and logs are saved to disk
-    """
     # Set up device
     device = setup_device(device)
     
@@ -135,8 +108,6 @@ def train_depth_clip_model(
     # Restore model if specified
     train_step, optimizer = restore_model_if_needed(model, restore_path_model, optimizer)
     start_step = train_step
-
-
     
     for param_group in optimizer.param_groups:
         param_group['lr'] = learning_rates[0]
@@ -147,7 +118,18 @@ def train_depth_clip_model(
         model = nn.DataParallel(model)
     
     model.to(device)
-    unwrap_model(model).train()
+    
+    if isinstance(model, torch.nn.DataParallel):
+        print(f"DataParallel using {len(model.device_ids)} GPUs: {model.device_ids}")
+
+    unwrapped_model = unwrap_model(model)
+    get_clip_baseline_performance(_model=model,
+                                  candidate_labels=candidate_labels,
+                                  dataloader=val_dataloader,
+                                  summary_writer=val_summary_writer,
+                                  device=device,
+                                  log_path=log_path)
+    unwrapped_model.train()
     # Log configuration settings
     log_configuration(
         log_path, labeled_metadata_path, unlabeled_metadata_path, 
@@ -170,6 +152,7 @@ def train_depth_clip_model(
     time_start = time.time()
     log('Begin training...', log_path)
     
+    text_embeddings = unwrapped_model.get_text_encoder(candidate_labels)
     # Main training loop
     for epoch in range(1, n_epoch + 1):
         total_loss = 0
@@ -190,12 +173,12 @@ def train_depth_clip_model(
                         image=labeled_images
                     )
 
-                    labeled_loss, loss_info_labeled = unwrap_model(model).compute_trimodal_loss(
-                        depth_embeddings=depth_embed_l,
-                        image_embeddings=image_embed_l,
-                        candidate_labels=candidate_labels,
+                    labeled_loss, loss_info_labeled = unwrapped_model.compute_trimodal_loss(
+                        embedding_1=depth_embed_l,
+                        embedding_2=image_embed_l,
+                        embedding_3=text_embeddings,
                         ground_truth_indices=labeled_ground_truth_indices,
-                        w_text=0.8
+                        w_1_2=0.2
                     )
                 else:
                     labeled_loss = 0
@@ -213,9 +196,9 @@ def train_depth_clip_model(
                         image=unlabeled_images
                     )
 
-                    unsup_loss, loss_info_unsup = unwrap_model(model).compute_bimodal_loss(
-                        depth_embeddings=depth_embed_u,
-                        other_embeddings=image_embed_u
+                    unsup_loss, loss_info_unsup = unwrapped_model.compute_bimodal_loss(
+                        embedding_1=depth_embed_u,
+                        embedding_2=image_embed_u
                     )
                 else:
                     unsup_loss = 0
@@ -228,7 +211,7 @@ def train_depth_clip_model(
                     loss = labeled_loss or unsup_loss  # whichever is nonzero
                 
                 loss_info = {**loss_info_labeled, **loss_info_unsup}
-
+                loss_info['loss'] = loss.item()
                 loss.backward()
                 # Gradient clipping
                 total_norm = 0
@@ -274,13 +257,13 @@ def train_depth_clip_model(
                 
                 # Validate model
                 with torch.no_grad():
-                    unwrap_model(model).eval()
-                    best_results, _ = validate_model(
+                    unwrapped_model.eval()
+                    best_results = validate_model(
                         model, candidate_labels, val_dataloader,
                         train_step, best_results, device,
                         val_summary_writer, n_sample_per_summary, log_path
                     )
-                    unwrap_model(model).train()
+                    unwrapped_model.train()
             
             # Save checkpoints
             if (train_step % n_step_per_checkpoint) == 0:
@@ -293,7 +276,7 @@ def train_depth_clip_model(
         log(f"Total loss: {total_loss}", log_path)
         
         # Update learning rate scheduler
-        update_scheduler(scheduler, scheduler_type, model, candidate_labels,
+        update_scheduler(scheduler, scheduler_type, unwrapped_model, candidate_labels,
                          val_dataloader, train_step,
                          best_results, device, val_summary_writer,
                          n_sample_per_summary, log_path)
@@ -328,7 +311,7 @@ def restore_model_if_needed(model, restore_path_model, optimizer):
     return start_step, optimizer
 
 
-def update_scheduler(scheduler, scheduler_type, model, candidate_labels,
+def update_scheduler(scheduler, scheduler_type, unwrapped_model, candidate_labels,
                     val_dataloader, train_step, best_results, device,
                     val_summary_writer, n_sample_per_summary, log_path):
     """
@@ -349,13 +332,13 @@ def update_scheduler(scheduler, scheduler_type, model, candidate_labels,
     """
     if scheduler_type == 'reduce_on_plateau':
         # For ReduceLROnPlateau, pass the validation loss
-        unwrap_model(model).eval()
+        unwrapped_model.eval()
         _, val_imce_loss = validate_model(
             model, candidate_labels, val_dataloader,
             train_step, best_results, device,
             val_summary_writer, n_sample_per_summary, log_path
         )
-        unwrap_model(model).train()
+        unwrapped_model.train()
         
         scheduler.step(val_imce_loss)
     else:
@@ -392,7 +375,7 @@ def save_checkpoint_and_log_progress(model, model_checkpoint_path, train_step,
         log_path
     )
 
-    unwrap_model(model).save_model(
+    unwrapped_model.save_model(
         model_checkpoint_path.format(train_step), train_step, optimizer
     )
 

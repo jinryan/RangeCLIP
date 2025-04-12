@@ -1,0 +1,34 @@
+DataParallel using 2 GPUs: [0, 1]
+Training input paths:
+training/labeled_metadata.csv
+training/unlabeled_metadata.csv
+Input settings:
+n_batch=32  n_height=256  n_width=256
+
+Network settings:
+model_architecture=resnet
+Weight settings:
+n_parameter=163301218
+
+Training settings:
+n_sample=37736  n_epoch=35  n_step=41300
+scheduler type: multi_step
+scheduler: multi_step, learning_schedule=[0-11790 : 0.0002, 11790-23580 : 0.0001, 23580-35370 : 5e-05, 35370-41265 : 1e-05]
+
+Loss function settings:
+w_weight_decay=1.0e-04
+
+Checkpoint settings:
+checkpoint_path=checkpoints
+checkpoint_save_frequency=1000
+validation_start_step=5000
+
+Tensorboard settings:
+event_path=checkpoints/tensorboard
+log_summary_frequency=1000  n_sample_per_summary=4  
+
+Hardware settings:
+device=cuda
+n_thread=4
+
+Begin training...

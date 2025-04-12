@@ -113,19 +113,7 @@ class DepthClipModel(nn.Module):
         class_descriptions: Optional[List[str]] = None,
         image: Optional[torch.Tensor] = None
     ) -> Tuple[torch.Tensor, Optional[torch.Tensor], Optional[torch.Tensor]]:
-        """
-        Forward pass: Handles both training (with images) and inference (depth + text only).
-        
-        Args:
-            depth_map (Tensor): Depth input (batch, 1, H, W)
-            class_descriptions (List[str], optional): List of text class descriptions
-            image (Tensor, optional): RGB image (batch, 3, H, W). Default is None for inference.
-        
-        Returns:
-            depth_embedding (Tensor): Depth feature embedding
-            text_embeddings (Tensor, optional): Class description embeddings
-            image_embedding (Tensor, optional): Image feature embedding
-        """
+
         
         if image is not None and image.size(0) != depth_map.size(0):
             raise ValueError("Batch size mismatch between depth_map and image.")
@@ -142,48 +130,73 @@ class DepthClipModel(nn.Module):
             
         return depth_embedding, text_embeddings, image_embedding
 
-
-    def predict(self, depth_map, class_descriptions):
+    def predict_image(self, image, class_descriptions, top_k=5):
         """
-        Predict class of an object given a depth map and possible text class descriptions.
-        
+        Predicts top-k classes for a batch of images.
+
         Args:
-            depth_map (Tensor): Depth map input (1, 1, H, W)
-            candidate_labels (List[str]): List of text class descriptions
-        
-        Returns:
-            predicted_class (int): Index of the predicted class
-            confidence_score (float): Softmax probability of the predicted class
-        """
-        self.eval()  # Set model to evaluation mode
+            image (Tensor): Batch of images with shape [B, C, H, W]
+            class_descriptions (List[str]): List of text class descriptions
+            top_k (int): Number of top predictions to return
 
+        Returns:
+            predicted_classes: List[List[int]] of shape [B, top_k]
+            top_k_confidence_scores: List[List[float]] of shape [B, top_k]
+        """
         with torch.no_grad():
-            depth_embedding, text_embeddings, _ = self(depth_map=depth_map,
-                                                    class_descriptions=class_descriptions)  # No image input
+            image_embeddings = self.image_encoder(image)  # Shape: [B, D]
+            text_embeddings = self.text_encoder(class_descriptions)  # Shape: [N, D]
+
+            # Compute similarity logits: [B, N]
+            logits = torch.matmul(image_embeddings, text_embeddings.T) / self.temperature.exp()
+            confidence_scores = F.softmax(logits, dim=-1)
+
+            # Top-k prediction: [B, top_k]
+            top_k_scores, top_k_indices = torch.topk(confidence_scores, k=top_k, dim=-1)
+
+            predicted_classes = top_k_indices.tolist()
+            top_k_confidence_scores = top_k_scores.tolist()
+
+            return predicted_classes, top_k_confidence_scores
+        
+    def predict(self, depth_map, class_descriptions, top_k=5):
+        """
+        depth_map: Tensor of shape [B, C, H, W]
+        class_descriptions: List of strings (length N)
+        Returns:
+            predicted_classes: Tensor of shape [B, top_k]
+            top_k_confidence_scores: Tensor of shape [B, top_k]
+        """
+        with torch.no_grad():
+            # Get embeddings
+            depth_embeddings = self.depth_encoder(depth_map)           # [B, D]
+            text_embeddings = self.text_encoder(class_descriptions)    # [N, D]
 
             # Compute similarity
-            logits = torch.matmul(depth_embedding, text_embeddings.T) / self.temperature.exp()
-            confidence_scores = F.softmax(logits, dim=-1)
-            predicted_class = torch.argmax(confidence_scores, dim=-1)
+            logits = torch.matmul(depth_embeddings, text_embeddings.T) / self.temperature.exp()  # [B, N]
+            confidence_scores = F.softmax(logits, dim=-1)  # [B, N]
 
-            return predicted_class.item(), confidence_scores.max().item()
+            # Top-k predictions for each item in batch
+            top_k_scores, top_k_indices = torch.topk(confidence_scores, k=top_k, dim=-1)  # [B, top_k]
+
+            return top_k_indices, top_k_scores
+
 
     def compute_trimodal_loss(self,
-                     depth_embeddings,
-                     image_embeddings,
-                     candidate_labels,
+                     embedding_1,
+                     embedding_2,
+                     embedding_3,
                      ground_truth_indices,
-                     w_text=0.8):
+                     w_1_2=0.2):
         
-        batch_size = depth_embeddings.shape[0]
-        text_embeddings = self.text_encoder(candidate_labels)
+        batch_size = embedding_1.shape[0]
         
-        check_extreme(depth_embeddings, 'Depth Embeddings')
-        check_extreme(text_embeddings, 'Text Embeddings')
-        check_extreme(image_embeddings, 'Image Embeddings')
+        check_extreme(embedding_1, 'Depth Embeddings')
+        check_extreme(embedding_2, 'Image Embeddings')
+        check_extreme(embedding_3, 'Text Embeddings')
         
         # Loss between depth and text
-        sim_d_t = torch.matmul(depth_embeddings, text_embeddings.T)
+        sim_d_t = torch.matmul(embedding_1, embedding_3.T)
         check_extreme(sim_d_t, 'sim_d_t')
         
         temp_value = self.temperature.exp().item()
@@ -201,7 +214,7 @@ class DepthClipModel(nn.Module):
             loss_d_t = torch.tensor(1.0, requires_grad=True, device=self.device)  # Safe fallback
             
         # Loss between depth and image
-        sim_d_i = torch.matmul(depth_embeddings, image_embeddings.T)
+        sim_d_i = torch.matmul(embedding_1, embedding_2.T)
         check_extreme(sim_d_i, 'sim_d_i')
         sim_d_i = sim_d_i / self.temperature.exp()
         check_extreme(sim_d_i, 'post temp sim_d_i')
@@ -215,22 +228,29 @@ class DepthClipModel(nn.Module):
             print(f"targets: {targets.detach().cpu()}")
             loss_d_i = torch.tensor(1.0, requires_grad=True, device=self.device)  # Safe fallback
         
-        loss = w_text * loss_d_t + (1 - w_text) * loss_d_i
+        loss = w_1_2 * loss_d_t + (1 - w_1_2) * loss_d_i
         loss_info = {'loss_d_i': loss_d_i.item(), 'loss_d_t': loss_d_t.item(), 'trimodal_loss': loss.item()}
         
         return loss, loss_info
         
         
-    def compute_bimodal_loss(self, depth_embeddings, other_embeddings):
-        batch_size = depth_embeddings.shape[0]
-        logits = torch.matmul(F.normalize(depth_embeddings, dim=-1),
-                      F.normalize(other_embeddings, dim=-1).T) / self.temperature.exp()
+    def compute_bimodal_loss(self, embedding_1, embedding_2):
+        batch_size = embedding_1.shape[0]
+        logits = torch.matmul(F.normalize(embedding_1, dim=-1),
+                      F.normalize(embedding_2, dim=-1).T) / self.temperature.exp()
         targets = torch.arange(batch_size, device=self.device)
         loss = F.cross_entropy(logits, targets)
         loss_info = {"bimodal_loss": loss}
         return loss, loss_info
         
+    def get_text_encoder(self):
+        return self.text_encoder
     
+    def get_image_encoder(self):
+        return self.image_encoder
+    
+    def get_depth_encoder(self):
+        return self.depth_encoder
     # def parameters(self):
     #     '''
     #     Returns the list of parameters in the model
