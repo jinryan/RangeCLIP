@@ -7,7 +7,8 @@ import torch.nn.functional as F
 from torch.cuda.amp import autocast
 from transformers import CLIPModel
 
-from utils.src.networks import DepthEncoder, TextEncoder, ImageEncoder
+from utils.src.networks import TextEncoder, ImageEncoder
+from utils.src.encoder import DepthEncoder
 from utils.src.log_utils import validate_tensor
 
 
