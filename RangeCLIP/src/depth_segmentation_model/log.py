@@ -3,7 +3,7 @@ import torch
 import sys
 import torch
 from torchvision.utils import make_grid
-project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..'))
 sys.path.insert(0, project_root)
 
 from utils.src.log_utils import log

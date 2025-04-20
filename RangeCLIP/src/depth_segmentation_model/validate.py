@@ -4,7 +4,7 @@ from torchvision import transforms
 import sys
 import os
 import tqdm
-project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..'))
 sys.path.insert(0, project_root)
 from utils.src.log_utils import log
 from RangeCLIP.src.depth_segmentation_model.log import log_validation_summary
@@ -13,6 +13,20 @@ import numpy as np
 from PIL import ImageDraw, ImageFont
 import matplotlib.cm as cm
 from collections import defaultdict
+
+def log_gpu_usage(tag=""):
+    allocated = torch.cuda.memory_allocated() / 1024**2
+    reserved = torch.cuda.memory_reserved() / 1024**2
+    print(f"[{tag}] Allocated: {allocated:.1f} MB, Reserved: {reserved:.1f} MB")
+
+def unwrap_model(model):
+    """
+    Unwraps the model if it is wrapped in DataParallel or DistributedDataParallel.
+    """
+    if hasattr(model, 'module'):
+        return model.module
+    return model
+
 
 def validate_model(
     model,
@@ -30,27 +44,29 @@ def validate_model(
 
     total_loss = 0.0
     n_batches = 0
-
-    # Precompute candidate text embeddings
-    candidate_text_embeddings = model.text_encoder(candidate_labels).to(device)
+    
 
     with torch.no_grad():
+        print(f"[Step {step}] Allocated: {torch.cuda.memory_allocated() / 1024**2:.1f} MB, Reserved: {torch.cuda.memory_reserved() / 1024**2:.1f} MB")
+
+        candidate_text_embeddings = unwrap_model(model).text_encoder(candidate_labels).to(device)
         for batch in tqdm.tqdm(dataloader, desc=f'Validation Step {step}'):
-            # Move batch to device
-            batch = {k: v.to(device) for k, v in batch.items()}
 
-            depth = batch['depth']                      # [B, 1, H, W]
-            image = batch['image']                      # e.g., RGB images
-            segmentation = batch['segmentation']        # [B, 1, H, W] or [B, H, W]
-            unique_labels = batch['unique_labels']      # Not used here, but maybe for logging
-
+            depth = batch['depth'].to(device)        # [B, 1, H, W]
+            segmentation = batch['segmentation'].to(device)  # [B, H, W]
+            
+            log_gpu_usage("Before forward")
             # Forward pass
             output = model(depth)                       # [B, D, H, W]
+            log_gpu_usage("After forward")
 
             # Compute loss
-            loss, loss_info = model.compute_loss(
+            torch.cuda.empty_cache()
+            log_gpu_usage("Empty cache before loss")
+            loss, loss_info = unwrap_model(model).compute_loss(
                 output, segmentation, candidate_text_embeddings
             )
+            log_gpu_usage("After loss computation")
 
             total_loss += loss.item()
             n_batches += 1

@@ -1,6 +1,7 @@
 from torchvision import transforms
 import torch.nn.functional as F
 import torch
+import numpy as np
 import datasets
 from torch.utils.data import DataLoader
 
@@ -57,13 +58,34 @@ def setup_dataloaders(metadata_file,
         else:
             return normalized
 
+    def resize_segmentation(segmentation):
+        """
+        Resize segmentation map using nearest neighbor interpolation.
+
+        Args:
+            segmentation (np.ndarray or torch.Tensor): Segmentation map as a 2D array of class indices.
+            resize_shape (tuple): (H, W) target shape.
+
+        Returns:
+            torch.Tensor: Resized segmentation map (H, W) with integer labels.
+        """
+        if isinstance(segmentation, np.ndarray):
+            segmentation = torch.from_numpy(segmentation).long()
+
+        if segmentation.dim() == 2:
+            segmentation = segmentation.unsqueeze(0).unsqueeze(0)  # [1, 1, H, W]
+
+        resized = F.interpolate(segmentation.float(), size=resize_shape, mode='nearest')  # Use float for interpolate
+        return resized.squeeze(0).squeeze(0).long()  # [H, W] with int labels
 
     depth_transform = depth_transform_fn
+    segmentation_transform = resize_segmentation
         
     dataset = datasets.ImageDepthTextDataset(metadata_file=metadata_file,
                                                   labels_path=labels_file,
                                                   image_transform=image_transform,
-                                                  depth_transform=depth_transform)
+                                                  depth_transform=depth_transform,
+                                                  segmentation_transform=segmentation_transform)
 
     labels = dataset.get_candidate_labels()
     

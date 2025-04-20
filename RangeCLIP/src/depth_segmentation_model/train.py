@@ -2,10 +2,10 @@ import argparse
 import sys
 import os
 
-project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..'))
 sys.path.insert(0, project_root)
 
-from RangeCLIP.src.train_util import train_depth_clip_model
+from RangeCLIP.src.depth_segmentation_model.train_util import train_depth_clip_model
 
 parser = argparse.ArgumentParser()
 

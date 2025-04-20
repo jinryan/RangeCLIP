@@ -174,39 +174,36 @@ class DepthUNet(nn.Module):
             else:
                 return predicted, predicted_scores
 
-    def compute_loss(self, pred, target_indices, candidate_text_embeddings, percent_image=0.5, k_distractors=100):
+    def compute_loss(self, pred, target_indices, candidate_text_embeddings, percent_image=0.1, k_distractors=20):
         """
         Hybrid contrastive loss: in-batch class labels + random distractors.
         """
+        # pred: [B, D, H, W]
+        # target_indices: [B, H, W]
         B, D, H, W = pred.shape
-        num_samples = int(percent_image * H * W)
-        device = pred.device
         C = candidate_text_embeddings.shape[0]
+        device = pred.device
+        num_samples = int(percent_image * H * W)
 
-        # Normalize predicted features
-        pred = F.normalize(pred, p=2, dim=1)
+        # Flatten for batch sampling
+        pred_flat = pred.reshape(B, D, -1)                   # [B, D, HW]
+        target_flat = target_indices.reshape(B, -1)          # [B, HW]
 
-        pred_samples, label_samples = [], []
+        # Random sample indices for each batch
+        rand_indices = torch.randint(0, H * W, (B, num_samples), device=device)  # [B, num_samples]
 
-        for b in range(B):
-            flat_indices = torch.arange(H * W, device=self.device)
+        # Gather predictions and labels
+        pred_samples = torch.gather(pred_flat, 2, rand_indices.unsqueeze(1).expand(-1, D, -1))  # [B, D, K]
+        label_samples = torch.gather(target_flat, 1, rand_indices)                              # [B, K]
 
-            sampled_idx = flat_indices[torch.randperm(len(flat_indices))[:min(num_samples, len(flat_indices))]]
-            h_idx = sampled_idx // W
-            w_idx = sampled_idx % W
-
-            sampled_pred = pred[b, :, h_idx, w_idx].T  # [K, D]
-            sampled_label = target_indices[b, h_idx, w_idx]  # [K]
-
-            pred_samples.append(sampled_pred)
-            label_samples.append(sampled_label)
-
-
-        if len(pred_samples) == 0:
+        # Flatten across batch
+        pred_samples = pred_samples.transpose(1, 2).reshape(-1, D)       # [B*K, D]
+        label_samples = label_samples.reshape(-1)                        # [B*K]
+        
+        if pred_samples.numel() == 0:
             raise RuntimeError("No valid pixels found for loss computation.")
 
-        pred_samples = torch.cat(pred_samples, dim=0)        # [N, D]
-        label_samples = torch.cat(label_samples, dim=0)      # [N]
+        pred_samples = F.normalize(pred_samples, p=2, dim=1)
 
         # Step 1: get unique labels in this batch
         unique_labels = torch.unique(label_samples)
@@ -232,9 +229,6 @@ class DepthUNet(nn.Module):
         loss_info = {
             'loss': loss.item(),
             'temperature': self.temperature.item(),
-            'unique_labels': len(unique_labels),
-            'distractors': len(distractor_labels),
-            'total_classes': logits.shape[1]
         }
 
         return loss, loss_info

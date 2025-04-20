@@ -12,7 +12,7 @@ import traceback
 
 from RangeCLIP.src.depth_segmentation_model.model import DepthUNet
 from RangeCLIP.src.depth_segmentation_model.dataloader import setup_dataloaders
-project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..'))
 sys.path.insert(0, project_root)
 from utils.src.log_utils import log
 from RangeCLIP.src.depth_segmentation_model.log import log_training_summary, log_configuration
@@ -81,8 +81,8 @@ def train_depth_clip_model(
     # Prepare data loaders
     resize_shape = (n_height, n_width)
     train_dataloader, val_dataloader, test_dataloader, n_train_step, candidate_labels = setup_dataloaders(
-        labeled_metadata_file=labeled_metadata_path,
-        labels_path=labels_path,
+        metadata_file=labeled_metadata_path,
+        labels_file=labels_path,
         resize_shape=resize_shape, 
         batch_size=batch_size,
         n_thread=n_thread,
@@ -121,7 +121,7 @@ def train_depth_clip_model(
     )
     
     # Restore model if specified
-    if restore_path_encoder is not None:
+    if restore_path_encoder is not None and restore_path_encoder != '':
         model.restore_depth_encoder(restore_path_encoder, freeze_encoder=True)
         train_step = 0
     else:
@@ -195,7 +195,6 @@ def train_depth_clip_model(
             depth = batch['depth']
             image = batch['image']
             segmentation = batch['segmentation']
-            unique_labels = batch['unique_labels']
             
             
             # Forward through network
@@ -277,7 +276,7 @@ def restore_model_if_needed(model, restore_path_model, optimizer):
     Returns:
         int: Starting step (0 for new training, restored step for continuing)
     """
-    if restore_path_model is not None:
+    if restore_path_model is not None and restore_path_model != '':
         start_step, optimizer = model.restore_model(
             restore_path_model, optimizer=optimizer)
     else:

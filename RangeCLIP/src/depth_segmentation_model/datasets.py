@@ -24,10 +24,13 @@ class ImageDepthTextDataset(torch.utils.data.Dataset):
         self.depth_transform = depth_transform or normalize_depth
         self.segmentation_transform = segmentation_transform
         self.root_dir = os.path.dirname(metadata_file)
+        
+        df = pd.read_csv(labels_path, usecols=['label', 'index'], na_values=[], keep_default_na=False)
+        df = df.sort_values(by='index', ascending=True)
+        self.labels = df['label'].tolist()
 
-        self.label_dict = pd.read_csv(
-            labels_path, usecols=['label', 'index'], na_values=[], keep_default_na=False
-        ).set_index('index')['label'].apply(lambda x: 'a depth map of ' + x.strip()).to_dict()
+        assert df['index'].tolist() == list(range(1, len(self.labels) + 1)), "Indices must be 1-based and consecutive"
+
 
     def __len__(self):
         return len(self.metadata)
@@ -45,6 +48,7 @@ class ImageDepthTextDataset(torch.utils.data.Dataset):
 
         img = F.to_tensor(img)
         depth = F.to_tensor(depth)
+        depth = depth.float()
         segmentation = np.array(segmentation)
 
         img = self.image_transform(img)
@@ -53,13 +57,11 @@ class ImageDepthTextDataset(torch.utils.data.Dataset):
         if self.segmentation_transform is not None:
             segmentation = self.segmentation_transform(segmentation)
 
-        unique_labels = np.unique(segmentation)
         return {
             'depth': depth,
             'image': img,
             'segmentation': segmentation,
-            'unique_labels': unique_labels
         }
 
     def get_candidate_labels(self):
-        return self.label_dict
+        return self.labels
