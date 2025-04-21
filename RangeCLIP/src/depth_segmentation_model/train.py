@@ -1,12 +1,25 @@
 import argparse
 import sys
 import os
+import torch.distributed as dist
+import torch.multiprocessing as mp
+import torch
+
 
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..'))
 sys.path.insert(0, project_root)
 
 from RangeCLIP.src.depth_segmentation_model.train_util import train_depth_clip_model
 
+def setup_ddp():
+    dist.init_process_group(backend="nccl")
+    local_rank = int(os.environ["LOCAL_RANK"])
+    torch.cuda.set_device(local_rank)
+    return torch.device(f"cuda:{local_rank}"), local_rank
+
+def cleanup_ddp():
+    dist.destroy_process_group()
+    
 parser = argparse.ArgumentParser()
 
 # Training and validation input filepaths
@@ -14,6 +27,8 @@ parser.add_argument('--labeled_metadata_path',
     type=str, required=True, help='Path to labeled dataset metadata.csv')
 parser.add_argument('--labels_path',
     type=str, required=True, help='Path to dataset labels')
+parser.add_argument('--equivalence_dict_path',
+    type=str, required=True, help='Path to equivalence dictionary CSV file')
 
 # Batch parameters
 parser.add_argument('--batch_size',
@@ -70,12 +85,12 @@ if __name__ == '__main__':
     # Sanity check
     assert len(args.learning_rates) == len(args.learning_schedule), "Mismatch in learning rates and schedule lengths"
 
-    # Convert device string
-    device = 'cuda' if args.device == 'gpu' else 'cpu'
+    device, local_rank = setup_ddp()
 
     train_depth_clip_model(
         labeled_metadata_path=args.labeled_metadata_path,
         labels_path=args.labels_path,
+        equivalence_dict_path=args.equivalence_dict_path,
         batch_size=args.batch_size,
         n_height=args.n_height,
         n_width=args.n_width,
@@ -93,5 +108,8 @@ if __name__ == '__main__':
         restore_path_encoder=args.restore_path_encoder,
         clip_model_name=args.clip_model_name,
         device=device,
-        n_thread=args.n_thread
+        n_thread=args.n_thread,
+        local_rank=local_rank,
     )
+    
+    cleanup_ddp()

@@ -13,6 +13,7 @@ class TextEncoder(nn.Module):
         super().__init__()
         
         self.clip_model = clip_model
+        self.clip_model.to(device)
         self.clip_tokenizer = CLIPTokenizer.from_pretrained(clip_model.config._name_or_path)
         self.device = device
         

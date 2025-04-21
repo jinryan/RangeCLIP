@@ -1,9 +1,12 @@
+import random
 from torchvision import transforms
 import torch.nn.functional as F
 import torch
 import numpy as np
 import datasets
 from torch.utils.data import DataLoader
+from torch.utils.data.distributed import DistributedSampler
+import pandas as pd
 
 def setup_dataloaders(metadata_file,
                       labels_file,
@@ -89,33 +92,74 @@ def setup_dataloaders(metadata_file,
 
     labels = dataset.get_candidate_labels()
     
-    generator = torch.Generator().manual_seed(42)
-    train_dataset, val_dataset, test_dataset = torch.utils.data.random_split(dataset, [0.6, 0.2, 0.2], generator=generator)
+    # Split dataset into train, validation, and test sets
+    random.seed(42)
+
+    indices = list(range(len(dataset)))
+    random.shuffle(indices)
+
+    split1 = int(0.6 * len(dataset))
+    split2 = int(0.8 * len(dataset))
+
+    train_indices = indices[:split1]
+    val_indices = indices[split1:split2]
+    test_indices = indices[split2:]
+
+    train_dataset = torch.utils.data.Subset(dataset, train_indices)
+    val_dataset = torch.utils.data.Subset(dataset, val_indices)
+    test_dataset = torch.utils.data.Subset(dataset, test_indices)
+    # Create samplers for distributed training
+
+    train_sampler = DistributedSampler(train_dataset)
+    val_sampler = DistributedSampler(val_dataset)
+    test_sampler = DistributedSampler(test_dataset)
     
     train_loader = DataLoader(
         train_dataset,
         batch_size=batch_size,
-        shuffle=True,
+        sampler=train_sampler,
         num_workers=n_thread
     )
     
     val_loader = DataLoader(
         val_dataset,
         batch_size=batch_size,
-        shuffle=False,
+        sampler=val_sampler,
         num_workers=n_thread
     )
     
     test_loader = DataLoader(
         test_dataset,
         batch_size=batch_size,
-        shuffle=False,
+        sampler=test_sampler,
         num_workers=n_thread
     )
     
     n_train_samples = len(train_dataset)
     n_train_steps = ((n_train_samples + batch_size - 1) // batch_size) * n_epoch
     
-    return train_loader, val_loader, test_loader, n_train_steps, labels
+    return train_loader, val_loader, test_loader, train_sampler, n_train_steps, labels
+
     
     
+    
+import ast  # To safely parse list strings like "[1, 2, 3]"
+
+def load_equivalence_dict(csv_path):
+    df = pd.read_csv(csv_path)
+    equivalence_dict = {}
+    for _, row in df.iterrows():
+        idx = int(row['index'])
+        same = set(ast.literal_eval(row['same']))  # safely parse the string list
+        same.add(idx)  # include self
+        equivalence_dict[idx] = same
+    return equivalence_dict
+
+import torch
+
+def build_equivalence_tensor(equivalence_dict, num_classes):
+    lookup = torch.zeros((num_classes, num_classes), dtype=torch.bool)
+    for gt, equivalents in equivalence_dict.items():
+        for pred in equivalents:
+            lookup[gt, pred] = True
+    return lookup

@@ -1,3 +1,4 @@
+import random
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -7,9 +8,7 @@ project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..
 sys.path.insert(0, project_root)
 from utils.src.encoder import DepthEncoder
 from utils.src.decoder import DepthDecoder
-from transformers import CLIPModel
 from torch.cuda.amp import autocast
-from utils.src.networks import TextEncoder
 
 
 class DepthUNet(nn.Module):
@@ -45,7 +44,6 @@ class DepthUNet(nn.Module):
     """
     def __init__(self,
                  unet_type,
-                 clip_model_name,
                  device,
                  n_layer=18,
                  input_channels=1,
@@ -59,14 +57,6 @@ class DepthUNet(nn.Module):
         super(DepthUNet, self).__init__()
         
         self.device = device
-        
-        try:
-            clip_model = CLIPModel.from_pretrained(clip_model_name)
-            embedding_dim = clip_model.config.projection_dim
-            print(f"Using CLIP model {clip_model_name} with embedding dimension {embedding_dim}")
-            self.text_encoder = TextEncoder(clip_model, device)
-        except Exception as e:
-            raise ValueError(f'Failed to initialize CLIP model {clip_model_name}: {str(e)}')
         
         self.log_temperature = nn.Parameter(torch.log(torch.tensor(temperature)))
         
@@ -97,7 +87,6 @@ class DepthUNet(nn.Module):
         else:
             raise ValueError(f'Unsupported depth encoder type: {unet_type}')
         
-        self.to(device)
     
     def forward(self, depth_map):
         """
@@ -115,75 +104,75 @@ class DepthUNet(nn.Module):
             _, encoder_features, final_feature_map = self.depth_encoder(depth_map)        
             output = self.depth_decoder(final_feature_map, encoder_features, target_shape)
         
-        return output
+        return output, self.temperature
     
-    def predict(self, depth_maps, candidate_labels, top_k=5, return_text=False):
+    def predict(self, depth_maps, candidate_text_embeddings, segmentation, num_negatives=300):
         """
-        Predict segmentation labels for the input depth maps
-        
-        Arg(s):
-            depth_maps : torch.Tensor
-                input depth map tensor of shape [B, 1, H, W]
-            candidate_labels : list of str
-                list of candidate class labels
-            top_k : int
-                number of top predictions to return per pixel
-            return_text : bool
-                whether to return predicted class names (optional)
-        
+        Predict segmentation labels for the input depth maps using a reduced candidate set.
+
+        Args:
+            depth_maps (torch.Tensor): input depth maps [B, 1, H, W]
+            candidate_text_embeddings (torch.Tensor): all text embeddings [C, D]
+            segmentation (torch.Tensor): ground truth segmentation [B, H, W], used to extract true label indices
+            num_negatives (int): number of additional negative labels to sample
+
         Returns:
-            torch.Tensor : predicted indices [B, H, W, K] or [B, H, W]
-            torch.Tensor : predicted scores [B, H, W, K] or [B, H, W]
-            Optional[List[List[str]]] : predicted class names
+            pred_indices (torch.LongTensor): predicted label indices in the ORIGINAL index space [B, H, W]
+            pixel_embeddings (torch.Tensor): output embeddings from the model [B, D, H, W]
+            temperature (float): learned temperature parameter
         """
-        with torch.no_grad():
-            depth_embeddings = self.forward(depth_maps)  # [B, D, H, W]
-            B, D, H, W = depth_embeddings.shape
+        self.eval()
+        B, _, H, W = depth_maps.shape
+        total_candidates, D = candidate_text_embeddings.shape
 
-            candidate_text_embeddings = self.text_encoder(candidate_labels)  # [C, D]
+        with torch.no_grad(), autocast():
+            # Forward pass
+            _, encoder_features, final_feature_map = self.depth_encoder(depth_maps)
+            pixel_embeddings = self.depth_decoder(final_feature_map, encoder_features, (H, W))  # [B, D, H, W]
+            pixel_embeddings = F.normalize(pixel_embeddings, dim=1)
 
-            # Normalize for cosine similarity
-            depth_embeddings = F.normalize(depth_embeddings, p=2, dim=1)
-            candidate_text_embeddings = F.normalize(candidate_text_embeddings, p=2, dim=1)
-
-            # Reshape to [B*H*W, D]
-            pixel_embeddings = depth_embeddings.permute(0, 2, 3, 1).reshape(-1, D)
-
-            # Cosine similarity + softmax over class dimension
-            similarity = torch.matmul(pixel_embeddings, candidate_text_embeddings.T)  # [N, C]
-            full_scores = F.softmax(similarity, dim=1)  # [N, C]
-
-            # Top-k prediction per pixel
-            topk_scores, topk_indices = full_scores.topk(k=top_k, dim=1)  # [N, K]
-
-            if top_k == 1:
-                predicted = topk_indices.view(B, H, W)
-                predicted_scores = topk_scores.view(B, H, W)
+            # --- Step 1: Build reduced candidate set ---
+            if segmentation is not None:
+                unique_labels = torch.unique(segmentation).tolist()
             else:
-                predicted = topk_indices.view(B, H, W, top_k)
-                predicted_scores = topk_scores.view(B, H, W, top_k)
+                raise ValueError("segmentation must be provided for reduced-candidate prediction")
 
-            if return_text:
-                # Always treat top_k as dimension - even if 1
-                topk_indices_flat = topk_indices.view(-1, top_k)
-                predicted_classes = [
-                    [candidate_labels[i.item()] for i in row]
-                    for row in topk_indices_flat
-                ]
-                return predicted, predicted_scores, predicted_classes
-            else:
-                return predicted, predicted_scores
+            all_indices = list(range(total_candidates))
+            gt_indices = set(unique_labels)
+            sample_pool = list(set(all_indices) - gt_indices)
+            sampled_negatives = random.sample(sample_pool, min(num_negatives, len(sample_pool)))
+            reduced_indices = sorted(list(gt_indices.union(sampled_negatives)))
 
-    def compute_loss(self, pred, target_indices, candidate_text_embeddings, percent_image=0.1, k_distractors=20):
+            # Mapping from reduced -> global
+            index_tensor = torch.tensor(reduced_indices, device=depth_maps.device)  # [C_reduced]
+            reduced_candidate_embeddings = candidate_text_embeddings[index_tensor]  # [C_reduced, D]
+            reduced_candidate_embeddings = F.normalize(reduced_candidate_embeddings, dim=1)
+
+            # --- Step 2: Predict using reduced candidates ---
+            pixel_flat = pixel_embeddings.view(B, D, H * W)
+            logits = torch.einsum('bdn,cd->bcn', pixel_flat, reduced_candidate_embeddings)
+            pred_indices_reduced = logits.argmax(dim=1).view(B, H, W)  # [B, H, W]
+
+            # --- Step 3: Map reduced indices back to original index space ---
+            pred_indices = index_tensor[pred_indices_reduced]  # [B, H, W], now in original index space
+
+            return pred_indices, pixel_embeddings, self.temperature
+
+        
+
+    def compute_loss(self, pred, target_indices, candidate_text_embeddings, temperature, percent_image=0.2, k_distractors=50):
         """
         Hybrid contrastive loss: in-batch class labels + random distractors.
         """
         # pred: [B, D, H, W]
         # target_indices: [B, H, W]
-        B, D, H, W = pred.shape
+        B, D, H, W = [int(s) for s in pred.shape]
         C = candidate_text_embeddings.shape[0]
         device = pred.device
         num_samples = int(percent_image * H * W)
+
+        
+        
 
         # Flatten for batch sampling
         pred_flat = pred.reshape(B, D, -1)                   # [B, D, HW]
@@ -203,8 +192,6 @@ class DepthUNet(nn.Module):
         if pred_samples.numel() == 0:
             raise RuntimeError("No valid pixels found for loss computation.")
 
-        pred_samples = F.normalize(pred_samples, p=2, dim=1)
-
         # Step 1: get unique labels in this batch
         unique_labels = torch.unique(label_samples)
 
@@ -215,20 +202,34 @@ class DepthUNet(nn.Module):
 
         # Step 3: combine and extract contrastive set
         contrast_indices = torch.cat([unique_labels, distractor_labels], dim=0)
-        contrast_text_embeddings = F.normalize(candidate_text_embeddings[contrast_indices], p=2, dim=1)  # [C', D]
+        contrast_text_embeddings = candidate_text_embeddings[contrast_indices]
+
 
         # Step 4: remap labels
-        label_map = {idx.item(): new_idx for new_idx, idx in enumerate(contrast_indices)}
-        label_samples_mapped = torch.tensor([label_map[l.item()] for l in label_samples], device=device)
+        # label_map = {idx.item(): new_idx for new_idx, idx in enumerate(contrast_indices)}
+        # label_samples_mapped = torch.tensor([label_map[l.item()] for l in label_samples], device=device)
+        # Step 4: remap labels (safe version)
+        # Create a tensor mapping from original label index to new index in contrast set
+        mapping_array = torch.full((C,), -1, dtype=torch.long, device=device)  # C = total candidate labels
+        mapping_array[contrast_indices] = torch.arange(contrast_indices.shape[0], device=device)
+        label_samples_mapped = mapping_array[label_samples]
+
+
+        if (label_samples_mapped == -1).any():
+            raise ValueError("Some labels in the batch were not found in the contrastive index set.")
+
+        # Remap labels
+        label_samples_mapped = mapping_array[label_samples]
+
 
         # Step 5: logits + loss
         logits = pred_samples @ contrast_text_embeddings.T  # [N, C']
-        logits /= self.temperature
+        logits /= temperature
         loss = F.cross_entropy(logits, label_samples_mapped)
 
         loss_info = {
             'loss': loss.item(),
-            'temperature': self.temperature.item(),
+            'temperature': temperature.item(),
         }
 
         return loss, loss_info
@@ -273,18 +274,17 @@ class DepthUNet(nn.Module):
             'train_step': step
         }
 
-        if isinstance(self.depth_encoder, torch.nn.DataParallel):
-            checkpoint['encoder'] = self.depth_encoder.module.state_dict()
-        else:
-            checkpoint['encoder'] = self.depth_encoder.state_dict()
-
-        if isinstance(self.depth_decoder, torch.nn.DataParallel):
-            checkpoint['decoder'] = self.depth_decoder.module.state_dict()
-        else:
-            checkpoint['decoder'] = self.depth_decoder.state_dict()
-
-        if optimizer is not None:
-            checkpoint['optimizer'] = optimizer.state_dict()
+        # Save encoder state dicts
+        encoder = self.depth_encoder
+        if hasattr(encoder, "module"):
+            encoder = encoder.module
+        checkpoint["encoder"] = encoder.state_dict()
+        
+        # Save decoder state dict
+        decoder = self.depth_decoder
+        if hasattr(decoder, "module"):
+            decoder = decoder.module
+        checkpoint["decoder"] = decoder.state_dict()
 
         torch.save(checkpoint, checkpoint_path)
     
@@ -304,16 +304,17 @@ class DepthUNet(nn.Module):
         """
         checkpoint = torch.load(restore_path, map_location=self.device)
 
-        if isinstance(self.depth_encoder, torch.nn.DataParallel):
-            self.depth_encoder.module.load_state_dict(checkpoint['encoder'])
-        else:
-            self.depth_encoder.load_state_dict(checkpoint['encoder'])
-
-        if isinstance(self.depth_decoder, torch.nn.DataParallel):
-            self.depth_decoder.module.load_state_dict(checkpoint['decoder'])
-        else:
-            self.depth_decoder.load_state_dict(checkpoint['decoder'])
-
+        encoder = self.depth_encoder
+        if hasattr(encoder, "module"):
+            encoder = encoder.module
+        
+        encoder.load_state_dict(checkpoint['encoder'])
+        decoder = self.depth_decoder
+        if hasattr(decoder, "module"):
+            decoder = decoder.module
+            
+        decoder.load_state_dict(checkpoint['decoder'])
+        
         if optimizer is not None and 'optimizer' in checkpoint.keys():
             optimizer.load_state_dict(checkpoint['optimizer'])
 
@@ -355,10 +356,11 @@ class DepthUNet(nn.Module):
         else:
             for param in self.depth_encoder.parameters():
                 param.requires_grad = True
-                
+    
+    @staticmethod
     def build_target_embedding_map(target_indices, candidate_text_embeddings):
         """
-        Vectorized version: no for-loop.
+        Vectorized version of the target embedding map construction.
         """
         B, H, W = target_indices.shape
         C, D = candidate_text_embeddings.shape
@@ -374,86 +376,3 @@ class DepthUNet(nn.Module):
         target_embedding_map = gathered.permute(0, 2, 1).reshape(B, D, H, W)
         return target_embedding_map
 
-
-                
-                
-import time
-
-if __name__ == "__main__":
-
-    # Set device
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-    # --- Time: Model Initialization ---
-    t0 = time.time()
-    model = DepthUNet(
-        unet_type='resnet',
-        clip_model_name='openai/clip-vit-base-patch32',  # Or another available CLIP model
-        device=device,
-        n_layer=18,
-        embedding_dim=768,
-        input_channels=1,
-        encoder_filters=[32, 64, 128, 256, 512],
-        weight_initializer='kaiming_uniform',
-        activation_func='relu',
-        use_batch_norm=True,
-        use_instance_norm=False,
-    )
-    t1 = time.time()
-    print(f"Model initialization took {t1 - t0:.3f} seconds")
-
-    # Create a dummy batch of depth maps [B, C, H, W]
-    B, C, H, W = 32, 1, 200, 200
-    dummy_depth = torch.randn(B, C, H, W).to(device)
-
-    import random
-    import string
-
-    # Generate 6000 random dummy labels
-    num_total_labels = 6000
-    dummy_labels = [f"label_{i}" for i in range(num_total_labels)]
-
-    # Randomly select 40 labels to be used in this batch's target
-    selected_indices = random.sample(range(num_total_labels), 40)
-    selected_labels = [dummy_labels[i] for i in selected_indices]
-
-    # Map selected class indices to 0–39 (for dummy target)
-    index_map = {original_idx: new_idx for new_idx, original_idx in enumerate(selected_indices)}
-
-    # Create dummy target segmentation map with values in [0, 39]
-    dummy_target = torch.randint(0, 40, size=(B, H, W)).to(device)
-
-    # Remap target indices to match the indices in dummy_labels
-    # (Later you'll reverse this during loss by mapping back to full label space)
-
-
-    model.eval()
-    with torch.no_grad():
-        # --- Time: Forward Pass ---
-        t2 = time.time()
-        embedding_output = model(dummy_depth)  # [B, D, H, W]    
-        t3 = time.time()
-        print(f"Forward pass took {t3 - t2:.3f} seconds")
-        print("Forward pass output shape:", embedding_output.shape)
-
-        # --- Time: Text Encoder ---
-        t4 = time.time()
-        dummy_text_embeddings = model.text_encoder(dummy_labels)
-        t5 = time.time()
-        print(f"Text encoding on candidate labels took {t5 - t4:.3f} seconds")
-
-        # --- Time: Loss Computation ---
-        t6 = time.time()
-        loss, info = model.compute_loss(embedding_output, dummy_target, dummy_text_embeddings)
-        t7 = time.time()
-        print(f"Loss computation took {t7 - t6:.3f} seconds")
-
-        print("Dummy loss:", loss.item())
-        print("Loss info:", info)
-
-        # --- Optional: Prediction ---
-        predicted_indices, predicted_scores, predicted_classes = model.predict(
-            dummy_depth, dummy_labels, top_k=1, return_text=True
-        )
-        print("Predicted indices shape:", predicted_indices.shape)
-        print("Predicted class names (first sample):", predicted_classes[:H * W][:5])

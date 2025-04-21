@@ -9,14 +9,22 @@ import tqdm
 import sys
 import os
 import traceback
+import torch.distributed as dist
+from torch.cuda.amp import autocast, GradScaler
+from utils.src.networks import TextEncoder
+from transformers import CLIPModel
+import matplotlib.pyplot as plt
+from matplotlib import cm
+
 
 from RangeCLIP.src.depth_segmentation_model.model import DepthUNet
-from RangeCLIP.src.depth_segmentation_model.dataloader import setup_dataloaders
+from RangeCLIP.src.depth_segmentation_model.dataloader import setup_dataloaders, load_equivalence_dict, build_equivalence_tensor
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..'))
 sys.path.insert(0, project_root)
 from utils.src.log_utils import log
-from RangeCLIP.src.depth_segmentation_model.log import log_training_summary, log_configuration
+from RangeCLIP.src.depth_segmentation_model.log import log_training_summary, log_configuration, visualize_batch_predictions
 from RangeCLIP.src.depth_segmentation_model.validate import validate_model
+
 
 def unwrap_model(model):
     return model.module if hasattr(model, "module") else model
@@ -40,9 +48,11 @@ def setup_device(device):
 
 
 
+
 def train_depth_clip_model(
         labeled_metadata_path,
         labels_path,
+        equivalence_dict_path,
         batch_size,
         n_height,
         n_width,
@@ -60,11 +70,12 @@ def train_depth_clip_model(
         restore_path_encoder,
         clip_model_name,
         device='cuda',
-        n_thread=8):
+        n_thread=8,
+        accumulation_steps = 4,
+        local_rank=0):
     
-    # Set up device
-    device = setup_device(device)
-    
+    scaler = GradScaler()
+
     # Set up directories for checkpoints and logs
     model_checkpoint_path, log_path, event_path = setup_checkpoint_and_event_paths(
         checkpoint_path, 'depth_segmentation_model')
@@ -80,7 +91,7 @@ def train_depth_clip_model(
     
     # Prepare data loaders
     resize_shape = (n_height, n_width)
-    train_dataloader, val_dataloader, test_dataloader, n_train_step, candidate_labels = setup_dataloaders(
+    train_dataloader, val_dataloader, test_dataloader, train_sampler, n_train_step, candidate_labels = setup_dataloaders(
         metadata_file=labeled_metadata_path,
         labels_file=labels_path,
         resize_shape=resize_shape, 
@@ -89,34 +100,44 @@ def train_depth_clip_model(
         n_epoch=n_epoch
     )
     
+    equivalence_dict = load_equivalence_dict(equivalence_dict_path)
+    equivalence_tensor = build_equivalence_tensor(equivalence_dict, num_classes=len(candidate_labels)).to(device)
+    equivalence_tensor = equivalence_tensor.to(device)
+    print(f"Equivalence tensor shape: {equivalence_tensor.shape}")
+    print(f"Memory: {equivalence_tensor.numel() / 8 / 1024 / 1024:.2f} MB")
+
     
     try:
+        
+        clip_model = CLIPModel.from_pretrained(clip_model_name)
+        embedding_dim = clip_model.config.projection_dim
+        text_encoder = TextEncoder(
+            clip_model=clip_model,
+            device=device
+        )
+        
         model = DepthUNet(
             unet_type=unet_architecture,
-            clip_model_name=clip_model_name,
             device=device,
             n_layer=18,
             input_channels=1,
             encoder_filters=[32, 64, 128, 256, 512],
-            embedding_dim=768,
+            embedding_dim=embedding_dim,
             weight_initializer='kaiming_uniform',
             activation_func='relu',
             use_batch_norm=True,
             use_instance_norm=False
         )
+        
+        
     except Exception as e:
         print(f"Error loading DepthUnet: {e}")
         traceback.print_exc()
     
-    text_param_ids = {id(p) for p in model.text_encoder.parameters()}
-
-    trainable_params = [
-        p for p in model.parameters()
-        if id(p) not in text_param_ids
-    ]
+    
 
     optimizer, scheduler = setup_optimizer_and_scheduler(
-        trainable_params, learning_rates, w_weight_decay, 
+        model.parameters(), learning_rates, w_weight_decay, 
         scheduler_type, learning_schedule
     )
     
@@ -135,14 +156,10 @@ def train_depth_clip_model(
     
     # Configure model for training
     
-    if torch.cuda.is_available() and torch.cuda.device_count() > 1:
-        model = nn.DataParallel(model)
-    
     model.to(device)
-    
-    if isinstance(model, torch.nn.DataParallel):
-        print(f"DataParallel using {len(model.device_ids)} GPUs: {model.device_ids}")    
-    
+    model = nn.parallel.DistributedDataParallel(model, device_ids=[local_rank], find_unused_parameters=True)
+
+
     # Log configuration settings
     log_configuration(
         log_path, labeled_metadata_path, 
@@ -157,21 +174,33 @@ def train_depth_clip_model(
         device, n_thread
     )
     
-    # Set up tensorboard summary writers
-    train_summary_writer = SummaryWriter(event_path + '-train')
-    val_summary_writer = SummaryWriter(event_path + '-val')
     
-    model.eval()
-    best_results = validate_model(model=model,
-                                  candidate_labels=candidate_labels,
-                                  dataloader=val_dataloader,
-                                  step=train_step,
-                                  best_results=best_results,
-                                  device=device,
-                                  summary_writer=val_summary_writer,
-                                  n_sample_per_summary=n_sample_per_summary,
-                                  log_path=log_path
-    )
+    
+    # Set up tensorboard summary writers
+    if local_rank == 0:
+        train_summary_writer = SummaryWriter(event_path + '-train')
+        val_summary_writer = SummaryWriter(event_path + '-val')
+    else:
+        train_summary_writer = val_summary_writer = None
+
+    with torch.no_grad():
+        candidate_text_embeddings = text_encoder(candidate_labels)
+
+    if local_rank == 0:
+        model.eval()
+        best_results = validate_model(model=model,
+                                    candidate_text_embeddings=candidate_text_embeddings,
+                                    candidate_labels=candidate_labels,
+                                    equivalence_tensor=equivalence_tensor,
+                                    dataloader=val_dataloader,
+                                    step=train_step,
+                                    best_results=best_results,
+                                    device=device,
+                                    summary_writer=val_summary_writer,
+                                    n_sample_per_summary=n_sample_per_summary,
+                                    log_path=log_path
+        )
+    
     model.train()
     # Begin training
     time_start = time.time()
@@ -179,14 +208,25 @@ def train_depth_clip_model(
     
     
     
-    with torch.no_grad():
-        candidate_text_embeddings = unwrap_model(model).text_encoder(candidate_labels).to(device)
-            
+    
+    loss = None
+    output_segmentation = None
     # ================ Main training loop ================
     for epoch in range(1, n_epoch + 1):
+        train_sampler.set_epoch(epoch)  # Inside the training loop, once per epoch
         total_loss = 0
-        for batch in tqdm.tqdm(train_dataloader, desc=f'{epoch}/{n_epoch}'):
+        n_batches = 0
+        optimizer.zero_grad()
+
+        for batch in tqdm.tqdm(train_dataloader, desc=f'{local_rank}: {epoch}/{n_epoch}'):
+            if loss is not None:
+                del loss
+            if output_segmentation is not None:
+                del output_segmentation
+            
+            torch.cuda.empty_cache()
             train_step += 1
+            n_batches += 1
             
             # Move batch to device
             batch = {k: v.to(device) for k, v in batch.items()}
@@ -196,71 +236,88 @@ def train_depth_clip_model(
             image = batch['image']
             segmentation = batch['segmentation']
             
-            
             # Forward through network
-            output_segmentation = model(depth)
-            loss, loss_info = model.compute_loss(
-                output_segmentation, image, candidate_text_embeddings, segmentation
-            )
+            
+            with autocast():
+                output_segmentation, temperature = model(depth)
+                loss, loss_info = unwrap_model(model).compute_loss(
+                    output_segmentation, segmentation, candidate_text_embeddings, temperature
+                )
             
             # Zero gradients, backpropagate, and update weights
-            optimizer.zero_grad()
-            loss.backward()
-            optimizer.step()
-            total_loss += loss.item()
-            
-            # Logging and validation
-            if (train_step % n_step_per_summary) == 0:
-                log_training_summary(
-                    train_summary_writer=train_summary_writer,
-                    train_step=train_step,
-                    image_samples=image,
-                    depth_samples=depth,
-                    ground_truth_segmentation_samples=segmentation,
-                    output_segmentation_samples=output_segmentation,
-                    candidate_labels=candidate_labels,
-                    loss_info=loss_info,
-                    n_sample_per_summary=n_sample_per_summary
-                )
+            loss = loss / accumulation_steps  # Normalize loss
+            scaler.scale(loss).backward()
+
+            if (n_batches % accumulation_steps) == 0:
+                scaler.step(optimizer)
+                scaler.update()
+                optimizer.zero_grad()
+                train_step += 1
                 
-                # Validate model
-                with torch.no_grad():
-                    model.eval()
-                    best_results = validate_model(model=unwrap_model(model),
-                                  candidate_labels=candidate_labels,
-                                  dataloader=val_dataloader,
-                                  step=train_step,
-                                  best_results=best_results,
-                                  device=device,
-                                  summary_writer=val_summary_writer,
-                                  n_sample_per_summary=n_sample_per_summary,
-                                  max_failed_log=16,
-                                  log_path=log_path
+                total_loss += loss.item()
+                
+                
+                
+                # Logging and validation
+                if (train_step % n_step_per_summary) == 0 and local_rank == 0:
+                    log_training_summary(
+                        train_summary_writer=train_summary_writer,
+                        train_step=train_step,
+                        image_samples=image,
+                        depth_samples=depth,
+                        ground_truth_segmentation_samples=segmentation,
+                        output_segmentation_samples=output_segmentation,
+                        candidate_labels=candidate_labels,
+                        loss_info=loss_info,
+                        n_sample_per_summary=n_sample_per_summary
                     )
-                    model.train()
+                    
+                    # Validate model
+                    with torch.no_grad():
+                        model.eval()
+                        best_results = validate_model(model=unwrap_model(model),
+                                    candidate_text_embeddings=candidate_text_embeddings,
+                                    candidate_labels=candidate_labels,
+                                    equivalence_tensor=equivalence_tensor,
+                                    dataloader=val_dataloader,
+                                    step=train_step,
+                                    best_results=best_results,
+                                    device=device,
+                                    summary_writer=val_summary_writer,
+                                    n_sample_per_summary=n_sample_per_summary,
+                                    max_failed_log=16,
+                                    log_path=log_path
+                        )
+                        model.train()
+                
+                # Save checkpoints
+                if (train_step % n_step_per_checkpoint) == 0 and local_rank == 0:
+                    save_checkpoint_and_log_progress(
+                        unwrap_model(model), model_checkpoint_path, train_step,
+                        n_train_step, start_step, loss.item(),
+                        time_start, log_path, optimizer
+                    )
+                
             
-            # Save checkpoints
-            if (train_step % n_step_per_checkpoint) == 0:
-                save_checkpoint_and_log_progress(
-                    unwrap_model(model), model_checkpoint_path, train_step,
-                    n_train_step, start_step, loss.item(),
-                    time_start, log_path, optimizer
-                )
-        
-        log(f"Total loss: {total_loss}", log_path)
+    
+        avg_loss = total_loss / max(n_batches, 1)
+        log(f"Rank {local_rank} | Epoch {epoch} | Average loss: {avg_loss}", log_path)
         
         # Update learning rate scheduler
-        update_scheduler(scheduler, scheduler_type, unwrap_model(model), candidate_labels,
-                         val_dataloader, train_step,
-                         best_results, device, val_summary_writer,
-                         n_sample_per_summary, log_path)
+        scheduler.step()
     
     # Save final model
-    save_checkpoint_and_log_progress(
-        model, model_checkpoint_path, train_step,
-        n_train_step, train_step - n_train_step, loss.item(),
-        time_start, log_path, optimizer
-    )
+    if local_rank == 0:
+        save_checkpoint_and_log_progress(
+            model, model_checkpoint_path, train_step,
+            n_train_step, train_step - n_train_step, loss.item(),
+            time_start, log_path, optimizer
+        )
+    
+    if dist.is_initialized():
+        dist.barrier()  # wait for all processes
+        dist.destroy_process_group()
+
 
 
 def restore_model_if_needed(model, restore_path_model, optimizer):
@@ -285,44 +342,7 @@ def restore_model_if_needed(model, restore_path_model, optimizer):
     return start_step, optimizer
 
 
-def update_scheduler(scheduler, scheduler_type, model, candidate_labels,
-                    val_dataloader, train_step, best_results, device,
-                    val_summary_writer, n_sample_per_summary, log_path):
-    """
-    Update the learning rate scheduler.
-    
-    Args:
-        scheduler: The learning rate scheduler
-        scheduler_type (str): Type of scheduler
-        model: The depth encoder model
-        image_encoder: The image encoder model
-        val_dataloader: Validation data loader
-        train_step (int): Current training step
-        best_results (dict): Best validation results
-        device (torch.device): The device
-        val_summary_writer: Validation summary writer
-        n_sample_per_summary (int): Number of samples to visualize
-        log_path (str): Path to log file
-    """
-    if scheduler_type == 'reduce_on_plateau':
-        # For ReduceLROnPlateau, pass the validation loss
-        model.eval()
-        _, val_imce_loss = validate_model(model=unwrap_model(model),
-                                  candidate_labels=candidate_labels,
-                                  dataloader=val_dataloader,
-                                  step=train_step,
-                                  best_results=best_results,
-                                  device=device,
-                                  summary_writer=val_summary_writer,
-                                  n_sample_per_summary=n_sample_per_summary,
-                                  max_failed_log=16,
-                                  log_path=log_path
-        )
-        model.train()
-        
-        scheduler.step(val_imce_loss)
-    else:
-        scheduler.step()
+
         
     
 def save_checkpoint_and_log_progress(model, model_checkpoint_path, train_step,

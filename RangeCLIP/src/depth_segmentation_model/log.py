@@ -5,6 +5,13 @@ import torch
 from torchvision.utils import make_grid
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..'))
 sys.path.insert(0, project_root)
+import matplotlib.pyplot as plt
+import numpy as np
+from matplotlib import cm
+from torchvision.utils import make_grid
+from io import BytesIO
+from PIL import Image
+from torchvision import transforms
 
 from utils.src.log_utils import log
 
@@ -286,3 +293,170 @@ def log_validation_summary(
         for name, val in loss_info.items():
             val_summary_writer.add_scalar(f'train/loss_{name}', val, global_step=val_step)
 
+
+
+
+def visualize_batch_predictions(
+    images,               # Tensor [B, 3, H, W]
+    depths,               # Tensor [B, 1, H, W]
+    seg_gt,               # Tensor [B, H, W] or [B, 1, H, W]
+    seg_pred,             # Tensor [B, H, W] or [B, 1, H, W]
+    candidate_labels,     # List[str]
+    save_dir="output/visualizations_preds"
+):
+    os.makedirs(save_dir, exist_ok=True)
+    B = images.size(0)
+
+    tab20 = cm.get_cmap('tab20', 20)
+    colors = (tab20(np.linspace(0, 1, 20))[:, :3] * 255).astype(np.uint8)
+
+    for i in range(B):
+        # RGB image (CLIP de-normalization)
+        img = images[i].cpu().numpy().transpose(1, 2, 0)
+        img = img * np.array([0.2686, 0.2613, 0.2758]) + np.array([0.4815, 0.4578, 0.4082])
+        img = np.clip(img, 0, 1)
+
+        # Depth
+        depth_np = depths[i][0].cpu().numpy()
+
+        # Segmentation GT and prediction
+        gt = seg_gt[i][0] if seg_gt[i].dim() == 3 else seg_gt[i]
+        pred = seg_pred[i][0] if seg_pred[i].dim() == 3 else seg_pred[i]
+        gt = gt.cpu().numpy().astype(np.int32)
+        pred = pred.cpu().numpy().astype(np.int32)
+
+        # Color visualizations
+        gt_vis = np.zeros((*gt.shape, 3), dtype=np.uint8)
+        pred_vis = np.zeros((*pred.shape, 3), dtype=np.uint8)
+
+        for label_idx in np.unique(gt):
+            if label_idx == 0:
+                continue
+            gt_vis[gt == label_idx] = colors[label_idx % len(colors)]
+
+        for label_idx in np.unique(pred):
+            if label_idx == 0:
+                continue
+            pred_vis[pred == label_idx] = colors[label_idx % len(colors)]
+
+        # Plot
+        fig, axs = plt.subplots(1, 4, figsize=(22, 6))
+
+        axs[0].imshow(img)
+        axs[0].set_title("RGB Image")
+        axs[0].axis("off")
+
+        axs[1].imshow(depth_np, cmap="plasma")
+        axs[1].set_title("Depth Map")
+        axs[1].axis("off")
+
+        axs[2].imshow(gt_vis)
+        axs[2].set_title("Ground Truth Seg")
+        axs[2].axis("off")
+
+        axs[3].imshow(pred_vis)
+        axs[3].set_title("Predicted Seg")
+        axs[3].axis("off")
+
+        # Overlay labels for GT
+        for uid in np.unique(gt):
+            if uid == 0 or uid >= len(candidate_labels):
+                continue
+            ys, xs = np.where(gt == uid)
+            if len(xs) == 0:
+                continue
+            x_c, y_c = int(xs.mean()), int(ys.mean())
+            axs[2].text(
+                x_c, y_c, candidate_labels[uid],
+                color="white", fontsize=8, ha='center', va='center',
+                bbox=dict(facecolor='black', alpha=0.5, edgecolor='none', pad=1)
+            )
+
+        # Overlay labels for Prediction
+        for uid in np.unique(pred):
+            if uid == 0 or uid >= len(candidate_labels):
+                continue
+            ys, xs = np.where(pred == uid)
+            if len(xs) == 0:
+                continue
+            x_c, y_c = int(xs.mean()), int(ys.mean())
+            axs[3].text(
+                x_c, y_c, candidate_labels[uid],
+                color="white", fontsize=8, ha='center', va='center',
+                bbox=dict(facecolor='black', alpha=0.5, edgecolor='none', pad=1)
+            )
+
+        plt.tight_layout()
+        plt.savefig(os.path.join(save_dir, f"sample_{i}.png"), bbox_inches='tight', dpi=150)
+        plt.close()
+        
+
+
+
+def visualize_tensorboard_image(depth, image, seg_gt, seg_pred, candidate_labels):
+    """
+    Returns a grid image visualizing RGB, depth, GT and predicted segmentation maps
+    for a single sample. All inputs should be torch.Tensors.
+    """
+    import matplotlib.pyplot as plt
+    import numpy as np
+
+    B = image.shape[0]
+    depth = depth.cpu()
+    image = image.cpu()
+    seg_gt = seg_gt.cpu()
+    seg_pred = seg_pred.cpu()
+
+    fig_images = []
+
+    tab20 = plt.get_cmap('tab20', 20)
+    colors = (tab20(np.linspace(0, 1, 20))[:, :3] * 255).astype(np.uint8)
+
+    for i in range(B):
+        img = image[i].numpy().transpose(1, 2, 0)
+        img = img * np.array([0.2686, 0.2613, 0.2758]) + np.array([0.4815, 0.4578, 0.4082])
+        img = np.clip(img, 0, 1)
+
+        depth_np = depth[i][0].numpy()
+        gt = seg_gt[i].numpy()
+        pred = seg_pred[i].numpy()
+
+        def colorize(seg):
+            seg = seg.astype(np.int32)
+            color_map = np.zeros((*seg.shape, 3), dtype=np.uint8)
+            for label_idx in np.unique(seg):
+                if label_idx == 0:
+                    continue
+                color_map[seg == label_idx] = colors[label_idx % len(colors)]
+            return color_map
+
+        gt_vis = colorize(gt)
+        pred_vis = colorize(pred)
+
+        fig, axs = plt.subplots(1, 4, figsize=(16, 4))
+        axs[0].imshow(img)
+        axs[0].set_title("RGB")
+        axs[0].axis("off")
+
+        axs[1].imshow(depth_np, cmap='plasma')
+        axs[1].set_title("Depth")
+        axs[1].axis("off")
+
+        axs[2].imshow(gt_vis)
+        axs[2].set_title("GT Seg")
+        axs[2].axis("off")
+
+        axs[3].imshow(pred_vis)
+        axs[3].set_title("Pred Seg")
+        axs[3].axis("off")
+
+        buf = BytesIO()
+        plt.tight_layout()
+        plt.savefig(buf, format='png')
+        buf.seek(0)
+        img = Image.open(buf).convert('RGB')
+        img_tensor = transforms.ToTensor()(img)
+        fig_images.append(img_tensor)
+        plt.close()
+
+    return make_grid(fig_images, nrow=1)

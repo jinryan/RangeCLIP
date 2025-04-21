@@ -30,7 +30,7 @@ class ImageDepthTextDataset(torch.utils.data.Dataset):
         self.labels = df['label'].tolist()
 
         assert df['index'].tolist() == list(range(1, len(self.labels) + 1)), "Indices must be 1-based and consecutive"
-
+        self.labels = [''] + self.labels  # Add empty label for index 0
 
     def __len__(self):
         return len(self.metadata)

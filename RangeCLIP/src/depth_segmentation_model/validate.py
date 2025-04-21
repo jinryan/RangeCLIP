@@ -7,12 +7,11 @@ import tqdm
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..'))
 sys.path.insert(0, project_root)
 from utils.src.log_utils import log
-from RangeCLIP.src.depth_segmentation_model.log import log_validation_summary
+from RangeCLIP.src.depth_segmentation_model.log import log_validation_summary, visualize_tensorboard_image
 from torchvision.transforms.functional import to_pil_image
 import numpy as np
-from PIL import ImageDraw, ImageFont
-import matplotlib.cm as cm
-from collections import defaultdict
+from torch.cuda.amp import autocast
+
 
 def log_gpu_usage(tag=""):
     allocated = torch.cuda.memory_allocated() / 1024**2
@@ -30,7 +29,9 @@ def unwrap_model(model):
 
 def validate_model(
     model,
+    candidate_text_embeddings,
     candidate_labels,
+    equivalence_tensor,
     dataloader,
     step,
     best_results,
@@ -45,33 +46,66 @@ def validate_model(
     total_loss = 0.0
     n_batches = 0
     
+    num_predicted = 0
+    torch.cuda.empty_cache()
+    with torch.no_grad(), autocast():
+        # print(f"[Step {step}] Allocated: {torch.cuda.memory_allocated() / 1024**2:.1f} MB, Reserved: {torch.cuda.memory_reserved() / 1024**2:.1f} MB")
+        correct_pixels = 0
+        total_pixels = 0
 
-    with torch.no_grad():
-        print(f"[Step {step}] Allocated: {torch.cuda.memory_allocated() / 1024**2:.1f} MB, Reserved: {torch.cuda.memory_reserved() / 1024**2:.1f} MB")
-
-        candidate_text_embeddings = unwrap_model(model).text_encoder(candidate_labels).to(device)
         for batch in tqdm.tqdm(dataloader, desc=f'Validation Step {step}'):
-
+            
+            
             depth = batch['depth'].to(device)        # [B, 1, H, W]
             segmentation = batch['segmentation'].to(device)  # [B, H, W]
+            # print(f"[Step {step}] Depth shape: {depth.shape}, Segmentation shape: {segmentation.shape}")
             
-            log_gpu_usage("Before forward")
-            # Forward pass
-            output = model(depth)                       # [B, D, H, W]
-            log_gpu_usage("After forward")
+            pred_segmentation, output, temperature = unwrap_model(model).predict(
+                depth_maps=depth,
+                candidate_text_embeddings=candidate_text_embeddings,
+                segmentation=segmentation,  # required for extracting true labels
+                num_negatives=300  # can tune based on memory
+            )
+            
+            # log_gpu_usage("After forward")
+            gt_flat = segmentation.view(-1)                     # shape [BHW]
+            pred_flat = pred_segmentation.view(-1)              # shape [BHW]
+
+            # Vectorized batch lookup
+            correct_mask = equivalence_tensor[gt_flat, pred_flat]  # shape [BHW], bool
+            correct_pixels += correct_mask.sum().item()
+            total_pixels += correct_mask.numel()
+
+
+            
+            if num_predicted < n_sample_per_summary and summary_writer is not None:
+                image = batch['image'].to(device)        # [B, 3, H, W]
+                grid_image = visualize_tensorboard_image(
+                    depth, image, segmentation, pred_segmentation, candidate_labels
+                )
+                summary_writer.add_image(f"val/qualitative_preds/{num_predicted}", grid_image, global_step=step)
+
 
             # Compute loss
-            torch.cuda.empty_cache()
-            log_gpu_usage("Empty cache before loss")
             loss, loss_info = unwrap_model(model).compute_loss(
-                output, segmentation, candidate_text_embeddings
+                output, segmentation, candidate_text_embeddings, temperature
             )
-            log_gpu_usage("After loss computation")
+            # log_gpu_usage("After loss computation")
 
             total_loss += loss.item()
             n_batches += 1
+            
+            del output, loss, pred_segmentation
+            torch.cuda.empty_cache()
+            
+            num_predicted += len(batch['depth'])
+            # log_gpu_usage("After batch cleanup")
+
 
     avg_loss = total_loss / max(n_batches, 1)
+    pixel_accuracy = correct_pixels / total_pixels if total_pixels > 0 else 0
+    log(f"[Step {step}] Validation pixel accuracy: {pixel_accuracy:.4f}", log_path)
+
 
     # Optionally log to summary writer
     if summary_writer is not None:

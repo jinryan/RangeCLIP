@@ -3,15 +3,17 @@
 # Paths
 labeled_metadata_path="data/sunrgbd/SUNRGBD/metadata.csv"
 labels_path="data/sunrgbd/SUNRGBD/candidate_labels.csv"
+equivalence_dict_path="data/sunrgbd/SUNRGBD/label_similarity_sets.csv"
 
 # Training & model config
-batch_size=32
+batch_size=2
 n_height=256
 n_width=256
+
 unet_architecture="resnet"
 clip_model_name="openai/clip-vit-base-patch32"
 learning_rates=(2e-4 1e-4 5e-5 1e-5)
-learning_schedule=(5 10 15 20)
+learning_schedule=(10 20 30 35)
 scheduler_type="multi_step"
 w_weight_decay=1e-4
 
@@ -28,9 +30,11 @@ restore_path_encoder=""     # Set to path if restoring encoder separately
 device="gpu"
 n_thread=8
 
-python RangeCLIP/src/depth_segmentation_model/train.py \
+export PYTORCH_CUDA_ALLOC_CONF=max_split_size_mb:128,garbage_collection_threshold:0.6
+torchrun --nproc_per_node=2 RangeCLIP/src/depth_segmentation_model/train.py \
     --labeled_metadata_path "$labeled_metadata_path" \
     --labels_path "$labels_path" \
+    --equivalence_dict_path "$equivalence_dict_path" \
     --batch_size $batch_size \
     --n_height $n_height \
     --n_width $n_width \
