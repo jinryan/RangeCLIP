@@ -18,7 +18,7 @@ from matplotlib import cm
 
 
 from RangeCLIP.src.depth_segmentation_model.model import DepthUNet
-from RangeCLIP.src.depth_segmentation_model.dataloader import setup_dataloaders, load_equivalence_dict, build_equivalence_tensor
+from RangeCLIP.src.depth_segmentation_model.dataloader import setup_dataloaders, load_equivalence_dict, build_equivalence_tensor, load_label_similarity_sets
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..'))
 sys.path.insert(0, project_root)
 from utils.src.log_utils import log
@@ -46,6 +46,18 @@ def setup_device(device):
     device = 'cuda' if device in ['gpu', 'cuda'] and torch.cuda.is_available() else 'cpu'
     return torch.device(device)
 
+def get_curriculum_schedule(epoch: int, total_epochs: int) -> dict:
+    pct = epoch / total_epochs
+    pct_medium = max(0.0, 1.0 - 4.0 * pct)   # from 1.0 → 0.0 over 25% of training
+    pct_hard = min(0.8, pct * 1.2)           # from 0.0 → 0.8 linearly
+    pct_rand = 1.0 - pct_medium - pct_hard
+
+    return {
+        "pct_medium": round(pct_medium, 4),
+        "pct_hard": round(pct_hard, 4),
+        "pct_rand": round(pct_rand, 4),
+    }
+
 
 
 
@@ -71,7 +83,7 @@ def train_depth_clip_model(
         clip_model_name,
         device='cuda',
         n_thread=8,
-        accumulation_steps = 4,
+        accumulation_steps = 8,
         local_rank=0):
     
     scaler = GradScaler()
@@ -103,8 +115,9 @@ def train_depth_clip_model(
     equivalence_dict = load_equivalence_dict(equivalence_dict_path)
     equivalence_tensor = build_equivalence_tensor(equivalence_dict, num_classes=len(candidate_labels)).to(device)
     equivalence_tensor = equivalence_tensor.to(device)
-    print(f"Equivalence tensor shape: {equivalence_tensor.shape}")
-    print(f"Memory: {equivalence_tensor.numel() / 8 / 1024 / 1024:.2f} MB")
+    
+    similarity_sets = load_label_similarity_sets(equivalence_dict_path, len(candidate_labels))
+    
 
     
     try:
@@ -192,6 +205,8 @@ def train_depth_clip_model(
                                     candidate_text_embeddings=candidate_text_embeddings,
                                     candidate_labels=candidate_labels,
                                     equivalence_tensor=equivalence_tensor,
+                                    similarity_sets=similarity_sets,
+                                    curriculum=get_curriculum_schedule(0, n_epoch),
                                     dataloader=val_dataloader,
                                     step=train_step,
                                     best_results=best_results,
@@ -210,7 +225,8 @@ def train_depth_clip_model(
     
     
     loss = None
-    output_segmentation = None
+    output = None
+    
     # ================ Main training loop ================
     for epoch in range(1, n_epoch + 1):
         train_sampler.set_epoch(epoch)  # Inside the training loop, once per epoch
@@ -221,11 +237,12 @@ def train_depth_clip_model(
         for batch in tqdm.tqdm(train_dataloader, desc=f'{local_rank}: {epoch}/{n_epoch}'):
             if loss is not None:
                 del loss
-            if output_segmentation is not None:
-                del output_segmentation
+            if output is not None:
+                del output
             
             torch.cuda.empty_cache()
-            train_step += 1
+            curriculum = get_curriculum_schedule(epoch, n_epoch)
+
             n_batches += 1
             
             # Move batch to device
@@ -238,10 +255,18 @@ def train_depth_clip_model(
             
             # Forward through network
             
+            
             with autocast():
-                output_segmentation, temperature = model(depth)
+                output, temperature = model(depth)
                 loss, loss_info = unwrap_model(model).compute_loss(
-                    output_segmentation, segmentation, candidate_text_embeddings, temperature
+                    output,
+                    segmentation,
+                    candidate_text_embeddings,
+                    temperature,
+                    label_similarity_sets=similarity_sets,
+                    pct_medium=curriculum['pct_medium'],
+                    pct_hard=curriculum['pct_hard'],
+                    pct_rand=curriculum['pct_rand'],
                 )
             
             # Zero gradients, backpropagate, and update weights
@@ -266,11 +291,17 @@ def train_depth_clip_model(
                         image_samples=image,
                         depth_samples=depth,
                         ground_truth_segmentation_samples=segmentation,
-                        output_segmentation_samples=output_segmentation,
+                        output_segmentation_samples=output,
                         candidate_labels=candidate_labels,
                         loss_info=loss_info,
                         n_sample_per_summary=n_sample_per_summary
                     )
+                    
+                    train_summary_writer.add_scalars("train/curriculum", {
+                        "pct_medium": curriculum["pct_medium"],
+                        "pct_hard": curriculum["pct_hard"],
+                        "pct_rand": curriculum["pct_rand"],
+                    }, global_step=train_step)
                     
                     # Validate model
                     with torch.no_grad():
@@ -279,6 +310,8 @@ def train_depth_clip_model(
                                     candidate_text_embeddings=candidate_text_embeddings,
                                     candidate_labels=candidate_labels,
                                     equivalence_tensor=equivalence_tensor,
+                                    similarity_sets=similarity_sets,
+                                    curriculum=curriculum,
                                     dataloader=val_dataloader,
                                     step=train_step,
                                     best_results=best_results,
@@ -301,7 +334,7 @@ def train_depth_clip_model(
             
     
         avg_loss = total_loss / max(n_batches, 1)
-        log(f"Rank {local_rank} | Epoch {epoch} | Average loss: {avg_loss}", log_path)
+        log(f"Rank {local_rank} | Epoch {epoch} | Step {train_step} | Average loss: {avg_loss}", log_path)
         
         # Update learning rate scheduler
         scheduler.step()

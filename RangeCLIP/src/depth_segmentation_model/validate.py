@@ -32,12 +32,14 @@ def validate_model(
     candidate_text_embeddings,
     candidate_labels,
     equivalence_tensor,
+    similarity_sets,
+    curriculum,
     dataloader,
     step,
     best_results,
     device,
     summary_writer=None,
-    n_sample_per_summary=8,
+    n_sample_per_summary=16,
     max_failed_log=16,
     log_path=None
 ):
@@ -88,7 +90,14 @@ def validate_model(
 
             # Compute loss
             loss, loss_info = unwrap_model(model).compute_loss(
-                output, segmentation, candidate_text_embeddings, temperature
+                output,
+                segmentation,
+                candidate_text_embeddings,
+                temperature,
+                label_similarity_sets=similarity_sets,
+                pct_medium=curriculum['pct_medium'],
+                pct_hard=curriculum['pct_hard'],
+                pct_rand=curriculum['pct_rand'],
             )
             # log_gpu_usage("After loss computation")
 

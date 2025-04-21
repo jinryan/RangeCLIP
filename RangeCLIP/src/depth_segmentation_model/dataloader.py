@@ -163,3 +163,21 @@ def build_equivalence_tensor(equivalence_dict, num_classes):
         for pred in equivalents:
             lookup[gt, pred] = True
     return lookup
+
+import pandas as pd
+import ast
+
+def load_label_similarity_sets(path, num_classes):
+    df = pd.read_csv(path)
+    medium_sets = [[] for _ in range(num_classes)]
+    hard_sets = [[] for _ in range(num_classes)]
+
+    for _, row in df.iterrows():
+        idx = int(row['index'])
+        medium_sets[idx] = ast.literal_eval(row['medium'])
+        hard_sets[idx] = ast.literal_eval(row['hard'])
+
+    return {
+        'medium': medium_sets,
+        'hard': hard_sets,
+    }

@@ -19,9 +19,9 @@ w_weight_decay=1e-4
 
 # Checkpoint & logging
 checkpoint_path="checkpoints"
-n_step_per_checkpoint=1000
+n_step_per_checkpoint=2000
 n_step_per_summary=1000
-n_sample_per_summary=4
+n_sample_per_summary=16
 validation_start_step=5000
 restore_path_model=""       # Set to path if resuming from checkpoint
 restore_path_encoder=""     # Set to path if restoring encoder separately

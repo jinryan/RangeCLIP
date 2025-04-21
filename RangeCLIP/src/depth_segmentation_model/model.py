@@ -9,7 +9,7 @@ sys.path.insert(0, project_root)
 from utils.src.encoder import DepthEncoder
 from utils.src.decoder import DepthDecoder
 from torch.cuda.amp import autocast
-
+import numpy as np
 
 class DepthUNet(nn.Module):
     """
@@ -160,79 +160,102 @@ class DepthUNet(nn.Module):
 
         
 
-    def compute_loss(self, pred, target_indices, candidate_text_embeddings, temperature, percent_image=0.2, k_distractors=50):
+    def compute_loss(
+        self,
+        pred,
+        target_indices,
+        candidate_text_embeddings,
+        temperature,
+        label_similarity_sets,
+        percent_image=0.2,
+        k_distractors=50,
+        pct_medium=0.0,
+        pct_hard=0.75,
+        pct_rand=0.25,
+    ):
         """
-        Hybrid contrastive loss: in-batch class labels + random distractors.
+        Hybrid contrastive loss with difficulty-aware distractors.
         """
-        # pred: [B, D, H, W]
-        # target_indices: [B, H, W]
+        assert abs(pct_medium + pct_hard + pct_rand - 1.0) < 1e-4, "Sum of percentages must be 1."
+
         B, D, H, W = [int(s) for s in pred.shape]
         C = candidate_text_embeddings.shape[0]
         device = pred.device
         num_samples = int(percent_image * H * W)
 
-        
-        
+        # Flatten and sample
+        pred_flat = pred.reshape(B, D, -1)
+        target_flat = target_indices.reshape(B, -1)
+        rand_indices = torch.randint(0, H * W, (B, num_samples), device=device)
+        pred_samples = torch.gather(pred_flat, 2, rand_indices.unsqueeze(1).expand(-1, D, -1))
+        label_samples = torch.gather(target_flat, 1, rand_indices)
+        pred_samples = pred_samples.transpose(1, 2).reshape(-1, D)
+        label_samples = label_samples.reshape(-1)
 
-        # Flatten for batch sampling
-        pred_flat = pred.reshape(B, D, -1)                   # [B, D, HW]
-        target_flat = target_indices.reshape(B, -1)          # [B, HW]
-
-        # Random sample indices for each batch
-        rand_indices = torch.randint(0, H * W, (B, num_samples), device=device)  # [B, num_samples]
-
-        # Gather predictions and labels
-        pred_samples = torch.gather(pred_flat, 2, rand_indices.unsqueeze(1).expand(-1, D, -1))  # [B, D, K]
-        label_samples = torch.gather(target_flat, 1, rand_indices)                              # [B, K]
-
-        # Flatten across batch
-        pred_samples = pred_samples.transpose(1, 2).reshape(-1, D)       # [B*K, D]
-        label_samples = label_samples.reshape(-1)                        # [B*K]
-        
         if pred_samples.numel() == 0:
             raise RuntimeError("No valid pixels found for loss computation.")
 
-        # Step 1: get unique labels in this batch
         unique_labels = torch.unique(label_samples)
 
-        # Step 2: sample distractors
-        all_indices = torch.arange(C, device=device)
-        remaining = all_indices[~torch.isin(all_indices, unique_labels)]
-        distractor_labels = remaining[torch.randperm(len(remaining))[:min(k_distractors, len(remaining))]]
+        distractor_indices = set()
 
-        # Step 3: combine and extract contrastive set
-        contrast_indices = torch.cat([unique_labels, distractor_labels], dim=0)
+        n_medium = int(k_distractors * pct_medium)
+        n_hard = int(k_distractors * pct_hard)
+        n_rand = k_distractors - n_medium - n_hard
+
+        # Get medium/hard sets
+        if n_medium > 0:
+            for label in unique_labels.tolist():
+                distractor_indices.update(label_similarity_sets['medium'][label])
+        if n_hard > 0:
+            for label in unique_labels.tolist():
+                distractor_indices.update(label_similarity_sets['hard'][label])
+
+        distractor_indices = list(distractor_indices)
+        distractor_indices = [d for d in distractor_indices if d not in unique_labels]
+
+        medium_and_hard = (
+            np.random.choice(distractor_indices, size=n_medium + n_hard, replace=False)
+            if len(distractor_indices) >= n_medium + n_hard
+            else distractor_indices
+        )
+        medium_and_hard = torch.tensor(medium_and_hard, device=device, dtype=torch.long)
+
+        # Random distractors
+        all_indices = torch.arange(C, device=device)
+        mask = ~torch.isin(all_indices, torch.cat([unique_labels, medium_and_hard], dim=0))
+        remaining = all_indices[mask]
+
+        rand_distractors = remaining[torch.randperm(len(remaining))[:n_rand]] if n_rand > 0 else torch.tensor([], device=device, dtype=torch.long)
+
+        all_distractors = torch.cat([medium_and_hard, rand_distractors], dim=0)
+
+        # Final contrast set
+        contrast_indices = torch.cat([unique_labels, all_distractors], dim=0)
         contrast_text_embeddings = candidate_text_embeddings[contrast_indices]
 
-
-        # Step 4: remap labels
-        # label_map = {idx.item(): new_idx for new_idx, idx in enumerate(contrast_indices)}
-        # label_samples_mapped = torch.tensor([label_map[l.item()] for l in label_samples], device=device)
-        # Step 4: remap labels (safe version)
-        # Create a tensor mapping from original label index to new index in contrast set
-        mapping_array = torch.full((C,), -1, dtype=torch.long, device=device)  # C = total candidate labels
+        # Map labels
+        mapping_array = torch.full((C,), -1, dtype=torch.long, device=device)
         mapping_array[contrast_indices] = torch.arange(contrast_indices.shape[0], device=device)
         label_samples_mapped = mapping_array[label_samples]
-
 
         if (label_samples_mapped == -1).any():
             raise ValueError("Some labels in the batch were not found in the contrastive index set.")
 
-        # Remap labels
-        label_samples_mapped = mapping_array[label_samples]
-
-
-        # Step 5: logits + loss
-        logits = pred_samples @ contrast_text_embeddings.T  # [N, C']
+        logits = pred_samples @ contrast_text_embeddings.T
         logits /= temperature
         loss = F.cross_entropy(logits, label_samples_mapped)
 
         loss_info = {
             'loss': loss.item(),
             'temperature': temperature.item(),
+            'n_distractors': len(all_distractors),
+            'n_unique_labels': len(unique_labels),
         }
 
         return loss, loss_info
+
+
 
 
     

@@ -291,7 +291,7 @@ def log_validation_summary(
 
         # Log scalar loss values
         for name, val in loss_info.items():
-            val_summary_writer.add_scalar(f'train/loss_{name}', val, global_step=val_step)
+            val_summary_writer.add_scalar(f'val/loss_{name}', val, global_step=val_step)
 
 
 
