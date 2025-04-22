@@ -112,4 +112,4 @@ if __name__ == '__main__':
         local_rank=local_rank,
     )
     
-    cleanup_ddp()
+    # cleanup_ddp()

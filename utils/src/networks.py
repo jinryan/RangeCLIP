@@ -6,6 +6,48 @@ import matplotlib.pyplot as plt
 from . import net_utils
 from .log_utils import apply_colormap
 
+class ASPP(nn.Module):
+    def __init__(self, in_channels, out_channels, dilation_rates=[1, 6, 12, 18]):
+        super(ASPP, self).__init__()
+        
+        self.branches = nn.ModuleList()
+
+        for rate in dilation_rates:
+            self.branches.append(
+                nn.Sequential(
+                    nn.Conv2d(in_channels, out_channels, kernel_size=3 if rate > 1 else 1,
+                              padding=rate if rate > 1 else 0, dilation=rate, bias=False),
+                    nn.GroupNorm(num_groups=32, num_channels=out_channels),
+                    nn.ReLU(inplace=True)
+                )
+            )
+
+        self.global_pool = nn.Sequential(
+            nn.AdaptiveAvgPool2d((1, 1)),
+            nn.Conv2d(in_channels, out_channels, kernel_size=1, bias=False),
+            nn.GroupNorm(num_groups=32, num_channels=out_channels),
+            nn.ReLU(inplace=True)
+        )
+
+        self.project = nn.Sequential(
+            nn.Conv2d(len(dilation_rates) * out_channels + out_channels, out_channels, kernel_size=1, bias=False),
+            nn.GroupNorm(num_groups=32, num_channels=out_channels),
+            nn.ReLU(inplace=True)
+        )
+
+    def forward(self, x):
+        size = x.shape[2:]
+        out = [branch(x) for branch in self.branches]
+
+        global_feat = self.global_pool(x)
+        global_feat = F.interpolate(global_feat, size=size, mode='bilinear', align_corners=True)
+
+        out.append(global_feat)
+
+        out = torch.cat(out, dim=1)
+        out = self.project(out)
+        out = F.normalize(out, p=2, dim=1)
+        return out
 
 
 class TextEncoder(nn.Module):

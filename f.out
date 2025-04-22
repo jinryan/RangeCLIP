@@ -1,0 +1,332 @@
+Training input paths:
+Training input paths:
+data/sunrgbd/SUNRGBD/metadata.csv
+Input settings:
+n_batch=2  n_height=256  n_width=256
+data/sunrgbd/SUNRGBD/metadata.csv
+
+Input settings:
+n_batch=2  n_height=256  n_width=256
+
+Network settings:
+model_architecture=resnet
+Network settings:Weight settings:
+
+n_parameter=29908929
+model_architecture=resnet
+
+Weight settings:
+Training settings:
+n_parameter=29908929
+n_sample=6201  n_epoch=70  n_step=217070
+
+scheduler type: multi_step
+Training settings:
+n_sample=6201  n_epoch=70  n_step=217070
+scheduler type: multi_step
+scheduler: multi_step, learning_schedule=[0-31000 : 0.0002, 31000-62000 : 0.0001, 62000-93000 : 5e-05, 93000-124000 : 2e-05, 124000-155000 : 5e-05, 155000-186000 : 1e-05, 186000-217000 : 5e-05]
+
+scheduler: multi_step, learning_schedule=[0-31000 : 0.0002, 31000-62000 : 0.0001, 62000-93000 : 5e-05, 93000-124000 : 2e-05, 124000-155000 : 5e-05, 155000-186000 : 1e-05, 186000-217000 : 5e-05]
+Loss function settings:
+
+Loss function settings:w_weight_decay=1.0e-04
+
+w_weight_decay=1.0e-04
+
+
+Checkpoint settings:
+Checkpoint settings:
+checkpoint_path=checkpoints
+checkpoint_path=checkpoints
+checkpoint_save_frequency=1000
+checkpoint_save_frequency=1000
+validation_start_step=5000
+validation_start_step=5000
+
+
+Tensorboard settings:
+Tensorboard settings:
+event_path=checkpoints/tensorboard
+event_path=checkpoints/tensorboard
+log_summary_frequency=500  n_sample_per_summary=32  
+log_summary_frequency=500  n_sample_per_summary=32  
+restore_path=checkpoints/checkpoints/depth_segmentation_model-6000.pth
+restore_path=checkpoints/checkpoints/depth_segmentation_model-6000.pth
+
+
+Hardware settings:
+Hardware settings:
+device=cuda
+device=cuda
+n_thread=8
+n_thread=8
+
+
+Begin training...
+[Step 6000] Validation pixel accuracy: 0.5717
+[Step 6000] Validation mIoU (w/ equivalence): 0.0148
+[Val] Step 6000 | Loss: 2.4521, Contrastive: 2.1086
+Best validation loss: 2.4521 at step 6000
+Begin training...
+Rank 1 | Epoch 1 | Step 6193 | Loss : 0.26744427026244644 | LR: 0.0002
+Rank 0 | Epoch 1 | Step 6193 | Loss : 0.2811722529212428 | LR: 0.0002
+Rank 1 | Epoch 2 | Step 6386 | Loss : 0.2682975543749765 | LR: 0.0002
+Rank 0 | Epoch 2 | Step 6386 | Loss : 0.26369851873946315 | LR: 0.0002
+[Step 6500] Validation pixel accuracy: 0.5581
+[Step 6500] Validation mIoU (w/ equivalence): 0.0123
+[Val] Step 6500 | Loss: 2.0920, Contrastive: 1.9830
+Best validation loss: 2.0920 at step 6500
+Rank 0 | Epoch 3 | Step 6579 | Loss : 0.25705356131563534 | LR: 0.0002
+Rank 1 | Epoch 3 | Step 6579 | Loss : 0.2534281901744981 | LR: 0.0002
+Rank 1 | Epoch 4 | Step 6772 | Loss : 0.24895235151052475 | LR: 0.0002Rank 0 | Epoch 4 | Step 6772 | Loss : 0.2514985034657266 | LR: 0.0002
+
+Rank 0 | Epoch 5 | Step 6965 | Loss : 0.24353328049954973 | LR: 0.0002
+Rank 1 | Epoch 5 | Step 6965 | Loss : 0.2410912971190838 | LR: 0.0002
+[Step 7000] Validation pixel accuracy: 0.5540
+[Step 7000] Validation mIoU (w/ equivalence): 0.0129
+[Val] Step 7000 | Loss: 2.0400, Contrastive: 1.9383
+Best validation loss: 2.0400 at step 7000
+Step=  7000/223070  Loss=0.2356734  Time Elapsed=0.51h  Time Remaining=110.36h
+Rank 1 | Epoch 6 | Step 7158 | Loss : 0.2397337221574289 | LR: 0.0002
+Rank 0 | Epoch 6 | Step 7158 | Loss : 0.2387250552214489 | LR: 0.0002
+Rank 0 | Epoch 7 | Step 7351 | Loss : 0.2336980930186924 | LR: 0.0002
+Rank 1 | Epoch 7 | Step 7351 | Loss : 0.22843202550948594 | LR: 0.0002
+[Step 7500] Validation pixel accuracy: 0.5594
+[Step 7500] Validation mIoU (w/ equivalence): 0.0144
+[Val] Step 7500 | Loss: 1.9704, Contrastive: 1.8765
+Best validation loss: 1.9704 at step 7500
+Rank 0 | Epoch 8 | Step 7544 | Loss : 0.22212348947870916 | LR: 0.0002
+Rank 1 | Epoch 8 | Step 7544 | Loss : 0.23687319743200905 | LR: 0.0002
+Rank 1 | Epoch 9 | Step 7737 | Loss : 0.21765490243008717 | LR: 0.0002
+Rank 0 | Epoch 9 | Step 7737 | Loss : 0.22637903570665596 | LR: 0.0002
+Rank 0 | Epoch 10 | Step 7930 | Loss : 0.2225895795025356 | LR: 0.0002
+Rank 1 | Epoch 10 | Step 7930 | Loss : 0.21628259384879175 | LR: 0.0002
+[Step 8000] Validation pixel accuracy: 0.5765
+[Step 8000] Validation mIoU (w/ equivalence): 0.0175
+[Val] Step 8000 | Loss: 1.8830, Contrastive: 1.7875
+Best validation loss: 1.8830 at step 8000
+Step=  8000/223070  Loss=0.2032398  Time Elapsed=1.02h  Time Remaining=109.36h
+Rank 0 | Epoch 11 | Step 8123 | Loss : 0.21251139751215672 | LR: 2e-05
+Rank 1 | Epoch 11 | Step 8123 | Loss : 0.20801832561665867 | LR: 2e-05
+Rank 0 | Epoch 12 | Step 8316 | Loss : 0.20431821071422163 | LR: 2e-05
+Rank 1 | Epoch 12 | Step 8316 | Loss : 0.2046848002029824 | LR: 2e-05
+[Step 8500] Validation pixel accuracy: 0.5763
+[Step 8500] Validation mIoU (w/ equivalence): 0.0177
+[Val] Step 8500 | Loss: 1.8891, Contrastive: 1.7873
+Best validation loss: 1.8830 at step 8000
+Rank 1 | Epoch 13 | Step 8509 | Loss : 0.2005187033294396 | LR: 2e-05
+Rank 0 | Epoch 13 | Step 8509 | Loss : 0.20109607715526392 | LR: 2e-05
+Rank 1 | Epoch 14 | Step 8702 | Loss : 0.19991084724819105 | LR: 2e-05
+Rank 0 | Epoch 14 | Step 8702 | Loss : 0.2019193391725807 | LR: 2e-05
+Rank 1 | Epoch 15 | Step 8895 | Loss : 0.19816773639596189 | LR: 2e-05
+Rank 0 | Epoch 15 | Step 8895 | Loss : 0.19875527439648624 | LR: 2e-05
+[Step 9000] Validation pixel accuracy: 0.5732
+[Step 9000] Validation mIoU (w/ equivalence): 0.0178
+[Val] Step 9000 | Loss: 1.9084, Contrastive: 1.8043
+Best validation loss: 1.8830 at step 8000
+Step=  9000/223070  Loss=0.1897413  Time Elapsed=1.48h  Time Remaining=105.76h
+Rank 1 | Epoch 16 | Step 9088 | Loss : 0.19692926043210252 | LR: 2e-05
+Rank 0 | Epoch 16 | Step 9088 | Loss : 0.1922580012231293 | LR: 2e-05
+Rank 1 | Epoch 17 | Step 9281 | Loss : 0.1912324598030105 | LR: 2e-05Rank 0 | Epoch 17 | Step 9281 | Loss : 0.18655842932549166 | LR: 2e-05
+
+Rank 1 | Epoch 18 | Step 9474 | Loss : 0.19047956276742906 | LR: 2e-05
+Rank 0 | Epoch 18 | Step 9474 | Loss : 0.19768769718668003 | LR: 2e-05
+[Step 9500] Validation pixel accuracy: 0.5764
+[Step 9500] Validation mIoU (w/ equivalence): 0.0175
+[Val] Step 9500 | Loss: 1.9065, Contrastive: 1.8022
+Best validation loss: 1.8830 at step 8000
+Rank 0 | Epoch 19 | Step 9667 | Loss : 0.19839345343372364 | LR: 2e-05
+Rank 1 | Epoch 19 | Step 9667 | Loss : 0.19288894711689628 | LR: 2e-05
+Rank 0 | Epoch 20 | Step 9860 | Loss : 0.1945040565698258 | LR: 2e-05
+Rank 1 | Epoch 20 | Step 9860 | Loss : 0.18944614372877258 | LR: 2e-05
+[Step 10000] Validation pixel accuracy: 0.5763
+[Step 10000] Validation mIoU (w/ equivalence): 0.0182
+[Val] Step 10000 | Loss: 1.9128, Contrastive: 1.8060
+Best validation loss: 1.8830 at step 8000
+Step= 10000/223070  Loss=0.1977088  Time Elapsed=1.89h  Time Remaining=100.68h
+Rank 1 | Epoch 21 | Step 10053 | Loss : 0.18874336651724238 | LR: 2.0000000000000003e-06
+Rank 0 | Epoch 21 | Step 10053 | Loss : 0.1951608024344543 | LR: 2.0000000000000003e-06
+Rank 1 | Epoch 22 | Step 10246 | Loss : 0.18983161098135568 | LR: 2.0000000000000003e-06
+Rank 0 | Epoch 22 | Step 10246 | Loss : 0.18961900924308311 | LR: 2.0000000000000003e-06
+Rank 1 | Epoch 23 | Step 10439 | Loss : 0.18587691981557738 | LR: 2.0000000000000003e-06
+Rank 0 | Epoch 23 | Step 10439 | Loss : 0.1963813266683119 | LR: 2.0000000000000003e-06
+[Step 10500] Validation pixel accuracy: 0.5752
+[Step 10500] Validation mIoU (w/ equivalence): 0.0175
+[Val] Step 10500 | Loss: 1.9159, Contrastive: 1.8109
+Best validation loss: 1.8830 at step 8000
+Rank 1 | Epoch 24 | Step 10632 | Loss : 0.1856909487686009 | LR: 2.0000000000000003e-06
+Rank 0 | Epoch 24 | Step 10632 | Loss : 0.19465371452928207 | LR: 2.0000000000000003e-06
+Rank 1 | Epoch 25 | Step 10825 | Loss : 0.18980537231413194 | LR: 2.0000000000000003e-06
+Rank 0 | Epoch 25 | Step 10825 | Loss : 0.18986272005065116 | LR: 2.0000000000000003e-06
+[Step 11000] Validation pixel accuracy: 0.5761
+[Step 11000] Validation mIoU (w/ equivalence): 0.0175
+[Val] Step 11000 | Loss: 1.9140, Contrastive: 1.8088
+Best validation loss: 1.8830 at step 8000
+Step= 11000/223070  Loss=0.1907546  Time Elapsed=2.31h  Time Remaining=97.96h
+Rank 0 | Epoch 26 | Step 11018 | Loss : 0.19031858320680925 | LR: 2.0000000000000003e-06
+Rank 1 | Epoch 26 | Step 11018 | Loss : 0.1909657317585278 | LR: 2.0000000000000003e-06
+Rank 0 | Epoch 27 | Step 11211 | Loss : 0.18006288364452402 | LR: 2.0000000000000003e-06
+Rank 1 | Epoch 27 | Step 11211 | Loss : 0.19631497519467161 | LR: 2.0000000000000003e-06
+Rank 1 | Epoch 28 | Step 11404 | Loss : 0.18725912851990814 | LR: 2.0000000000000003e-06
+Rank 0 | Epoch 28 | Step 11404 | Loss : 0.1836587534976129 | LR: 2.0000000000000003e-06
+[Step 11500] Validation pixel accuracy: 0.5737
+[Step 11500] Validation mIoU (w/ equivalence): 0.0186
+[Val] Step 11500 | Loss: 1.9280, Contrastive: 1.8210
+Best validation loss: 1.8830 at step 8000
+Rank 0 | Epoch 29 | Step 11597 | Loss : 0.1801355609313194 | LR: 2.0000000000000003e-06
+Rank 1 | Epoch 29 | Step 11597 | Loss : 0.1868410590707947 | LR: 2.0000000000000003e-06
+Rank 0 | Epoch 30 | Step 11790 | Loss : 0.19076438140066176 | LR: 2.0000000000000003e-06
+Rank 1 | Epoch 30 | Step 11790 | Loss : 0.18698625189343882 | LR: 2.0000000000000003e-06
+Rank 1 | Epoch 31 | Step 11983 | Loss : 0.17964015627 | LR: 2.0000000000000004e-07
+Rank 0 | Epoch 31 | Step 11983 | Loss : 0.18463836884405946 | LR: 2.0000000000000004e-07
+[Step 12000] Validation pixel accuracy: 0.5764
+[Step 12000] Validation mIoU (w/ equivalence): 0.0180
+[Val] Step 12000 | Loss: 1.9197, Contrastive: 1.8124
+Best validation loss: 1.8830 at step 8000
+Step= 12000/223070  Loss=0.1819455  Time Elapsed=2.73h  Time Remaining=95.98h
+Rank 1 | Epoch 32 | Step 12176 | Loss : 0.1868872471115132 | LR: 2.0000000000000004e-07
+Rank 0 | Epoch 32 | Step 12176 | Loss : 0.18036215485995297 | LR: 2.0000000000000004e-07
+Rank 0 | Epoch 33 | Step 12369 | Loss : 0.18393151585611037 | LR: 2.0000000000000004e-07
+Rank 1 | Epoch 33 | Step 12369 | Loss : 0.19153987832483232 | LR: 2.0000000000000004e-07
+[Step 12500] Validation pixel accuracy: 0.5752
+[Step 12500] Validation mIoU (w/ equivalence): 0.0178
+[Val] Step 12500 | Loss: 1.9288, Contrastive: 1.8214
+Best validation loss: 1.8830 at step 8000
+Rank 1 | Epoch 34 | Step 12562 | Loss : 0.18656224344369662 | LR: 2.0000000000000004e-07
+Rank 0 | Epoch 34 | Step 12562 | Loss : 0.18829597308845716 | LR: 2.0000000000000004e-07
+Rank 1 | Epoch 35 | Step 12755 | Loss : 0.19166404302256096 | LR: 2.0000000000000004e-07
+Rank 0 | Epoch 35 | Step 12755 | Loss : 0.18931032111144436 | LR: 2.0000000000000004e-07
+Rank 1 | Epoch 36 | Step 12948 | Loss : 0.18727315360091512 | LR: 2.0000000000000004e-07
+Rank 0 | Epoch 36 | Step 12948 | Loss : 0.1928969217473979 | LR: 2.0000000000000004e-07
+[Step 13000] Validation pixel accuracy: 0.5742
+[Step 13000] Validation mIoU (w/ equivalence): 0.0184
+[Val] Step 13000 | Loss: 1.9383, Contrastive: 1.8302
+Best validation loss: 1.8830 at step 8000
+Step= 13000/223070  Loss=0.1911648  Time Elapsed=3.12h  Time Remaining=93.76h
+Rank 0 | Epoch 37 | Step 13141 | Loss : 0.1863529324299931 | LR: 2.0000000000000004e-07
+Rank 1 | Epoch 37 | Step 13141 | Loss : 0.18507191855363894 | LR: 2.0000000000000004e-07
+Rank 1 | Epoch 38 | Step 13334 | Loss : 0.1883514132833234 | LR: 2.0000000000000004e-07
+Rank 0 | Epoch 38 | Step 13334 | Loss : 0.18804328197642312 | LR: 2.0000000000000004e-07
+[Step 13500] Validation pixel accuracy: 0.5748
+[Step 13500] Validation mIoU (w/ equivalence): 0.0179
+[Val] Step 13500 | Loss: 1.9336, Contrastive: 1.8252
+Best validation loss: 1.8830 at step 8000
+Rank 0 | Epoch 39 | Step 13527 | Loss : 0.18290319255133367 | LR: 2.0000000000000004e-07Rank 1 | Epoch 39 | Step 13527 | Loss : 0.1861673764923076 | LR: 2.0000000000000004e-07
+
+Rank 1 | Epoch 40 | Step 13720 | Loss : 0.18555096235763224 | LR: 2.0000000000000004e-07
+Rank 0 | Epoch 40 | Step 13720 | Loss : 0.18482135502631183 | LR: 2.0000000000000004e-07
+Rank 1 | Epoch 41 | Step 13913 | Loss : 0.1840525933497928 | LR: 2.0000000000000007e-08
+Rank 0 | Epoch 41 | Step 13913 | Loss : 0.19347410656782013 | LR: 2.0000000000000007e-08
+[Step 14000] Validation pixel accuracy: 0.5759
+[Step 14000] Validation mIoU (w/ equivalence): 0.0182
+[Val] Step 14000 | Loss: 1.9358, Contrastive: 1.8271
+Best validation loss: 1.8830 at step 8000
+Step= 14000/223070  Loss=0.1713289  Time Elapsed=3.52h  Time Remaining=91.99h
+Rank 1 | Epoch 42 | Step 14106 | Loss : 0.1929083199389858 | LR: 2.0000000000000007e-08
+Rank 0 | Epoch 42 | Step 14106 | Loss : 0.18461242140574777 | LR: 2.0000000000000007e-08
+Rank 1 | Epoch 43 | Step 14299 | Loss : 0.19348265913947257 | LR: 2.0000000000000007e-08
+Rank 0 | Epoch 43 | Step 14299 | Loss : 0.18541172011683024 | LR: 2.0000000000000007e-08
+Rank 1 | Epoch 44 | Step 14492 | Loss : 0.18511690542951148 | LR: 2.0000000000000007e-08
+Rank 0 | Epoch 44 | Step 14492 | Loss : 0.18697059127487667 | LR: 2.0000000000000007e-08
+[Step 14500] Validation pixel accuracy: 0.5736
+[Step 14500] Validation mIoU (w/ equivalence): 0.0179
+[Val] Step 14500 | Loss: 1.9434, Contrastive: 1.8329
+Best validation loss: 1.8830 at step 8000
+Rank 0 | Epoch 45 | Step 14685 | Loss : 0.18862128917880627 | LR: 2.0000000000000007e-08Rank 1 | Epoch 45 | Step 14685 | Loss : 0.18994647017414706 | LR: 2.0000000000000007e-08
+
+Rank 0 | Epoch 46 | Step 14878 | Loss : 0.1870000606759842 | LR: 2.0000000000000007e-08
+Rank 1 | Epoch 46 | Step 14878 | Loss : 0.185892132781639 | LR: 2.0000000000000007e-08
+[Step 15000] Validation pixel accuracy: 0.5749
+[Step 15000] Validation mIoU (w/ equivalence): 0.0175
+[Val] Step 15000 | Loss: 1.9314, Contrastive: 1.8253
+Best validation loss: 1.8830 at step 8000
+Step= 15000/223070  Loss=0.1908710  Time Elapsed=3.92h  Time Remaining=90.52h
+Rank 1 | Epoch 47 | Step 15071 | Loss : 0.18558100607111047 | LR: 2.0000000000000007e-08
+Rank 0 | Epoch 47 | Step 15071 | Loss : 0.19095602465571518 | LR: 2.0000000000000007e-08
+Rank 0 | Epoch 48 | Step 15264 | Loss : 0.19366528452832465 | LR: 2.0000000000000007e-08
+Rank 1 | Epoch 48 | Step 15264 | Loss : 0.18840559382821612 | LR: 2.0000000000000007e-08
+Rank 1 | Epoch 49 | Step 15457 | Loss : 0.18794287903321222 | LR: 2.0000000000000007e-08
+Rank 0 | Epoch 49 | Step 15457 | Loss : 0.1917359731280742 | LR: 2.0000000000000007e-08
+[Step 15500] Validation pixel accuracy: 0.5751
+[Step 15500] Validation mIoU (w/ equivalence): 0.0176
+[Val] Step 15500 | Loss: 1.9380, Contrastive: 1.8302
+Best validation loss: 1.8830 at step 8000
+Rank 0 | Epoch 50 | Step 15650 | Loss : 0.1902642711765408 | LR: 2.0000000000000007e-08
+Rank 1 | Epoch 50 | Step 15650 | Loss : 0.18559759276209717 | LR: 2.0000000000000007e-08
+Rank 1 | Epoch 51 | Step 15843 | Loss : 0.1950431349904426 | LR: 2.000000000000001e-09
+Rank 0 | Epoch 51 | Step 15843 | Loss : 0.18771478954528897 | LR: 2.000000000000001e-09
+[Step 16000] Validation pixel accuracy: 0.5755
+[Step 16000] Validation mIoU (w/ equivalence): 0.0175
+[Val] Step 16000 | Loss: 1.9308, Contrastive: 1.8258
+Best validation loss: 1.8830 at step 8000
+Step= 16000/223070  Loss=0.1851441  Time Elapsed=4.31h  Time Remaining=89.27h
+Rank 1 | Epoch 52 | Step 16036 | Loss : 0.19144042577459405 | LR: 2.000000000000001e-09
+Rank 0 | Epoch 52 | Step 16036 | Loss : 0.18595179344088303 | LR: 2.000000000000001e-09
+Rank 1 | Epoch 53 | Step 16229 | Loss : 0.18284812519432966 | LR: 2.000000000000001e-09
+Rank 0 | Epoch 53 | Step 16229 | Loss : 0.18901914693994226 | LR: 2.000000000000001e-09
+Rank 0 | Epoch 54 | Step 16422 | Loss : 0.19243098633276984 | LR: 2.000000000000001e-09
+Rank 1 | Epoch 54 | Step 16422 | Loss : 0.18990856212192248 | LR: 2.000000000000001e-09
+[Step 16500] Validation pixel accuracy: 0.5739
+[Step 16500] Validation mIoU (w/ equivalence): 0.0181
+[Val] Step 16500 | Loss: 1.9432, Contrastive: 1.8326
+Best validation loss: 1.8830 at step 8000
+Rank 1 | Epoch 55 | Step 16615 | Loss : 0.18159433245813292 | LR: 2.000000000000001e-09
+Rank 0 | Epoch 55 | Step 16615 | Loss : 0.19297577463901106 | LR: 2.000000000000001e-09
+Rank 0 | Epoch 56 | Step 16808 | Loss : 0.18799483162288222 | LR: 2.000000000000001e-09
+Rank 1 | Epoch 56 | Step 16808 | Loss : 0.18763616982210485 | LR: 2.000000000000001e-09
+[Step 17000] Validation pixel accuracy: 0.5758
+[Step 17000] Validation mIoU (w/ equivalence): 0.0178
+[Val] Step 17000 | Loss: 1.9367, Contrastive: 1.8294
+Best validation loss: 1.8830 at step 8000
+Step= 17000/223070  Loss=0.1944410  Time Elapsed=4.71h  Time Remaining=88.17h
+Rank 1 | Epoch 57 | Step 17001 | Loss : 0.1965256871491516 | LR: 2.000000000000001e-09
+Rank 0 | Epoch 57 | Step 17001 | Loss : 0.19462457113933068 | LR: 2.000000000000001e-09
+Rank 1 | Epoch 58 | Step 17194 | Loss : 0.1924820129658274 | LR: 2.000000000000001e-09
+Rank 0 | Epoch 58 | Step 17194 | Loss : 0.18202665220424918 | LR: 2.000000000000001e-09
+Rank 1 | Epoch 59 | Step 17387 | Loss : 0.1880005009356558 | LR: 2.000000000000001e-09
+Rank 0 | Epoch 59 | Step 17387 | Loss : 0.18680024749256785 | LR: 2.000000000000001e-09
+[Step 17500] Validation pixel accuracy: 0.5750
+[Step 17500] Validation mIoU (w/ equivalence): 0.0175
+[Val] Step 17500 | Loss: 1.9462, Contrastive: 1.8392
+Best validation loss: 1.8830 at step 8000
+Rank 1 | Epoch 60 | Step 17580 | Loss : 0.18845497438481434 | LR: 2.000000000000001e-09
+Rank 0 | Epoch 60 | Step 17580 | Loss : 0.18593938660281928 | LR: 2.000000000000001e-09
+Rank 1 | Epoch 61 | Step 17773 | Loss : 0.18896960652399558 | LR: 2.000000000000001e-10
+Rank 0 | Epoch 61 | Step 17773 | Loss : 0.1940672237792781 | LR: 2.000000000000001e-10
+Rank 0 | Epoch 62 | Step 17966 | Loss : 0.19143907679486152 | LR: 2.000000000000001e-10
+Rank 1 | Epoch 62 | Step 17966 | Loss : 0.18294774532472532 | LR: 2.000000000000001e-10
+[Step 18000] Validation pixel accuracy: 0.5747
+[Step 18000] Validation mIoU (w/ equivalence): 0.0181
+[Val] Step 18000 | Loss: 1.9399, Contrastive: 1.8319
+Best validation loss: 1.8830 at step 8000
+Step= 18000/223070  Loss=0.1815717  Time Elapsed=5.10h  Time Remaining=87.19h
+Rank 1 | Epoch 63 | Step 18159 | Loss : 0.1934044420950771 | LR: 2.000000000000001e-10
+Rank 0 | Epoch 63 | Step 18159 | Loss : 0.18226722102863183 | LR: 2.000000000000001e-10
+Rank 1 | Epoch 64 | Step 18352 | Loss : 0.18870812461475017 | LR: 2.000000000000001e-10
+Rank 0 | Epoch 64 | Step 18352 | Loss : 0.19028073607176696 | LR: 2.000000000000001e-10
+[Step 18500] Validation pixel accuracy: 0.5754
+[Step 18500] Validation mIoU (w/ equivalence): 0.0183
+[Val] Step 18500 | Loss: 1.9412, Contrastive: 1.8332
+Best validation loss: 1.8830 at step 8000
+Rank 1 | Epoch 65 | Step 18545 | Loss : 0.1872286465347122 | LR: 2.000000000000001e-10
+Rank 0 | Epoch 65 | Step 18545 | Loss : 0.19285865985050102 | LR: 2.000000000000001e-10
+Rank 0 | Epoch 66 | Step 18738 | Loss : 0.18430843092308144 | LR: 2.000000000000001e-10
+Rank 1 | Epoch 66 | Step 18738 | Loss : 0.19254431807933076 | LR: 2.000000000000001e-10
+Rank 1 | Epoch 67 | Step 18931 | Loss : 0.19222205367730688 | LR: 2.000000000000001e-10
+Rank 0 | Epoch 67 | Step 18931 | Loss : 0.18432964774456667 | LR: 2.000000000000001e-10
+[Step 19000] Validation pixel accuracy: 0.5765
+[Step 19000] Validation mIoU (w/ equivalence): 0.0187
+[Val] Step 19000 | Loss: 1.9339, Contrastive: 1.8281
+Best validation loss: 1.8830 at step 8000
+Step= 19000/223070  Loss=0.1909805  Time Elapsed=5.50h  Time Remaining=86.30h
+Rank 1 | Epoch 68 | Step 19124 | Loss : 0.19109985433094243 | LR: 2.000000000000001e-10
+Rank 0 | Epoch 68 | Step 19124 | Loss : 0.18685595069678954 | LR: 2.000000000000001e-10
+Rank 1 | Epoch 69 | Step 19317 | Loss : 0.1993656438712629 | LR: 2.000000000000001e-10
+Rank 0 | Epoch 69 | Step 19317 | Loss : 0.19013320179800913 | LR: 2.000000000000001e-10
+[Step 19500] Validation pixel accuracy: 0.5755
+[Step 19500] Validation mIoU (w/ equivalence): 0.0173
+[Val] Step 19500 | Loss: 1.9309, Contrastive: 1.8252
+Best validation loss: 1.8830 at step 8000
+Rank 1 | Epoch 70 | Step 19510 | Loss : 0.18873025677673558 | LR: 2.000000000000001e-10
+Rank 0 | Epoch 70 | Step 19510 | Loss : 0.1933462473086125 | LR: 2.000000000000001e-10
+Step= 19510/19510  Loss=37.3158257  Time Elapsed=5.70h  Time Remaining=0.00h

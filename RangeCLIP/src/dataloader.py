@@ -91,7 +91,7 @@ def setup_dataloaders(labeled_metadata_file,
     
     # More accurate calculation of train steps
     n_train_samples = len(train_dataset)
-    n_train_steps = ((n_train_samples + batch_size - 1) // batch_size) * n_epoch
+    n_train_steps = ((n_train_samples + batch_size - 1) // batch_size) * n_epoch / 8 / 2
     
     val_loader = DataLoader(val_dataset,
                                 batch_size=batch_size,
