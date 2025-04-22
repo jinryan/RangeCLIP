@@ -61,7 +61,7 @@ class DepthUNet(nn.Module):
         self.log_temperature = nn.Parameter(torch.log(torch.tensor(temperature)))
         
         if unet_type == 'resnet':
-            decoder_filters = encoder_filters[-1:0:-1]
+            decoder_filters = encoder_filters[::-1]
             
             self.freeze_encoder = False
             self.depth_encoder = DepthEncoder(
@@ -122,6 +122,7 @@ class DepthUNet(nn.Module):
             temperature (float): learned temperature parameter
         """
         self.eval()
+            
         B, _, H, W = depth_maps.shape
         total_candidates, D = candidate_text_embeddings.shape
 
@@ -167,11 +168,12 @@ class DepthUNet(nn.Module):
         candidate_text_embeddings,
         temperature,
         label_similarity_sets,
-        percent_image=0.2,
-        k_distractors=50,
+        percent_image=0.7,
+        k_distractors=100,
         pct_medium=0.0,
         pct_hard=0.75,
         pct_rand=0.25,
+        lambda_smooth=1e2,
     ):
         """
         Hybrid contrastive loss with difficulty-aware distractors.
@@ -244,16 +246,24 @@ class DepthUNet(nn.Module):
 
         logits = pred_samples @ contrast_text_embeddings.T
         logits /= temperature
-        loss = F.cross_entropy(logits, label_samples_mapped)
+        contrastive_loss = F.cross_entropy(logits, label_samples_mapped)
+        
+        # pred: [B, D, H, W] — normalized embeddings
+        tv_h = F.l1_loss(pred[:, :, :, :-1], pred[:, :, :, 1:])
+        tv_v = F.l1_loss(pred[:, :, :-1, :], pred[:, :, 1:, :])
+        smoothness_loss = (tv_h + tv_v) * lambda_smooth
+        
+        total_loss = contrastive_loss + smoothness_loss
+
 
         loss_info = {
-            'loss': loss.item(),
+            'total_loss': total_loss.detach().item(),
+            'contrastive_loss': contrastive_loss.detach().item(),
+            'smoothness_loss': smoothness_loss.detach().item(),
             'temperature': temperature.item(),
-            'n_distractors': len(all_distractors),
-            'n_unique_labels': len(unique_labels),
         }
 
-        return loss, loss_info
+        return total_loss, loss_info
 
 
 
@@ -284,7 +294,7 @@ class DepthUNet(nn.Module):
     def save_model(self, checkpoint_path, step, optimizer=None):
         """
         Save the full model checkpoint
-        
+
         Arg(s):
             checkpoint_path : str
                 path to save checkpoint
@@ -309,7 +319,15 @@ class DepthUNet(nn.Module):
             decoder = decoder.module
         checkpoint["decoder"] = decoder.state_dict()
 
+        # Save temperature parameter
+        checkpoint["temperature"] = self.temperature.data
+
+        # Optionally save optimizer state
+        if optimizer is not None:
+            checkpoint["optimizer"] = optimizer.state_dict()
+
         torch.save(checkpoint, checkpoint_path)
+
     
     def restore_model(self, restore_path, optimizer=None):
         """
@@ -345,7 +363,10 @@ class DepthUNet(nn.Module):
             train_step = checkpoint['train_step']
         except Exception:
             train_step = 0
-
+            
+        if "temperature" in checkpoint:
+            self.temperature = nn.Parameter(checkpoint["temperature"])
+            
         return train_step, optimizer if optimizer else None
     
     def restore_depth_encoder(self, encoder_path, freeze_encoder=False):
@@ -380,22 +401,4 @@ class DepthUNet(nn.Module):
             for param in self.depth_encoder.parameters():
                 param.requires_grad = True
     
-    @staticmethod
-    def build_target_embedding_map(target_indices, candidate_text_embeddings):
-        """
-        Vectorized version of the target embedding map construction.
-        """
-        B, H, W = target_indices.shape
-        C, D = candidate_text_embeddings.shape
-
-        flat_indices = target_indices.view(B, H * W)  # [B, HW]
-
-        # [C, D] -> [1, C, D]
-        text_emb = candidate_text_embeddings.unsqueeze(0)  # [1, C, D]
-
-        # Index embeddings for each pixel
-        gathered = text_emb.expand(B, C, D).gather(1, flat_indices.unsqueeze(-1).expand(-1, -1, D))  # [B, HW, D]
-        
-        target_embedding_map = gathered.permute(0, 2, 1).reshape(B, D, H, W)
-        return target_embedding_map
-
+    

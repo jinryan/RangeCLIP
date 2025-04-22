@@ -181,3 +181,22 @@ def load_label_similarity_sets(path, num_classes):
         'medium': medium_sets,
         'hard': hard_sets,
     }
+
+from collections import defaultdict
+import torch
+from torch.cuda.amp import autocast
+import tqdm
+
+
+def build_equivalence_class_map(equivalence_tensor, device):
+    """
+    Given an equivalence_tensor, map each label index to a representative
+    label ID of its equivalence class (smallest index in the class).
+    """
+    num_labels = equivalence_tensor.shape[0]
+    equiv_class_map = torch.arange(num_labels).to(device)
+    for i in range(num_labels):
+        equiv = (equivalence_tensor[i] == 1).nonzero(as_tuple=True)[0]
+        if len(equiv) > 0:
+            equiv_class_map[i] = torch.min(equiv)
+    return equiv_class_map

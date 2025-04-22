@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from . import net_utils
+from .networks import ASPP
 
 class DepthEncoder(torch.nn.Module):
     """
@@ -97,6 +98,8 @@ class DepthEncoder(torch.nn.Module):
             nn.Linear(in_channels, embedding_dim)
         )
         
+        self.aspp = ASPP(in_channels=embedding_dim, out_channels=embedding_dim)
+        
     def forward(self, x):
         # Ensure input is single-channel
         if len(x.shape) == 3:
@@ -117,6 +120,8 @@ class DepthEncoder(torch.nn.Module):
         pooled = self.global_pool(x2).view(x2.size(0), -1)
         embedding = self.projection_head(pooled)
         embedding = F.normalize(embedding, p=2, dim=1)
+        
+        final_feature_map = self.aspp(final_feature_map)
         
         return embedding, features, final_feature_map
     

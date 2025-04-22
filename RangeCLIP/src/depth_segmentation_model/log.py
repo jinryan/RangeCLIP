@@ -282,16 +282,14 @@ def log_training_summary(
 def log_validation_summary(
         val_summary_writer,
         val_step,
-        loss_info,
+        scalar_info,
     ):
     """
     Log validation summary to TensorBoard.
     """
     with torch.no_grad():
-
-        # Log scalar loss values
-        for name, val in loss_info.items():
-            val_summary_writer.add_scalar(f'val/loss_{name}', val, global_step=val_step)
+        for name, val in scalar_info.items():
+            val_summary_writer.add_scalar(f'val/{name}', val, global_step=val_step)
 
 
 
@@ -449,6 +447,19 @@ def visualize_tensorboard_image(depth, image, seg_gt, seg_pred, candidate_labels
         axs[3].imshow(pred_vis)
         axs[3].set_title("Pred Seg")
         axs[3].axis("off")
+        
+        # Get unique labels from GT and Pred
+        unique_labels = np.unique(np.concatenate([gt.flatten(), pred.flatten()]))
+        unique_labels = [l for l in unique_labels if l != 0]
+        
+        # Draw legend
+        axs[4].axis("off")
+        for j, label in enumerate(unique_labels[:20]):
+            y = 1 - j * 0.05
+            axs[4].add_patch(plt.Rectangle((0, y), 0.1, 0.03, color=colors[label % len(colors)] / 255.0))
+            axs[4].text(0.15, y + 0.01, candidate_labels[label], fontsize=8, verticalalignment='center')
+
+        plt.subplots_adjust(wspace=0.05)
 
         buf = BytesIO()
         plt.tight_layout()

@@ -22,7 +22,7 @@ class DepthDecoder(nn.Module):
             if set, then apply instance normalization
     """
     def __init__(self,
-                 n_filters=[256, 128, 64],
+                 n_filters=[256, 128, 64, 32],
                  encoder_filters=[32, 64, 128, 256, 512],
                  embedding_dim=256,
                  weight_initializer='kaiming_uniform',
@@ -95,10 +95,10 @@ class DepthDecoder(nn.Module):
             torch.Tensor : segmentation with pixel-wise
         """
         # Skip connections exclude the last encoder feature used for spatial_feature_map
-        expected_skips = len(encoder_features) - 1  # last one goes to spatial_feature_map
-        assert len(self.up_blocks) <= expected_skips, \
-            f"Decoder expects ≤{expected_skips} up blocks, got {len(self.up_blocks)}"
-
+        skip_features = encoder_features[:-1][::-1]
+        assert len(skip_features) == len(self.up_blocks) - 1, f"Mismatch in number of skip features and decoder blocks: {len(skip_features)} vs {len(self.up_blocks) - 1}"
+        
+        
                 
         # Start with feature map from the last encoder block
         # We need to reshape the embedding to match the spatial dimensions
@@ -106,19 +106,12 @@ class DepthDecoder(nn.Module):
         x = spatial_feature_map
         encoder_features = encoder_features[::-1]
 
-        for i, up_block in enumerate(self.up_blocks):
-            if i == 0:
-                x = up_block(x)  # no skip
-            else:
-                skip_feature = encoder_features[i]
-                x = up_block(x, skip_feature)
-
+        x = self.up_blocks[0](spatial_feature_map)  # no skip
+        for i in range(1, len(self.up_blocks)):
+            x = self.up_blocks[i](x, skip_features[i - 1])
         
         output = self.output_conv(x)
         output = F.interpolate(output, size=target_shape, mode='nearest')
-        
-        
-        
         output = F.normalize(output, p=2, dim=1)
 
         return output
@@ -156,11 +149,12 @@ class DecoderBlock(nn.Module):
         
         self.use_skip = use_skip
         
-        self.upsample = nn.Upsample(scale_factor=2, mode='bilinear', align_corners=True)
+        # Replaced nn.UpSample with ConvTranspose2d for upsampling
+        self.upsample = nn.ConvTranspose2d(in_channels, out_channels, kernel_size=2, stride=2)
         
-        conv_in_channels = in_channels
+        conv_in_channels = out_channels
         if use_skip:
-            conv_in_channels = in_channels + skip_channels
+            conv_in_channels += skip_channels
         
         # Convolutional layers
         self.conv1 = net_utils.Conv2d(

@@ -11,6 +11,7 @@ import os
 import traceback
 import torch.distributed as dist
 from torch.cuda.amp import autocast, GradScaler
+from RangeCLIP.src.depth_segmentation_model.evaluation import MajorityBaseline, evaluate_majority_model, evaluate_mask_clip, evaluate_random_model, evaluate_seg_former
 from utils.src.networks import TextEncoder
 from transformers import CLIPModel
 import matplotlib.pyplot as plt
@@ -18,7 +19,7 @@ from matplotlib import cm
 
 
 from RangeCLIP.src.depth_segmentation_model.model import DepthUNet
-from RangeCLIP.src.depth_segmentation_model.dataloader import setup_dataloaders, load_equivalence_dict, build_equivalence_tensor, load_label_similarity_sets
+from RangeCLIP.src.depth_segmentation_model.dataloader import setup_dataloaders, load_equivalence_dict, build_equivalence_tensor, load_label_similarity_sets, build_equivalence_class_map
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..'))
 sys.path.insert(0, project_root)
 from utils.src.log_utils import log
@@ -117,8 +118,41 @@ def train_depth_clip_model(
     equivalence_tensor = equivalence_tensor.to(device)
     
     similarity_sets = load_label_similarity_sets(equivalence_dict_path, len(candidate_labels))
+    equivalence_class_map = build_equivalence_class_map(equivalence_tensor, device)
     
+    # Do some baseline evals
+    
+    num_classes = len(candidate_labels)
 
+    # Use either baseline
+    # if local_rank == 0:
+        
+    #     from collections import Counter
+
+    #     def get_majority_label_index(dataloader):
+    #         label_counter = Counter()
+    #         for batch in tqdm.tqdm(dataloader, desc="Computing Majority Label"):
+    #             seg = batch['segmentation'].numpy()
+    #             label_counter.update(seg.flatten().tolist())
+    #         return label_counter.most_common(1)[0][0]
+        
+    #     majority_label_index = get_majority_label_index(train_dataloader)
+    #     evaluate_majority_model(
+    #         majority_label_index=majority_label_index,
+    #         dataloader=test_dataloader,
+    #         equivalence_tensor=equivalence_tensor,
+    #         log_path=log_path,
+    #         device=device,
+    #     )
+        
+    #     evaluate_random_model(
+    #         dataloader=test_dataloader,
+    #         num_candidate_labels=num_classes,
+    #         equivalence_tensor=equivalence_tensor,
+    #         log_path=log_path,
+    #         device=device
+    #     )
+    
     
     try:
         
@@ -143,12 +177,11 @@ def train_depth_clip_model(
         )
         
         
+        
     except Exception as e:
         print(f"Error loading DepthUnet: {e}")
         traceback.print_exc()
     
-    
-
     optimizer, scheduler = setup_optimizer_and_scheduler(
         model.parameters(), learning_rates, w_weight_decay, 
         scheduler_type, learning_schedule
@@ -198,6 +231,30 @@ def train_depth_clip_model(
 
     with torch.no_grad():
         candidate_text_embeddings = text_encoder(candidate_labels)
+        
+    # if local_rank == 0:
+        # from transformers import SegformerForSemanticSegmentation, SegformerImageProcessor
+
+        # smodel = SegformerForSemanticSegmentation.from_pretrained("nvidia/segformer-b0-finetuned-ade-512-512")
+        # image_processor = SegformerImageProcessor.from_pretrained("nvidia/segformer-b0-finetuned-ade-512-512")
+        
+        # evaluate_seg_former(
+        #     dataloader=test_dataloader,
+        #     model=smodel,
+        #     image_processor=image_processor,
+        #     equivalence_tensor=equivalence_tensor,
+        #     candidate_labels=candidate_labels,
+        #     log_path=log_path,
+        # )
+
+        # evaluate_mask_clip(
+        #     dataloader=test_dataloader,
+        #     clip_model=clip_model,
+        #     candidate_text_embeddings=candidate_text_embeddings,
+        #     equivalence_tensor=equivalence_tensor,
+        #     log_path=log_path,
+        #     device="cuda"
+        # )
 
     if local_rank == 0:
         model.eval()
@@ -205,6 +262,7 @@ def train_depth_clip_model(
                                     candidate_text_embeddings=candidate_text_embeddings,
                                     candidate_labels=candidate_labels,
                                     equivalence_tensor=equivalence_tensor,
+                                    equiv_class_map=equivalence_class_map,
                                     similarity_sets=similarity_sets,
                                     curriculum=get_curriculum_schedule(0, n_epoch),
                                     dataloader=val_dataloader,
@@ -229,9 +287,10 @@ def train_depth_clip_model(
     
     # ================ Main training loop ================
     for epoch in range(1, n_epoch + 1):
-        train_sampler.set_epoch(epoch)  # Inside the training loop, once per epoch
+        train_sampler.set_epoch(epoch)
         total_loss = 0
         n_batches = 0
+        n_optimizer_steps = 0
         optimizer.zero_grad()
 
         for batch in tqdm.tqdm(train_dataloader, desc=f'{local_rank}: {epoch}/{n_epoch}'):
@@ -278,6 +337,7 @@ def train_depth_clip_model(
                 scaler.update()
                 optimizer.zero_grad()
                 train_step += 1
+                n_optimizer_steps += 1
                 
                 total_loss += loss.item()
                 
@@ -310,6 +370,7 @@ def train_depth_clip_model(
                                     candidate_text_embeddings=candidate_text_embeddings,
                                     candidate_labels=candidate_labels,
                                     equivalence_tensor=equivalence_tensor,
+                                    equiv_class_map=equivalence_class_map,
                                     similarity_sets=similarity_sets,
                                     curriculum=curriculum,
                                     dataloader=val_dataloader,
@@ -318,7 +379,6 @@ def train_depth_clip_model(
                                     device=device,
                                     summary_writer=val_summary_writer,
                                     n_sample_per_summary=n_sample_per_summary,
-                                    max_failed_log=16,
                                     log_path=log_path
                         )
                         model.train()
@@ -327,14 +387,13 @@ def train_depth_clip_model(
                 if (train_step % n_step_per_checkpoint) == 0 and local_rank == 0:
                     save_checkpoint_and_log_progress(
                         unwrap_model(model), model_checkpoint_path, train_step,
-                        n_train_step, start_step, loss.item(),
+                        n_train_step, start_step, total_loss  / max(1, n_optimizer_steps),
                         time_start, log_path, optimizer
                     )
                 
             
     
-        avg_loss = total_loss / max(n_batches, 1)
-        log(f"Rank {local_rank} | Epoch {epoch} | Step {train_step} | Average loss: {avg_loss}", log_path)
+        log(f"Rank {local_rank} | Epoch {epoch} | Step {train_step} | Loss : {total_loss / max(1, n_optimizer_steps)} | LR: {optimizer.param_groups[0]['lr']}", log_path)
         
         # Update learning rate scheduler
         scheduler.step()
@@ -343,7 +402,7 @@ def train_depth_clip_model(
     if local_rank == 0:
         save_checkpoint_and_log_progress(
             model, model_checkpoint_path, train_step,
-            n_train_step, train_step - n_train_step, loss.item(),
+            n_train_step, train_step - n_train_step, total_loss,
             time_start, log_path, optimizer
         )
     
