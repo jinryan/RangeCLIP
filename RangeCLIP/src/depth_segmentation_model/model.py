@@ -106,7 +106,7 @@ class DepthUNet(nn.Module):
         
         return output, self.temperature
     
-    def predict(self, depth_maps, candidate_text_embeddings, segmentation, num_negatives=300):
+    def predict(self, depth_maps, candidate_text_embeddings, segmentation, num_negatives=300, top_k=5):
         """
         Predict segmentation labels for the input depth maps using a reduced candidate set.
 
@@ -115,14 +115,15 @@ class DepthUNet(nn.Module):
             candidate_text_embeddings (torch.Tensor): all text embeddings [C, D]
             segmentation (torch.Tensor): ground truth segmentation [B, H, W], used to extract true label indices
             num_negatives (int): number of additional negative labels to sample
+            top_k (int): number of top labels to return per pixel
 
         Returns:
-            pred_indices (torch.LongTensor): predicted label indices in the ORIGINAL index space [B, H, W]
+            topk_pred_indices (torch.LongTensor): top-k predicted label indices in the ORIGINAL index space [B, k, H, W]
             pixel_embeddings (torch.Tensor): output embeddings from the model [B, D, H, W]
             temperature (float): learned temperature parameter
         """
         self.eval()
-            
+
         B, _, H, W = depth_maps.shape
         total_candidates, D = candidate_text_embeddings.shape
 
@@ -151,13 +152,18 @@ class DepthUNet(nn.Module):
 
             # --- Step 2: Predict using reduced candidates ---
             pixel_flat = pixel_embeddings.view(B, D, H * W)
-            logits = torch.einsum('bdn,cd->bcn', pixel_flat, reduced_candidate_embeddings)
-            pred_indices_reduced = logits.argmax(dim=1).view(B, H, W)  # [B, H, W]
+            logits = torch.einsum('bdn,cd->bcn', pixel_flat, reduced_candidate_embeddings)  # [B, C_reduced, H*W]
 
-            # --- Step 3: Map reduced indices back to original index space ---
-            pred_indices = index_tensor[pred_indices_reduced]  # [B, H, W], now in original index space
+            # Top-k prediction
+            topk = min(top_k, logits.shape[1])
+            topk_indices_reduced = logits.topk(topk, dim=1).indices  # [B, k, H*W]
+            topk_indices_reduced = topk_indices_reduced.view(B, topk, H, W)  # [B, k, H, W]
 
-            return pred_indices, pixel_embeddings, self.temperature
+            # Map reduced indices back to original candidate label indices
+            topk_pred_indices = index_tensor[topk_indices_reduced]  # [B, k, H, W]
+
+            return topk_pred_indices, pixel_embeddings, self.temperature
+
 
         
 
@@ -169,11 +175,11 @@ class DepthUNet(nn.Module):
         temperature,
         label_similarity_sets,
         percent_image=0.7,
-        k_distractors=100,
+        k_distractors=50,
         pct_medium=0.0,
         pct_hard=0.75,
         pct_rand=0.25,
-        lambda_smooth=1e2,
+        lambda_smooth=2e2,
     ):
         """
         Hybrid contrastive loss with difficulty-aware distractors.
@@ -320,7 +326,7 @@ class DepthUNet(nn.Module):
         checkpoint["decoder"] = decoder.state_dict()
 
         # Save temperature parameter
-        checkpoint["temperature"] = self.temperature.data
+        checkpoint["log_temperature"] = self.log_temperature.data
 
         # Optionally save optimizer state
         if optimizer is not None:
@@ -364,8 +370,8 @@ class DepthUNet(nn.Module):
         except Exception:
             train_step = 0
             
-        if "temperature" in checkpoint:
-            self.temperature = nn.Parameter(checkpoint["temperature"])
+        if "log_temperature" in checkpoint:
+            self.log_temperature = nn.Parameter(checkpoint["log_temperature"])
             
         return train_step, optimizer if optimizer else None
     

@@ -20,3 +20,6 @@ setup/Playground.ipynb
 checkpoints_model
 checkpoints_unet
 checkpoints_unet2
+playground
+benchmark/clipseg_visualizations
+benchmark/*.png

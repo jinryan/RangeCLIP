@@ -20,13 +20,12 @@ def setup_dataloaders(metadata_file,
     ])
     
 
-    def depth_transform_fn(depth_tensor):
+    def depth_transform_fn(depth_tensor, interpolation_mode='nearest'):
         """
-        Resize and normalize a depth map tensor to [0, 1].
+        Resize and normalize a depth map tensor using the median value for normalization.
 
         Args:
             depth_tensor (torch.Tensor): Input depth map. Shape can be [H, W] or [C, H, W].
-            resize_shape (tuple): Desired (H, W) shape.
             interpolation_mode (str): Interpolation mode for resizing (default: 'nearest').
 
         Returns:
@@ -44,15 +43,15 @@ def setup_dataloaders(metadata_file,
         resized = F.interpolate(
             depth_tensor,
             size=resize_shape,
-            mode='nearest'
+            mode=interpolation_mode
         )
 
-        min_val, max_val = resized.min(), resized.max()
+        median_val = resized.median()
 
-        if (max_val - min_val).abs() < 1e-6:
+        if median_val.abs() < 1e-6:
             normalized = torch.zeros_like(resized)
         else:
-            normalized = (resized - min_val) / (max_val - min_val)
+            normalized = resized / median_val
 
         if original_dims == 2:
             return normalized.squeeze(0).squeeze(0)

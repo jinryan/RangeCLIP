@@ -28,6 +28,12 @@ class ImageDepthTextDataset(torch.utils.data.Dataset):
         df = pd.read_csv(labels_path, usecols=['label', 'index'], na_values=[], keep_default_na=False)
         df = df.sort_values(by='index', ascending=True)
         self.labels = df['label'].tolist()
+        
+        actual_indices = df['index'].tolist()
+        expected_indices = list(range(1, len(self.labels) + 1))
+
+        assert actual_indices == expected_indices, "Indices must be 1-based and consecutive"
+
 
         assert df['index'].tolist() == list(range(1, len(self.labels) + 1)), "Indices must be 1-based and consecutive"
         self.labels = [''] + self.labels  # Add empty label for index 0

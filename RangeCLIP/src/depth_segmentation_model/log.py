@@ -12,7 +12,6 @@ from torchvision.utils import make_grid
 from io import BytesIO
 from PIL import Image
 from torchvision import transforms
-
 from utils.src.log_utils import log
 
 def log_input_settings(log_path,
@@ -388,16 +387,12 @@ def visualize_batch_predictions(
         plt.savefig(os.path.join(save_dir, f"sample_{i}.png"), bbox_inches='tight', dpi=150)
         plt.close()
         
-
-
-
 def visualize_tensorboard_image(depth, image, seg_gt, seg_pred, candidate_labels):
     """
     Returns a grid image visualizing RGB, depth, GT and predicted segmentation maps
     for a single sample. All inputs should be torch.Tensors.
     """
-    import matplotlib.pyplot as plt
-    import numpy as np
+    
 
     B = image.shape[0]
     depth = depth.cpu()
@@ -407,8 +402,10 @@ def visualize_tensorboard_image(depth, image, seg_gt, seg_pred, candidate_labels
 
     fig_images = []
 
-    tab20 = plt.get_cmap('tab20', 20)
-    colors = (tab20(np.linspace(0, 1, 20))[:, :3] * 255).astype(np.uint8)
+    n_labels = len(candidate_labels)
+    cmap = plt.get_cmap('gist_ncar', n_labels)
+    colors = (cmap(np.arange(n_labels))[:, :3] * 255).astype(np.uint8)
+
 
     for i in range(B):
         img = image[i].numpy().transpose(1, 2, 0)
@@ -418,20 +415,24 @@ def visualize_tensorboard_image(depth, image, seg_gt, seg_pred, candidate_labels
         depth_np = depth[i][0].numpy()
         gt = seg_gt[i].numpy()
         pred = seg_pred[i].numpy()
+        
+        
 
         def colorize(seg):
             seg = seg.astype(np.int32)
             color_map = np.zeros((*seg.shape, 3), dtype=np.uint8)
             for label_idx in np.unique(seg):
+                
                 if label_idx == 0:
                     continue
-                color_map[seg == label_idx] = colors[label_idx % len(colors)]
+                if label_idx < len(colors):
+                    color_map[seg == label_idx] = colors[label_idx]
             return color_map
 
         gt_vis = colorize(gt)
         pred_vis = colorize(pred)
 
-        fig, axs = plt.subplots(1, 4, figsize=(16, 4))
+        fig, axs = plt.subplots(1, 5, figsize=(16, 4))
         axs[0].imshow(img)
         axs[0].set_title("RGB")
         axs[0].axis("off")
@@ -452,12 +453,16 @@ def visualize_tensorboard_image(depth, image, seg_gt, seg_pred, candidate_labels
         unique_labels = np.unique(np.concatenate([gt.flatten(), pred.flatten()]))
         unique_labels = [l for l in unique_labels if l != 0]
         
-        # Draw legend
+        legend_y = 0.95
+        legend_gap = 0.05
+
+        for j, label in enumerate(unique_labels[:30]):
+            y = legend_y - j * legend_gap
+            if y < 0: break  # Avoid drawing below the plot
+            axs[4].add_patch(plt.Rectangle((0.0, y), 0.1, 0.04, color=colors[label] / 255.0, transform=axs[4].transAxes))
+            axs[4].text(0.15, y + 0.015, candidate_labels[label], fontsize=8, verticalalignment='center', transform=axs[4].transAxes)
+
         axs[4].axis("off")
-        for j, label in enumerate(unique_labels[:20]):
-            y = 1 - j * 0.05
-            axs[4].add_patch(plt.Rectangle((0, y), 0.1, 0.03, color=colors[label % len(colors)] / 255.0))
-            axs[4].text(0.15, y + 0.01, candidate_labels[label], fontsize=8, verticalalignment='center')
 
         plt.subplots_adjust(wspace=0.05)
 

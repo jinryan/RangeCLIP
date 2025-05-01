@@ -53,10 +53,16 @@ def get_curriculum_schedule(epoch: int, total_epochs: int) -> dict:
     pct_hard = min(0.8, pct * 1.2)           # from 0.0 → 0.8 linearly
     pct_rand = 1.0 - pct_medium - pct_hard
 
+    # return {
+    #     "pct_medium": round(pct_medium, 4),
+    #     "pct_hard": round(pct_hard, 4),
+    #     "pct_rand": round(pct_rand, 4),
+    # }
+    
     return {
-        "pct_medium": round(pct_medium, 4),
-        "pct_hard": round(pct_hard, 4),
-        "pct_rand": round(pct_rand, 4),
+        "pct_medium": 0.2,
+        "pct_hard": 0.7,
+        "pct_rand": 0.1,
     }
 
 
@@ -120,40 +126,6 @@ def train_depth_clip_model(
     similarity_sets = load_label_similarity_sets(equivalence_dict_path, len(candidate_labels))
     equivalence_class_map = build_equivalence_class_map(equivalence_tensor, device)
     
-    # Do some baseline evals
-    
-    num_classes = len(candidate_labels)
-
-    # Use either baseline
-    # if local_rank == 0:
-        
-    #     from collections import Counter
-
-    #     def get_majority_label_index(dataloader):
-    #         label_counter = Counter()
-    #         for batch in tqdm.tqdm(dataloader, desc="Computing Majority Label"):
-    #             seg = batch['segmentation'].numpy()
-    #             label_counter.update(seg.flatten().tolist())
-    #         return label_counter.most_common(1)[0][0]
-        
-    #     majority_label_index = get_majority_label_index(train_dataloader)
-    #     evaluate_majority_model(
-    #         majority_label_index=majority_label_index,
-    #         dataloader=test_dataloader,
-    #         equivalence_tensor=equivalence_tensor,
-    #         log_path=log_path,
-    #         device=device,
-    #     )
-        
-    #     evaluate_random_model(
-    #         dataloader=test_dataloader,
-    #         num_candidate_labels=num_classes,
-    #         equivalence_tensor=equivalence_tensor,
-    #         log_path=log_path,
-    #         device=device
-    #     )
-    
-    
     try:
         
         clip_model = CLIPModel.from_pretrained(clip_model_name)
@@ -193,7 +165,12 @@ def train_depth_clip_model(
         train_step = 0
     else:
         train_step, optimizer = restore_model_if_needed(model, restore_path_model, optimizer)
-        
+    
+    optimizer, scheduler = setup_optimizer_and_scheduler(
+        model.parameters(), learning_rates, w_weight_decay, 
+        scheduler_type, learning_schedule
+    )
+    
     start_step = train_step
     
     if start_step == 0:
@@ -300,7 +277,24 @@ def train_depth_clip_model(
                 del output
             
             torch.cuda.empty_cache()
-            curriculum = get_curriculum_schedule(epoch, n_epoch)
+            
+            progress = epoch / n_epoch
+
+            if progress > 0.3:  # Last 20% of training
+                curriculum = {
+                    "pct_medium": 0.0,
+                    "pct_hard": 0.95,  # Mostly hard negatives
+                    "pct_rand": 0.05
+                }
+            elif progress > 0.5:  # Last 10% of training
+                curriculum = {
+                    "pct_medium": 0.0,
+                    "pct_hard": 1.0,  # Purely hard negatives
+                    "pct_rand": 0.0
+                }
+            else:
+                # Default curriculum
+                curriculum = get_curriculum_schedule(epoch, n_epoch)
 
             n_batches += 1
             

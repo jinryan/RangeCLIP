@@ -1,0 +1,1890 @@
+Using device: cuda
+Total samples to evaluate: 50
+Visualization indices: {6180, 6948, 6982, 39, 4903, 4619, 592, 6847, 9915, 1183}
+  Processing sample 7153 for Brightness=1.00, Saturation=1.00
+logits.shape = torch.Size([40, 352, 352]), len(prompts) = 40
+GT label counts: Counter({1160: 146246, 1605: 68214, 187: 65294, 88: 58912, 14: 11068, 86: 7830, 529: 6233, 1349: 5202, 131: 4864, 2533: 2986, 56: 2597, 918: 2519, 391: 1793, 0: 1587, 744: 689, 101: 481, 1350: 244, 253: 141})
+Predicted label counts (top1): Counter({1160: 147170, 187: 72561, 744: 51396, 88: 49358, 1605: 42460, 86: 8869, 14: 4530, 131: 3796, 529: 2811, 1349: 2405, 253: 1259, 56: 268, 743: 17})
+    Metrics for sample 7153 @ B=1.00/S=1.00: Acc=0.7778, mIoU=0.2463, TopK Acc=0.9387, TopK mIoU=0.6615
+  Processing sample 7153 for Brightness=0.50, Saturation=0.70
+logits.shape = torch.Size([40, 352, 352]), len(prompts) = 40
+GT label counts: Counter({1160: 146246, 1605: 68214, 187: 65294, 88: 58912, 14: 11068, 86: 7830, 529: 6233, 1349: 5202, 131: 4864, 2533: 2986, 56: 2597, 918: 2519, 391: 1793, 0: 1587, 744: 689, 101: 481, 1350: 244, 253: 141})
+Predicted label counts (top1): Counter({1160: 143237, 744: 73935, 187: 69710, 88: 42355, 1605: 40000, 86: 9382, 14: 2161, 131: 2003, 529: 1680, 1349: 1411, 253: 469, 56: 186, 5181: 135, 5631: 73, 277: 73, 918: 48, 743: 42})
+    Metrics for sample 7153 @ B=0.50/S=0.70: Acc=0.7417, mIoU=0.1887, TopK Acc=0.9239, TopK mIoU=0.5734
+  Processing sample 7153 for Brightness=0.20, Saturation=0.50
+logits.shape = torch.Size([40, 352, 352]), len(prompts) = 40
+GT label counts: Counter({1160: 146246, 1605: 68214, 187: 65294, 88: 58912, 14: 11068, 86: 7830, 529: 6233, 1349: 5202, 131: 4864, 2533: 2986, 56: 2597, 918: 2519, 391: 1793, 0: 1587, 744: 689, 101: 481, 1350: 244, 253: 141})
+Predicted label counts (top1): Counter({1160: 128774, 744: 78180, 187: 62232, 88: 46827, 1605: 42714, 743: 10263, 86: 9895, 277: 5512, 14: 1973, 5181: 530})
+    Metrics for sample 7153 @ B=0.20/S=0.50: Acc=0.6769, mIoU=0.1579, TopK Acc=0.8460, TopK mIoU=0.3935
+  Processing sample 7153 for Brightness=0.10, Saturation=0.20
+logits.shape = torch.Size([40, 352, 352]), len(prompts) = 40
+GT label counts: Counter({1160: 146246, 1605: 68214, 187: 65294, 88: 58912, 14: 11068, 86: 7830, 529: 6233, 1349: 5202, 131: 4864, 2533: 2986, 56: 2597, 918: 2519, 391: 1793, 0: 1587, 744: 689, 101: 481, 1350: 244, 253: 141})
+Predicted label counts (top1): Counter({1160: 106908, 744: 78423, 88: 61311, 187: 59588, 1605: 36182, 327: 15166, 86: 14331, 743: 10193, 253: 2481, 14: 2317})
+    Metrics for sample 7153 @ B=0.10/S=0.20: Acc=0.5925, mIoU=0.1405, TopK Acc=0.7811, TopK mIoU=0.3262
+  Processing sample 7153 for Brightness=0.05, Saturation=0.10
+logits.shape = torch.Size([40, 352, 352]), len(prompts) = 40
+GT label counts: Counter({1160: 146246, 1605: 68214, 187: 65294, 88: 58912, 14: 11068, 86: 7830, 529: 6233, 1349: 5202, 131: 4864, 2533: 2986, 56: 2597, 918: 2519, 391: 1793, 0: 1587, 744: 689, 101: 481, 1350: 244, 253: 141})
+Predicted label counts (top1): Counter({744: 101977, 1160: 85723, 88: 76032, 187: 42393, 327: 33434, 1605: 21283, 277: 15119, 86: 10808, 14: 131})
+    Metrics for sample 7153 @ B=0.05/S=0.10: Acc=0.4631, mIoU=0.1151, TopK Acc=0.7452, TopK mIoU=0.3354
+  Processing sample 7153 for Brightness=0.02, Saturation=0.10
+logits.shape = torch.Size([40, 352, 352]), len(prompts) = 40
+GT label counts: Counter({1160: 146246, 1605: 68214, 187: 65294, 88: 58912, 14: 11068, 86: 7830, 529: 6233, 1349: 5202, 131: 4864, 2533: 2986, 56: 2597, 918: 2519, 391: 1793, 0: 1587, 744: 689, 101: 481, 1350: 244, 253: 141})
+Predicted label counts (top1): Counter({327: 276637, 1847: 109797, 744: 466})
+    Metrics for sample 7153 @ B=0.02/S=0.10: Acc=0.0000, mIoU=0.0000, TopK Acc=0.0580, TopK mIoU=0.0974
+  Processing sample 7153 for Brightness=0.01, Saturation=0.05
+logits.shape = torch.Size([40, 352, 352]), len(prompts) = 40
+GT label counts: Counter({1160: 146246, 1605: 68214, 187: 65294, 88: 58912, 14: 11068, 86: 7830, 529: 6233, 1349: 5202, 131: 4864, 2533: 2986, 56: 2597, 918: 2519, 391: 1793, 0: 1587, 744: 689, 101: 481, 1350: 244, 253: 141})
+Predicted label counts (top1): Counter({1847: 222760, 327: 162289, 0: 1242, 744: 609})
+    Metrics for sample 7153 @ B=0.01/S=0.05: Acc=0.0002, mIoU=0.0014, TopK Acc=0.0067, TopK mIoU=0.0610
+  Processing sample 9142 for Brightness=1.00, Saturation=1.00
+logits.shape = torch.Size([28, 352, 352]), len(prompts) = 28
+GT label counts: Counter({88: 142338, 1605: 104384, 1160: 71418, 14: 50414, 187: 17326, 1497: 442, 4: 401, 0: 177})
+Predicted label counts (top1): Counter({88: 132717, 1160: 81149, 1605: 76075, 181: 69216, 14: 27743})
+    Metrics for sample 9142 @ B=1.00/S=1.00: Acc=0.5168, mIoU=0.1901, TopK Acc=0.8554, TopK mIoU=0.4712
+  Processing sample 9142 for Brightness=0.50, Saturation=0.70
+logits.shape = torch.Size([28, 352, 352]), len(prompts) = 28
+GT label counts: Counter({88: 142338, 1605: 104384, 1160: 71418, 14: 50414, 187: 17326, 1497: 442, 4: 401, 0: 177})
+Predicted label counts (top1): Counter({88: 122318, 1160: 84741, 1605: 76589, 181: 71963, 14: 31268, 134: 21})
+    Metrics for sample 9142 @ B=0.50/S=0.70: Acc=0.5000, mIoU=0.1664, TopK Acc=0.8623, TopK mIoU=0.5069
+  Processing sample 9142 for Brightness=0.20, Saturation=0.50
+logits.shape = torch.Size([28, 352, 352]), len(prompts) = 28
+GT label counts: Counter({88: 142338, 1605: 104384, 1160: 71418, 14: 50414, 187: 17326, 1497: 442, 4: 401, 0: 177})
+Predicted label counts (top1): Counter({88: 128796, 1160: 87133, 1605: 59525, 14: 57551, 187: 28581, 181: 25138, 134: 165, 773: 11})
+    Metrics for sample 9142 @ B=0.20/S=0.50: Acc=0.4881, mIoU=0.1436, TopK Acc=0.8722, TopK mIoU=0.4102
+  Processing sample 9142 for Brightness=0.10, Saturation=0.20
+logits.shape = torch.Size([28, 352, 352]), len(prompts) = 28
+GT label counts: Counter({88: 142338, 1605: 104384, 1160: 71418, 14: 50414, 187: 17326, 1497: 442, 4: 401, 0: 177})
+Predicted label counts (top1): Counter({88: 98315, 1160: 83090, 14: 70152, 773: 56365, 187: 29600, 181: 24497, 1605: 19622, 134: 5259})
+    Metrics for sample 9142 @ B=0.10/S=0.20: Acc=0.2752, mIoU=0.0799, TopK Acc=0.8917, TopK mIoU=0.3297
+  Processing sample 9142 for Brightness=0.05, Saturation=0.10
+logits.shape = torch.Size([28, 352, 352]), len(prompts) = 28
+GT label counts: Counter({88: 142338, 1605: 104384, 1160: 71418, 14: 50414, 187: 17326, 1497: 442, 4: 401, 0: 177})
+Predicted label counts (top1): Counter({14: 163574, 1160: 97333, 88: 72359, 1605: 28493, 181: 24035, 356: 966, 187: 128, 134: 12})
+    Metrics for sample 9142 @ B=0.05/S=0.10: Acc=0.2496, mIoU=0.0631, TopK Acc=0.6318, TopK mIoU=0.2776
+  Processing sample 9142 for Brightness=0.02, Saturation=0.10
+logits.shape = torch.Size([28, 352, 352]), len(prompts) = 28
+GT label counts: Counter({88: 142338, 1605: 104384, 1160: 71418, 14: 50414, 187: 17326, 1497: 442, 4: 401, 0: 177})
+Predicted label counts (top1): Counter({0: 250010, 14: 135468, 1605: 1422})
+    Metrics for sample 9142 @ B=0.02/S=0.10: Acc=0.0176, mIoU=0.0047, TopK Acc=0.4006, TopK mIoU=0.1992
+  Processing sample 9142 for Brightness=0.01, Saturation=0.05
+logits.shape = torch.Size([28, 352, 352]), len(prompts) = 28
+GT label counts: Counter({88: 142338, 1605: 104384, 1160: 71418, 14: 50414, 187: 17326, 1497: 442, 4: 401, 0: 177})
+Predicted label counts (top1): Counter({134: 306151, 0: 71516, 14: 9233})
+    Metrics for sample 9142 @ B=0.01/S=0.05: Acc=0.0024, mIoU=0.0018, TopK Acc=0.4006, TopK mIoU=0.2162
+  Processing sample 765 for Brightness=1.00, Saturation=1.00
+logits.shape = torch.Size([40, 352, 352]), len(prompts) = 40
+GT label counts: Counter({1605: 69990, 529: 39019, 391: 30361, 14: 25979, 525: 24549, 88: 24177, 0: 8504, 2482: 6457, 86: 3124, 993: 2129, 2888: 1561, 1160: 1024, 2533: 925, 662: 659, 3840: 650, 131: 300, 1700: 129, 476: 10})
+Predicted label counts (top1): Counter({1605: 46414, 14: 39277, 88: 33563, 2482: 31319, 391: 25648, 529: 21776, 525: 9910, 3145: 7780, 86: 5466, 993: 5026, 2533: 4297, 0: 3766, 5565: 2114, 1160: 1911, 2888: 608, 476: 431, 3840: 241})
+    Metrics for sample 765 @ B=1.00/S=1.00: Acc=0.5932, mIoU=0.2429, TopK Acc=0.9089, TopK mIoU=0.5848
+  Processing sample 765 for Brightness=0.50, Saturation=0.70
+logits.shape = torch.Size([40, 352, 352]), len(prompts) = 40
+GT label counts: Counter({1605: 69990, 529: 39019, 391: 30361, 14: 25979, 525: 24549, 88: 24177, 0: 8504, 2482: 6457, 86: 3124, 993: 2129, 2888: 1561, 1160: 1024, 2533: 925, 662: 659, 3840: 650, 131: 300, 1700: 129, 476: 10})
+Predicted label counts (top1): Counter({14: 58903, 2482: 41162, 88: 33536, 1605: 31686, 391: 24523, 529: 12811, 3145: 10129, 5565: 7481, 993: 5096, 86: 4885, 0: 4540, 1160: 1927, 525: 1263, 3840: 531, 2888: 332, 2533: 305, 476: 258, 1323: 179})
+    Metrics for sample 765 @ B=0.50/S=0.70: Acc=0.4305, mIoU=0.1825, TopK Acc=0.9053, TopK mIoU=0.5342
+  Processing sample 765 for Brightness=0.20, Saturation=0.50
+logits.shape = torch.Size([40, 352, 352]), len(prompts) = 40
+GT label counts: Counter({1605: 69990, 529: 39019, 391: 30361, 14: 25979, 525: 24549, 88: 24177, 0: 8504, 2482: 6457, 86: 3124, 993: 2129, 2888: 1561, 1160: 1024, 2533: 925, 662: 659, 3840: 650, 131: 300, 1700: 129, 476: 10})
+Predicted label counts (top1): Counter({1160: 46675, 14: 42156, 2482: 37662, 88: 29372, 1605: 24234, 529: 19944, 391: 14431, 5565: 6888, 86: 4837, 0: 3753, 993: 3239, 3145: 2749, 3972: 1650, 3840: 927, 2888: 690, 525: 324, 476: 16})
+    Metrics for sample 765 @ B=0.20/S=0.50: Acc=0.2864, mIoU=0.0998, TopK Acc=0.6734, TopK mIoU=0.3841
+  Processing sample 765 for Brightness=0.10, Saturation=0.20
+logits.shape = torch.Size([40, 352, 352]), len(prompts) = 40
+GT label counts: Counter({1605: 69990, 529: 39019, 391: 30361, 14: 25979, 525: 24549, 88: 24177, 0: 8504, 2482: 6457, 86: 3124, 993: 2129, 2888: 1561, 1160: 1024, 2533: 925, 662: 659, 3840: 650, 131: 300, 1700: 129, 476: 10})
+Predicted label counts (top1): Counter({14: 71840, 88: 41330, 1160: 31509, 2482: 26039, 1605: 25040, 300: 13097, 529: 9860, 391: 9359, 993: 8632, 1252: 2559, 525: 158, 5565: 99, 662: 25})
+    Metrics for sample 765 @ B=0.10/S=0.20: Acc=0.2256, mIoU=0.0482, TopK Acc=0.6288, TopK mIoU=0.3473
+  Processing sample 765 for Brightness=0.05, Saturation=0.10
+logits.shape = torch.Size([40, 352, 352]), len(prompts) = 40
+GT label counts: Counter({1605: 69990, 529: 39019, 391: 30361, 14: 25979, 525: 24549, 88: 24177, 0: 8504, 2482: 6457, 86: 3124, 993: 2129, 2888: 1561, 1160: 1024, 2533: 925, 662: 659, 3840: 650, 131: 300, 1700: 129, 476: 10})
+Predicted label counts (top1): Counter({14: 121491, 1160: 29327, 391: 24130, 88: 17542, 2482: 17313, 1605: 13598, 993: 12048, 1252: 2684, 525: 1386, 5565: 15, 3145: 9, 529: 4})
+    Metrics for sample 765 @ B=0.05/S=0.10: Acc=0.1631, mIoU=0.0348, TopK Acc=0.5822, TopK mIoU=0.3032
+  Processing sample 765 for Brightness=0.02, Saturation=0.10
+logits.shape = torch.Size([40, 352, 352]), len(prompts) = 40
+GT label counts: Counter({1605: 69990, 529: 39019, 391: 30361, 14: 25979, 525: 24549, 88: 24177, 0: 8504, 2482: 6457, 86: 3124, 993: 2129, 2888: 1561, 1160: 1024, 2533: 925, 662: 659, 3840: 650, 131: 300, 1700: 129, 476: 10})
+Predicted label counts (top1): Counter({14: 167484, 86: 67228, 476: 4614, 391: 124, 1605: 97})
+    Metrics for sample 765 @ B=0.02/S=0.10: Acc=0.0658, mIoU=0.0063, TopK Acc=0.5150, TopK mIoU=0.1709
+  Processing sample 765 for Brightness=0.01, Saturation=0.05
+logits.shape = torch.Size([40, 352, 352]), len(prompts) = 40
+GT label counts: Counter({1605: 69990, 529: 39019, 391: 30361, 14: 25979, 525: 24549, 88: 24177, 0: 8504, 2482: 6457, 86: 3124, 993: 2129, 2888: 1561, 1160: 1024, 2533: 925, 662: 659, 3840: 650, 131: 300, 1700: 129, 476: 10})
+Predicted label counts (top1): Counter({0: 141460, 1605: 96179, 14: 1908})
+    Metrics for sample 765 @ B=0.01/S=0.05: Acc=0.0715, mIoU=0.0073, TopK Acc=0.5042, TopK mIoU=0.1443
+  Processing sample 4871 for Brightness=1.00, Saturation=1.00
+logits.shape = torch.Size([30, 352, 352]), len(prompts) = 30
+GT label counts: Counter({1605: 70187, 14: 48537, 1160: 45349, 86: 44899, 88: 23131, 367: 15735, 187: 5716, 831: 3350, 1379: 2414, 1482: 1313})
+Predicted label counts (top1): Counter({1160: 56383, 1605: 48615, 18: 41821, 88: 36038, 14: 33781, 187: 22755, 367: 16116, 86: 3032, 2766: 1556, 5: 403, 15: 131})
+    Metrics for sample 4871 @ B=1.00/S=1.00: Acc=0.3839, mIoU=0.1780, TopK Acc=0.8843, TopK mIoU=0.5663
+  Processing sample 4871 for Brightness=0.50, Saturation=0.70
+logits.shape = torch.Size([30, 352, 352]), len(prompts) = 30
+GT label counts: Counter({1605: 70187, 14: 48537, 1160: 45349, 86: 44899, 88: 23131, 367: 15735, 187: 5716, 831: 3350, 1379: 2414, 1482: 1313})
+Predicted label counts (top1): Counter({18: 93152, 1160: 55359, 1605: 33492, 88: 30084, 367: 16496, 187: 15795, 86: 13311, 14: 2826, 5: 70, 1997: 37, 15: 9})
+    Metrics for sample 4871 @ B=0.50/S=0.70: Acc=0.3039, mIoU=0.1591, TopK Acc=0.8570, TopK mIoU=0.5646
+  Processing sample 4871 for Brightness=0.20, Saturation=0.50
+logits.shape = torch.Size([30, 352, 352]), len(prompts) = 30
+GT label counts: Counter({1605: 70187, 14: 48537, 1160: 45349, 86: 44899, 88: 23131, 367: 15735, 187: 5716, 831: 3350, 1379: 2414, 1482: 1313})
+Predicted label counts (top1): Counter({18: 123498, 1160: 57466, 1605: 37462, 367: 16763, 187: 15784, 88: 7890, 14: 1768})
+    Metrics for sample 4871 @ B=0.20/S=0.50: Acc=0.2478, mIoU=0.1562, TopK Acc=0.8801, TopK mIoU=0.6121
+  Processing sample 4871 for Brightness=0.10, Saturation=0.20
+logits.shape = torch.Size([30, 352, 352]), len(prompts) = 30
+GT label counts: Counter({1605: 70187, 14: 48537, 1160: 45349, 86: 44899, 88: 23131, 367: 15735, 187: 5716, 831: 3350, 1379: 2414, 1482: 1313})
+Predicted label counts (top1): Counter({1160: 96571, 18: 93085, 1605: 56839, 14: 7334, 187: 6529, 1379: 273})
+    Metrics for sample 4871 @ B=0.10/S=0.20: Acc=0.2244, mIoU=0.0532, TopK Acc=0.7136, TopK mIoU=0.3530
+  Processing sample 4871 for Brightness=0.05, Saturation=0.10
+logits.shape = torch.Size([30, 352, 352]), len(prompts) = 30
+GT label counts: Counter({1605: 70187, 14: 48537, 1160: 45349, 86: 44899, 88: 23131, 367: 15735, 187: 5716, 831: 3350, 1379: 2414, 1482: 1313})
+Predicted label counts (top1): Counter({1160: 87115, 14: 54400, 1605: 49611, 18: 48434, 1379: 16419, 187: 3875, 88: 777})
+    Metrics for sample 4871 @ B=0.05/S=0.10: Acc=0.2134, mIoU=0.0528, TopK Acc=0.6322, TopK mIoU=0.2200
+  Processing sample 4871 for Brightness=0.02, Saturation=0.10
+logits.shape = torch.Size([30, 352, 352]), len(prompts) = 30
+GT label counts: Counter({1605: 70187, 14: 48537, 1160: 45349, 86: 44899, 88: 23131, 367: 15735, 187: 5716, 831: 3350, 1379: 2414, 1482: 1313})
+Predicted label counts (top1): Counter({14: 178440, 86: 57162, 2669: 14870, 1160: 9128, 1605: 1031})
+    Metrics for sample 4871 @ B=0.02/S=0.10: Acc=0.3423, mIoU=0.0886, TopK Acc=0.8018, TopK mIoU=0.3109
+  Processing sample 4871 for Brightness=0.01, Saturation=0.05
+logits.shape = torch.Size([30, 352, 352]), len(prompts) = 30
+GT label counts: Counter({1605: 70187, 14: 48537, 1160: 45349, 86: 44899, 88: 23131, 367: 15735, 187: 5716, 831: 3350, 1379: 2414, 1482: 1313})
+Predicted label counts (top1): Counter({14: 169741, 1605: 90890})
+    Metrics for sample 4871 @ B=0.01/S=0.05: Acc=0.2949, mIoU=0.0548, TopK Acc=0.5540, TopK mIoU=0.2580
+  Processing sample 562 for Brightness=1.00, Saturation=1.00
+logits.shape = torch.Size([37, 352, 352]), len(prompts) = 37
+GT label counts: Counter({1605: 99794, 308: 42333, 54: 29000, 14: 17553, 0: 16255, 662: 11060, 253: 6969, 447: 3813, 1160: 3027, 815: 2846, 1038: 2208, 529: 1656, 2786: 1326, 525: 749, 79: 472, 4872: 253, 1155: 233})
+Predicted label counts (top1): Counter({1605: 69276, 308: 49244, 529: 33308, 662: 28522, 1357: 25825, 14: 18632, 1160: 4303, 54: 2999, 1038: 2681, 253: 2656, 195: 1486, 447: 439, 3532: 174, 2113: 2})
+    Metrics for sample 562 @ B=1.00/S=1.00: Acc=0.5848, mIoU=0.1405, TopK Acc=0.8701, TopK mIoU=0.3970
+  Processing sample 562 for Brightness=0.50, Saturation=0.70
+logits.shape = torch.Size([37, 352, 352]), len(prompts) = 37
+GT label counts: Counter({1605: 99794, 308: 42333, 54: 29000, 14: 17553, 0: 16255, 662: 11060, 253: 6969, 447: 3813, 1160: 3027, 815: 2846, 1038: 2208, 529: 1656, 2786: 1326, 525: 749, 79: 472, 4872: 253, 1155: 233})
+Predicted label counts (top1): Counter({1605: 72709, 308: 43894, 529: 32247, 14: 26875, 1357: 25597, 662: 16818, 1038: 4279, 1160: 4047, 195: 3635, 447: 3367, 253: 3169, 54: 2881, 2113: 29})
+    Metrics for sample 562 @ B=0.50/S=0.70: Acc=0.5900, mIoU=0.1664, TopK Acc=0.8743, TopK mIoU=0.3930
+  Processing sample 562 for Brightness=0.20, Saturation=0.50
+logits.shape = torch.Size([37, 352, 352]), len(prompts) = 37
+GT label counts: Counter({1605: 99794, 308: 42333, 54: 29000, 14: 17553, 0: 16255, 662: 11060, 253: 6969, 447: 3813, 1160: 3027, 815: 2846, 1038: 2208, 529: 1656, 2786: 1326, 525: 749, 79: 472, 4872: 253, 1155: 233})
+Predicted label counts (top1): Counter({1605: 72676, 308: 40627, 529: 38104, 14: 29391, 1357: 28575, 662: 14169, 54: 4876, 2113: 3867, 1160: 3666, 1038: 1758, 195: 1071, 2036: 384, 447: 382, 0: 1})
+    Metrics for sample 562 @ B=0.20/S=0.50: Acc=0.5717, mIoU=0.1428, TopK Acc=0.8733, TopK mIoU=0.4176
+  Processing sample 562 for Brightness=0.10, Saturation=0.20
+logits.shape = torch.Size([37, 352, 352]), len(prompts) = 37
+GT label counts: Counter({1605: 99794, 308: 42333, 54: 29000, 14: 17553, 0: 16255, 662: 11060, 253: 6969, 447: 3813, 1160: 3027, 815: 2846, 1038: 2208, 529: 1656, 2786: 1326, 525: 749, 79: 472, 4872: 253, 1155: 233})
+Predicted label counts (top1): Counter({1605: 79811, 308: 50972, 14: 45443, 529: 25250, 1357: 15722, 447: 5180, 2113: 4924, 1038: 4659, 662: 2933, 253: 2615, 1160: 1612, 195: 411, 0: 15})
+    Metrics for sample 562 @ B=0.10/S=0.20: Acc=0.6354, mIoU=0.1212, TopK Acc=0.8901, TopK mIoU=0.3679
+  Processing sample 562 for Brightness=0.05, Saturation=0.10
+logits.shape = torch.Size([37, 352, 352]), len(prompts) = 37
+GT label counts: Counter({1605: 99794, 308: 42333, 54: 29000, 14: 17553, 0: 16255, 662: 11060, 253: 6969, 447: 3813, 1160: 3027, 815: 2846, 1038: 2208, 529: 1656, 2786: 1326, 525: 749, 79: 472, 4872: 253, 1155: 233})
+Predicted label counts (top1): Counter({14: 119464, 0: 80632, 308: 16707, 662: 9323, 1605: 6137, 253: 4203, 447: 1682, 3469: 956, 1357: 364, 529: 40, 1038: 38, 3810: 1})
+    Metrics for sample 562 @ B=0.05/S=0.10: Acc=0.2218, mIoU=0.0414, TopK Acc=0.8320, TopK mIoU=0.3106
+  Processing sample 562 for Brightness=0.02, Saturation=0.10
+logits.shape = torch.Size([37, 352, 352]), len(prompts) = 37
+GT label counts: Counter({1605: 99794, 308: 42333, 54: 29000, 14: 17553, 0: 16255, 662: 11060, 253: 6969, 447: 3813, 1160: 3027, 815: 2846, 1038: 2208, 529: 1656, 2786: 1326, 525: 749, 79: 472, 4872: 253, 1155: 233})
+Predicted label counts (top1): Counter({14: 239546, 1605: 1})
+    Metrics for sample 562 @ B=0.02/S=0.10: Acc=0.1411, mIoU=0.0043, TopK Acc=0.5868, TopK mIoU=0.1254
+  Processing sample 562 for Brightness=0.01, Saturation=0.05
+logits.shape = torch.Size([37, 352, 352]), len(prompts) = 37
+GT label counts: Counter({1605: 99794, 308: 42333, 54: 29000, 14: 17553, 0: 16255, 662: 11060, 253: 6969, 447: 3813, 1160: 3027, 815: 2846, 1038: 2208, 529: 1656, 2786: 1326, 525: 749, 79: 472, 4872: 253, 1155: 233})
+Predicted label counts (top1): Counter({14: 230115, 1605: 9432})
+    Metrics for sample 562 @ B=0.01/S=0.05: Acc=0.1273, mIoU=0.0050, TopK Acc=0.5868, TopK mIoU=0.1218
+
+Processing sample 6982 for visualization...
+  Computed original prediction for sample 6982
+  Processing sample 6982 for Brightness=1.00, Saturation=1.00
+logits.shape = torch.Size([28, 352, 352]), len(prompts) = 28
+GT label counts: Counter({88: 127718, 1605: 96142, 1160: 66537, 187: 40978, 701: 26427, 308: 13656, 14: 11586, 54: 3856})
+Predicted label counts (top1): Counter({88: 166700, 1605: 93971, 1160: 66780, 187: 34626, 308: 13300, 701: 6042, 14: 5237, 1104: 244})
+    Metrics for sample 6982 @ B=1.00/S=1.00: Acc=0.8494, mIoU=0.4451, TopK Acc=0.9905, TopK mIoU=0.8505
+    Stored variant prediction for sample 6982
+  Processing sample 6982 for Brightness=0.50, Saturation=0.70
+logits.shape = torch.Size([28, 352, 352]), len(prompts) = 28
+GT label counts: Counter({88: 127718, 1605: 96142, 1160: 66537, 187: 40978, 701: 26427, 308: 13656, 14: 11586, 54: 3856})
+Predicted label counts (top1): Counter({88: 148557, 1605: 94897, 1160: 66004, 187: 34863, 701: 24413, 308: 12986, 14: 5170, 1104: 10})
+    Metrics for sample 6982 @ B=0.50/S=0.70: Acc=0.8869, mIoU=0.5021, TopK Acc=0.9851, TopK mIoU=0.9387
+    Stored variant prediction for sample 6982
+  Processing sample 6982 for Brightness=0.20, Saturation=0.50
+logits.shape = torch.Size([28, 352, 352]), len(prompts) = 28
+GT label counts: Counter({88: 127718, 1605: 96142, 1160: 66537, 187: 40978, 701: 26427, 308: 13656, 14: 11586, 54: 3856})
+Predicted label counts (top1): Counter({701: 110221, 1605: 88263, 1160: 66584, 88: 65442, 187: 32453, 14: 12721, 308: 11216})
+    Metrics for sample 6982 @ B=0.20/S=0.50: Acc=0.5964, mIoU=0.3969, TopK Acc=0.9881, TopK mIoU=0.9447
+    Stored variant prediction for sample 6982
+  Processing sample 6982 for Brightness=0.10, Saturation=0.20
+logits.shape = torch.Size([28, 352, 352]), len(prompts) = 28
+GT label counts: Counter({88: 127718, 1605: 96142, 1160: 66537, 187: 40978, 701: 26427, 308: 13656, 14: 11586, 54: 3856})
+Predicted label counts (top1): Counter({701: 137425, 1160: 97829, 1605: 70632, 88: 36578, 14: 30525, 308: 10928, 3267: 2971, 187: 12})
+    Metrics for sample 6982 @ B=0.10/S=0.20: Acc=0.4723, mIoU=0.2183, TopK Acc=0.9475, TopK mIoU=0.6975
+    Stored variant prediction for sample 6982
+  Processing sample 6982 for Brightness=0.05, Saturation=0.10
+logits.shape = torch.Size([28, 352, 352]), len(prompts) = 28
+GT label counts: Counter({88: 127718, 1605: 96142, 1160: 66537, 187: 40978, 701: 26427, 308: 13656, 14: 11586, 54: 3856})
+Predicted label counts (top1): Counter({88: 111659, 1605: 65693, 14: 57365, 701: 48993, 1353: 35610, 2235: 34153, 3267: 21732, 308: 7421, 187: 3386, 844: 888})
+    Metrics for sample 6982 @ B=0.05/S=0.10: Acc=0.3226, mIoU=0.1081, TopK Acc=0.7131, TopK mIoU=0.3427
+    Stored variant prediction for sample 6982
+  Processing sample 6982 for Brightness=0.02, Saturation=0.10
+logits.shape = torch.Size([28, 352, 352]), len(prompts) = 28
+GT label counts: Counter({88: 127718, 1605: 96142, 1160: 66537, 187: 40978, 701: 26427, 308: 13656, 14: 11586, 54: 3856})
+Predicted label counts (top1): Counter({14: 386898, 1605: 2})
+    Metrics for sample 6982 @ B=0.02/S=0.10: Acc=0.0299, mIoU=0.0037, TopK Acc=0.3401, TopK mIoU=0.1752
+    Stored variant prediction for sample 6982
+  Processing sample 6982 for Brightness=0.01, Saturation=0.05
+logits.shape = torch.Size([28, 352, 352]), len(prompts) = 28
+GT label counts: Counter({88: 127718, 1605: 96142, 1160: 66537, 187: 40978, 701: 26427, 308: 13656, 14: 11586, 54: 3856})
+Predicted label counts (top1): Counter({1199: 386865, 14: 35})
+    Metrics for sample 6982 @ B=0.01/S=0.05: Acc=0.0000, mIoU=0.0000, TopK Acc=0.3791, TopK mIoU=0.2873
+    Stored variant prediction for sample 6982
+  Generating full variation visualization for sample 6982...
+  Saved extended visualization to: ./benchmark/clipseg_visualizations/sample_006982_variation.png
+
+Processing sample 39 for visualization...
+  Computed original prediction for sample 39
+  Processing sample 39 for Brightness=1.00, Saturation=1.00
+logits.shape = torch.Size([36, 352, 352]), len(prompts) = 36
+GT label counts: Counter({1605: 80607, 88: 45013, 1160: 36618, 14: 31680, 0: 12253, 187: 9793, 831: 5832, 291: 4492, 936: 4060, 918: 3690, 2533: 2021, 1931: 1585, 1235: 817, 941: 611, 330: 367, 970: 108})
+Predicted label counts (top1): Counter({1605: 76055, 88: 62278, 1160: 35653, 187: 20095, 525: 10423, 14: 8206, 831: 6579, 291: 6138, 1406: 4993, 941: 3162, 100: 1733, 0: 1474, 2533: 1282, 918: 933, 949: 475, 360: 68})
+    Metrics for sample 39 @ B=1.00/S=1.00: Acc=0.6478, mIoU=0.1389, TopK Acc=0.8718, TopK mIoU=0.4542
+    Stored variant prediction for sample 39
+  Processing sample 39 for Brightness=0.50, Saturation=0.70
+logits.shape = torch.Size([36, 352, 352]), len(prompts) = 36
+GT label counts: Counter({1605: 80607, 88: 45013, 1160: 36618, 14: 31680, 0: 12253, 187: 9793, 831: 5832, 291: 4492, 936: 4060, 918: 3690, 2533: 2021, 1931: 1585, 1235: 817, 941: 611, 330: 367, 970: 108})
+Predicted label counts (top1): Counter({1605: 75851, 88: 61074, 1160: 33145, 1406: 19327, 187: 11504, 14: 10696, 525: 9576, 831: 8703, 918: 4333, 0: 1741, 2533: 1463, 291: 1280, 100: 563, 949: 282, 941: 9})
+    Metrics for sample 39 @ B=0.50/S=0.70: Acc=0.6292, mIoU=0.1465, TopK Acc=0.8829, TopK mIoU=0.4728
+    Stored variant prediction for sample 39
+  Processing sample 39 for Brightness=0.20, Saturation=0.50
+logits.shape = torch.Size([36, 352, 352]), len(prompts) = 36
+GT label counts: Counter({1605: 80607, 88: 45013, 1160: 36618, 14: 31680, 0: 12253, 187: 9793, 831: 5832, 291: 4492, 936: 4060, 918: 3690, 2533: 2021, 1931: 1585, 1235: 817, 941: 611, 330: 367, 970: 108})
+Predicted label counts (top1): Counter({1605: 72918, 1406: 56881, 88: 52482, 1160: 22811, 525: 13658, 14: 8725, 831: 5320, 187: 2493, 941: 2168, 2533: 1551, 936: 528, 1235: 12})
+    Metrics for sample 39 @ B=0.20/S=0.50: Acc=0.5567, mIoU=0.1519, TopK Acc=0.8523, TopK mIoU=0.4638
+    Stored variant prediction for sample 39
+  Processing sample 39 for Brightness=0.10, Saturation=0.20
+logits.shape = torch.Size([36, 352, 352]), len(prompts) = 36
+GT label counts: Counter({1605: 80607, 88: 45013, 1160: 36618, 14: 31680, 0: 12253, 187: 9793, 831: 5832, 291: 4492, 936: 4060, 918: 3690, 2533: 2021, 1931: 1585, 1235: 817, 941: 611, 330: 367, 970: 108})
+Predicted label counts (top1): Counter({1406: 61730, 88: 57614, 1605: 44138, 14: 38338, 1160: 19027, 525: 14249, 936: 2870, 941: 1581})
+    Metrics for sample 39 @ B=0.10/S=0.20: Acc=0.4865, mIoU=0.1224, TopK Acc=0.8594, TopK mIoU=0.4206
+    Stored variant prediction for sample 39
+  Processing sample 39 for Brightness=0.05, Saturation=0.10
+logits.shape = torch.Size([36, 352, 352]), len(prompts) = 36
+GT label counts: Counter({1605: 80607, 88: 45013, 1160: 36618, 14: 31680, 0: 12253, 187: 9793, 831: 5832, 291: 4492, 936: 4060, 918: 3690, 2533: 2021, 1931: 1585, 1235: 817, 941: 611, 330: 367, 970: 108})
+Predicted label counts (top1): Counter({14: 164897, 1605: 31933, 88: 30916, 187: 6790, 1160: 3713, 1406: 1214, 936: 84})
+    Metrics for sample 39 @ B=0.05/S=0.10: Acc=0.3752, mIoU=0.0618, TopK Acc=0.8543, TopK mIoU=0.3427
+    Stored variant prediction for sample 39
+  Processing sample 39 for Brightness=0.02, Saturation=0.10
+logits.shape = torch.Size([36, 352, 352]), len(prompts) = 36
+GT label counts: Counter({1605: 80607, 88: 45013, 1160: 36618, 14: 31680, 0: 12253, 187: 9793, 831: 5832, 291: 4492, 936: 4060, 918: 3690, 2533: 2021, 1931: 1585, 1235: 817, 941: 611, 330: 367, 970: 108})
+Predicted label counts (top1): Counter({14: 192551, 1605: 24960, 325: 21246, 525: 790})
+    Metrics for sample 39 @ B=0.02/S=0.10: Acc=0.1813, mIoU=0.0164, TopK Acc=0.5199, TopK mIoU=0.0646
+    Stored variant prediction for sample 39
+  Processing sample 39 for Brightness=0.01, Saturation=0.05
+logits.shape = torch.Size([36, 352, 352]), len(prompts) = 36
+GT label counts: Counter({1605: 80607, 88: 45013, 1160: 36618, 14: 31680, 0: 12253, 187: 9793, 831: 5832, 291: 4492, 936: 4060, 918: 3690, 2533: 2021, 1931: 1585, 1235: 817, 941: 611, 330: 367, 970: 108})
+Predicted label counts (top1): Counter({525: 239271, 325: 237, 1605: 39})
+    Metrics for sample 39 @ B=0.01/S=0.05: Acc=0.0510, mIoU=0.0000, TopK Acc=0.5199, TopK mIoU=0.1180
+    Stored variant prediction for sample 39
+  Generating full variation visualization for sample 39...
+  Saved extended visualization to: ./benchmark/clipseg_visualizations/sample_000039_variation.png
+  Processing sample 1597 for Brightness=1.00, Saturation=1.00
+logits.shape = torch.Size([38, 352, 352]), len(prompts) = 38
+GT label counts: Counter({529: 79009, 14: 34152, 1349: 24295, 834: 20225, 525: 18941, 86: 11898, 436: 9840, 1605: 9357, 918: 8125, 1293: 6899, 1160: 5038, 2888: 4150, 3730: 2337, 4807: 2002, 548: 1424, 831: 1131, 4872: 400, 100: 324})
+Predicted label counts (top1): Counter({133: 65718, 1349: 34403, 529: 31485, 1605: 26549, 525: 23977, 834: 10578, 918: 10001, 620: 6721, 4254: 5742, 1160: 5526, 740: 2718, 1293: 2652, 2888: 2531, 4807: 2442, 14: 2101, 601: 1821, 436: 1745, 2004: 1575, 881: 1026, 530: 207, 86: 24, 831: 5})
+    Metrics for sample 1597 @ B=1.00/S=1.00: Acc=0.3519, mIoU=0.1772, TopK Acc=0.6756, TopK mIoU=0.3998
+  Processing sample 1597 for Brightness=0.50, Saturation=0.70
+logits.shape = torch.Size([38, 352, 352]), len(prompts) = 38
+GT label counts: Counter({529: 79009, 14: 34152, 1349: 24295, 834: 20225, 525: 18941, 86: 11898, 436: 9840, 1605: 9357, 918: 8125, 1293: 6899, 1160: 5038, 2888: 4150, 3730: 2337, 4807: 2002, 548: 1424, 831: 1131, 4872: 400, 100: 324})
+Predicted label counts (top1): Counter({133: 84360, 1605: 26268, 529: 25843, 1349: 23867, 525: 18347, 436: 10772, 918: 10462, 620: 10197, 1293: 9395, 1160: 5246, 4254: 3501, 2888: 2608, 834: 2056, 831: 1744, 740: 1737, 881: 1335, 2004: 882, 601: 735, 857: 96, 86: 35, 14: 34, 4807: 27})
+    Metrics for sample 1597 @ B=0.50/S=0.70: Acc=0.2636, mIoU=0.1408, TopK Acc=0.6314, TopK mIoU=0.3632
+  Processing sample 1597 for Brightness=0.20, Saturation=0.50
+logits.shape = torch.Size([38, 352, 352]), len(prompts) = 38
+GT label counts: Counter({529: 79009, 14: 34152, 1349: 24295, 834: 20225, 525: 18941, 86: 11898, 436: 9840, 1605: 9357, 918: 8125, 1293: 6899, 1160: 5038, 2888: 4150, 3730: 2337, 4807: 2002, 548: 1424, 831: 1131, 4872: 400, 100: 324})
+Predicted label counts (top1): Counter({133: 119930, 529: 25426, 740: 15603, 86: 13506, 918: 12114, 1349: 11776, 1605: 10705, 525: 8559, 436: 6894, 1160: 5655, 2888: 5103, 831: 4111, 881: 126, 14: 34, 2004: 5})
+    Metrics for sample 1597 @ B=0.20/S=0.50: Acc=0.1805, mIoU=0.1212, TopK Acc=0.4419, TopK mIoU=0.2841
+  Processing sample 1597 for Brightness=0.10, Saturation=0.20
+logits.shape = torch.Size([38, 352, 352]), len(prompts) = 38
+GT label counts: Counter({529: 79009, 14: 34152, 1349: 24295, 834: 20225, 525: 18941, 86: 11898, 436: 9840, 1605: 9357, 918: 8125, 1293: 6899, 1160: 5038, 2888: 4150, 3730: 2337, 4807: 2002, 548: 1424, 831: 1131, 4872: 400, 100: 324})
+Predicted label counts (top1): Counter({14: 67599, 740: 42601, 86: 37787, 1160: 24798, 133: 24733, 529: 23936, 1605: 12047, 525: 5700, 831: 283, 4872: 63})
+    Metrics for sample 1597 @ B=0.10/S=0.20: Acc=0.1380, mIoU=0.0329, TopK Acc=0.4220, TopK mIoU=0.2138
+  Processing sample 1597 for Brightness=0.05, Saturation=0.10
+logits.shape = torch.Size([38, 352, 352]), len(prompts) = 38
+GT label counts: Counter({529: 79009, 14: 34152, 1349: 24295, 834: 20225, 525: 18941, 86: 11898, 436: 9840, 1605: 9357, 918: 8125, 1293: 6899, 1160: 5038, 2888: 4150, 3730: 2337, 4807: 2002, 548: 1424, 831: 1131, 4872: 400, 100: 324})
+Predicted label counts (top1): Counter({14: 221520, 1160: 14341, 133: 2644, 1349: 1042})
+    Metrics for sample 1597 @ B=0.05/S=0.10: Acc=0.1292, mIoU=0.0072, TopK Acc=0.2193, TopK mIoU=0.0859
+  Processing sample 1597 for Brightness=0.02, Saturation=0.10
+logits.shape = torch.Size([38, 352, 352]), len(prompts) = 38
+GT label counts: Counter({529: 79009, 14: 34152, 1349: 24295, 834: 20225, 525: 18941, 86: 11898, 436: 9840, 1605: 9357, 918: 8125, 1293: 6899, 1160: 5038, 2888: 4150, 3730: 2337, 4807: 2002, 548: 1424, 831: 1131, 4872: 400, 100: 324})
+Predicted label counts (top1): Counter({14: 239379, 1605: 95, 1549: 73})
+    Metrics for sample 1597 @ B=0.02/S=0.10: Acc=0.1426, mIoU=0.0075, TopK Acc=0.2518, TopK mIoU=0.1652
+  Processing sample 1597 for Brightness=0.01, Saturation=0.05
+logits.shape = torch.Size([38, 352, 352]), len(prompts) = 38
+GT label counts: Counter({529: 79009, 14: 34152, 1349: 24295, 834: 20225, 525: 18941, 86: 11898, 436: 9840, 1605: 9357, 918: 8125, 1293: 6899, 1160: 5038, 2888: 4150, 3730: 2337, 4807: 2002, 548: 1424, 831: 1131, 4872: 400, 100: 324})
+Predicted label counts (top1): Counter({14: 132039, 1605: 107508})
+    Metrics for sample 1597 @ B=0.01/S=0.05: Acc=0.1127, mIoU=0.0113, TopK Acc=0.1816, TopK mIoU=0.0185
+  Processing sample 5180 for Brightness=1.00, Saturation=1.00
+logits.shape = torch.Size([29, 352, 352]), len(prompts) = 29
+GT label counts: Counter({226: 78417, 223: 60379, 1160: 43191, 4997: 36242, 1605: 27632, 14: 6830, 235: 5047, 135: 2717, 0: 176})
+Predicted label counts (top1): Counter({226: 83063, 223: 66665, 1605: 55099, 1160: 49096, 4997: 6421, 2766: 279, 14: 8})
+    Metrics for sample 5180 @ B=1.00/S=1.00: Acc=0.7974, mIoU=0.3183, TopK Acc=0.9728, TopK mIoU=0.7810
+  Processing sample 5180 for Brightness=0.50, Saturation=0.70
+logits.shape = torch.Size([29, 352, 352]), len(prompts) = 29
+GT label counts: Counter({226: 78417, 223: 60379, 1160: 43191, 4997: 36242, 1605: 27632, 14: 6830, 235: 5047, 135: 2717, 0: 176})
+Predicted label counts (top1): Counter({226: 81839, 1605: 57183, 223: 56032, 1160: 48628, 4997: 14873, 135: 1322, 14: 754})
+    Metrics for sample 5180 @ B=0.50/S=0.70: Acc=0.7343, mIoU=0.3491, TopK Acc=0.9481, TopK mIoU=0.7640
+  Processing sample 5180 for Brightness=0.20, Saturation=0.50
+logits.shape = torch.Size([29, 352, 352]), len(prompts) = 29
+GT label counts: Counter({226: 78417, 223: 60379, 1160: 43191, 4997: 36242, 1605: 27632, 14: 6830, 235: 5047, 135: 2717, 0: 176})
+Predicted label counts (top1): Counter({226: 63084, 223: 59041, 1160: 47083, 1605: 44524, 135: 16464, 4997: 14083, 235: 6507, 28: 5407, 14: 4438})
+    Metrics for sample 5180 @ B=0.20/S=0.50: Acc=0.7169, mIoU=0.3204, TopK Acc=0.8767, TopK mIoU=0.4845
+  Processing sample 5180 for Brightness=0.10, Saturation=0.20
+logits.shape = torch.Size([29, 352, 352]), len(prompts) = 29
+GT label counts: Counter({226: 78417, 223: 60379, 1160: 43191, 4997: 36242, 1605: 27632, 14: 6830, 235: 5047, 135: 2717, 0: 176})
+Predicted label counts (top1): Counter({226: 92808, 1605: 88963, 14: 24105, 4997: 23162, 1101: 10256, 2766: 9705, 135: 7007, 489: 4112, 1160: 458, 28: 55})
+    Metrics for sample 5180 @ B=0.10/S=0.20: Acc=0.3184, mIoU=0.0750, TopK Acc=0.4398, TopK mIoU=0.1369
+  Processing sample 5180 for Brightness=0.05, Saturation=0.10
+logits.shape = torch.Size([29, 352, 352]), len(prompts) = 29
+GT label counts: Counter({226: 78417, 223: 60379, 1160: 43191, 4997: 36242, 1605: 27632, 14: 6830, 235: 5047, 135: 2717, 0: 176})
+Predicted label counts (top1): Counter({1605: 106056, 2209: 73570, 14: 33799, 1160: 23447, 235: 20044, 2766: 3715})
+    Metrics for sample 5180 @ B=0.05/S=0.10: Acc=0.1148, mIoU=0.0386, TopK Acc=0.2540, TopK mIoU=0.1184
+  Processing sample 5180 for Brightness=0.02, Saturation=0.10
+logits.shape = torch.Size([29, 352, 352]), len(prompts) = 29
+GT label counts: Counter({226: 78417, 223: 60379, 1160: 43191, 4997: 36242, 1605: 27632, 14: 6830, 235: 5047, 135: 2717, 0: 176})
+Predicted label counts (top1): Counter({14: 248898, 1605: 11574, 5231: 159})
+    Metrics for sample 5180 @ B=0.02/S=0.10: Acc=0.0535, mIoU=0.0281, TopK Acc=0.1322, TopK mIoU=0.0942
+  Processing sample 5180 for Brightness=0.01, Saturation=0.05
+logits.shape = torch.Size([29, 352, 352]), len(prompts) = 29
+GT label counts: Counter({226: 78417, 223: 60379, 1160: 43191, 4997: 36242, 1605: 27632, 14: 6830, 235: 5047, 135: 2717, 0: 176})
+Predicted label counts (top1): Counter({14: 167887, 1605: 90539, 394: 1140, 5231: 1065})
+    Metrics for sample 5180 @ B=0.01/S=0.05: Acc=0.0822, mIoU=0.0183, TopK Acc=0.1322, TopK mIoU=0.0299
+
+Processing sample 4619 for visualization...
+  Computed original prediction for sample 4619
+  Processing sample 4619 for Brightness=1.00, Saturation=1.00
+logits.shape = torch.Size([29, 352, 352]), len(prompts) = 29
+GT label counts: Counter({1160: 85809, 1605: 53680, 88: 49251, 187: 39924, 14: 15883, 436: 12125, 367: 3789, 319: 152, 1632: 18})
+Predicted label counts (top1): Counter({1160: 72890, 88: 50075, 1605: 48485, 187: 42471, 14: 12935, 5189: 11225, 4583: 9307, 3001: 6196, 472: 4240, 73: 1551, 436: 1062, 693: 99, 367: 67, 1795: 28})
+    Metrics for sample 4619 @ B=1.00/S=1.00: Acc=0.7183, mIoU=0.1905, TopK Acc=0.9418, TopK mIoU=0.4075
+    Stored variant prediction for sample 4619
+  Processing sample 4619 for Brightness=0.50, Saturation=0.70
+logits.shape = torch.Size([29, 352, 352]), len(prompts) = 29
+GT label counts: Counter({1160: 85809, 1605: 53680, 88: 49251, 187: 39924, 14: 15883, 436: 12125, 367: 3789, 319: 152, 1632: 18})
+Predicted label counts (top1): Counter({1160: 76595, 1605: 43486, 14: 39083, 187: 37389, 88: 31291, 4583: 14430, 1795: 10485, 5189: 5752, 367: 798, 436: 726, 4980: 254, 3001: 212, 912: 119, 73: 10, 693: 1})
+    Metrics for sample 4619 @ B=0.50/S=0.70: Acc=0.6736, mIoU=0.1782, TopK Acc=0.9358, TopK mIoU=0.4121
+    Stored variant prediction for sample 4619
+  Processing sample 4619 for Brightness=0.20, Saturation=0.50
+logits.shape = torch.Size([29, 352, 352]), len(prompts) = 29
+GT label counts: Counter({1160: 85809, 1605: 53680, 88: 49251, 187: 39924, 14: 15883, 436: 12125, 367: 3789, 319: 152, 1632: 18})
+Predicted label counts (top1): Counter({1160: 113184, 14: 43321, 187: 41515, 1605: 38938, 88: 12482, 1982: 8862, 472: 1854, 693: 303, 3412: 152, 5189: 16, 1795: 4})
+    Metrics for sample 4619 @ B=0.20/S=0.50: Acc=0.6590, mIoU=0.1692, TopK Acc=0.8169, TopK mIoU=0.2786
+    Stored variant prediction for sample 4619
+  Processing sample 4619 for Brightness=0.10, Saturation=0.20
+logits.shape = torch.Size([29, 352, 352]), len(prompts) = 29
+GT label counts: Counter({1160: 85809, 1605: 53680, 88: 49251, 187: 39924, 14: 15883, 436: 12125, 367: 3789, 319: 152, 1632: 18})
+Predicted label counts (top1): Counter({1160: 165174, 1605: 40835, 14: 40511, 88: 9107, 472: 2798, 187: 2206})
+    Metrics for sample 4619 @ B=0.10/S=0.20: Acc=0.4937, mIoU=0.1292, TopK Acc=0.7792, TopK mIoU=0.3242
+    Stored variant prediction for sample 4619
+  Processing sample 4619 for Brightness=0.05, Saturation=0.10
+logits.shape = torch.Size([29, 352, 352]), len(prompts) = 29
+GT label counts: Counter({1160: 85809, 1605: 53680, 88: 49251, 187: 39924, 14: 15883, 436: 12125, 367: 3789, 319: 152, 1632: 18})
+Predicted label counts (top1): Counter({1160: 150491, 1605: 44957, 14: 43862, 472: 11667, 187: 6340, 912: 1682, 88: 1632})
+    Metrics for sample 4619 @ B=0.05/S=0.10: Acc=0.4617, mIoU=0.1085, TopK Acc=0.7929, TopK mIoU=0.3485
+    Stored variant prediction for sample 4619
+  Processing sample 4619 for Brightness=0.02, Saturation=0.10
+logits.shape = torch.Size([29, 352, 352]), len(prompts) = 29
+GT label counts: Counter({1160: 85809, 1605: 53680, 88: 49251, 187: 39924, 14: 15883, 436: 12125, 367: 3789, 319: 152, 1632: 18})
+Predicted label counts (top1): Counter({14: 255574, 1605: 5057})
+    Metrics for sample 4619 @ B=0.02/S=0.10: Acc=0.0689, mIoU=0.0113, TopK Acc=0.2669, TopK mIoU=0.1147
+    Stored variant prediction for sample 4619
+  Processing sample 4619 for Brightness=0.01, Saturation=0.05
+logits.shape = torch.Size([29, 352, 352]), len(prompts) = 29
+GT label counts: Counter({1160: 85809, 1605: 53680, 88: 49251, 187: 39924, 14: 15883, 436: 12125, 367: 3789, 319: 152, 1632: 18})
+Predicted label counts (top1): Counter({14: 260436, 1605: 195})
+    Metrics for sample 4619 @ B=0.01/S=0.05: Acc=0.0617, mIoU=0.0072, TopK Acc=0.2669, TopK mIoU=0.1196
+    Stored variant prediction for sample 4619
+  Generating full variation visualization for sample 4619...
+  Saved extended visualization to: ./benchmark/clipseg_visualizations/sample_004619_variation.png
+  Processing sample 7106 for Brightness=1.00, Saturation=1.00
+logits.shape = torch.Size([34, 352, 352]), len(prompts) = 34
+GT label counts: Counter({1160: 159940, 367: 82142, 1605: 65402, 187: 23938, 1349: 19028, 86: 14842, 14: 11240, 88: 6411, 33: 2181, 359: 1040, 147: 275, 3888: 268, 313: 157, 1350: 36})
+Predicted label counts (top1): Counter({1160: 156064, 367: 70262, 1605: 52458, 1349: 38673, 187: 22137, 86: 14018, 88: 10353, 14: 8811, 1350: 4899, 359: 4065, 16: 2090, 584: 1997, 105: 1073})
+    Metrics for sample 7106 @ B=1.00/S=1.00: Acc=0.7917, mIoU=0.2414, TopK Acc=0.9484, TopK mIoU=0.4785
+  Processing sample 7106 for Brightness=0.50, Saturation=0.70
+logits.shape = torch.Size([34, 352, 352]), len(prompts) = 34
+GT label counts: Counter({1160: 159940, 367: 82142, 1605: 65402, 187: 23938, 1349: 19028, 86: 14842, 14: 11240, 88: 6411, 33: 2181, 359: 1040, 147: 275, 3888: 268, 313: 157, 1350: 36})
+Predicted label counts (top1): Counter({1160: 155126, 367: 70128, 1605: 52421, 86: 23915, 1349: 22310, 187: 22237, 1350: 12858, 14: 9567, 88: 9403, 16: 7250, 359: 1441, 5192: 127, 105: 70, 1843: 43, 1477: 4})
+    Metrics for sample 7106 @ B=0.50/S=0.70: Acc=0.7976, mIoU=0.2376, TopK Acc=0.9563, TopK mIoU=0.4876
+  Processing sample 7106 for Brightness=0.20, Saturation=0.50
+logits.shape = torch.Size([34, 352, 352]), len(prompts) = 34
+GT label counts: Counter({1160: 159940, 367: 82142, 1605: 65402, 187: 23938, 1349: 19028, 86: 14842, 14: 11240, 88: 6411, 33: 2181, 359: 1040, 147: 275, 3888: 268, 313: 157, 1350: 36})
+Predicted label counts (top1): Counter({1160: 143687, 367: 73452, 14: 55018, 86: 28050, 187: 23141, 1349: 19022, 88: 14274, 1843: 8614, 1350: 8248, 16: 6243, 1605: 6185, 359: 495, 45: 396, 5192: 75})
+    Metrics for sample 7106 @ B=0.20/S=0.50: Acc=0.6991, mIoU=0.2063, TopK Acc=0.9602, TopK mIoU=0.4801
+  Processing sample 7106 for Brightness=0.10, Saturation=0.20
+logits.shape = torch.Size([34, 352, 352]), len(prompts) = 34
+GT label counts: Counter({1160: 159940, 367: 82142, 1605: 65402, 187: 23938, 1349: 19028, 86: 14842, 14: 11240, 88: 6411, 33: 2181, 359: 1040, 147: 275, 3888: 268, 313: 157, 1350: 36})
+Predicted label counts (top1): Counter({14: 119201, 1160: 83521, 367: 46557, 88: 46179, 918: 23278, 187: 20861, 86: 19339, 1349: 17973, 1605: 5031, 1843: 2570, 1350: 2341, 2657: 48, 3024: 1})
+    Metrics for sample 7106 @ B=0.10/S=0.20: Acc=0.4383, mIoU=0.1343, TopK Acc=0.9437, TopK mIoU=0.3930
+  Processing sample 7106 for Brightness=0.05, Saturation=0.10
+logits.shape = torch.Size([34, 352, 352]), len(prompts) = 34
+GT label counts: Counter({1160: 159940, 367: 82142, 1605: 65402, 187: 23938, 1349: 19028, 86: 14842, 14: 11240, 88: 6411, 33: 2181, 359: 1040, 147: 275, 3888: 268, 313: 157, 1350: 36})
+Predicted label counts (top1): Counter({1160: 152933, 1605: 74310, 14: 71880, 88: 33718, 1349: 22324, 187: 13816, 86: 11074, 442: 3425, 3088: 3029, 367: 391})
+    Metrics for sample 7106 @ B=0.05/S=0.10: Acc=0.4114, mIoU=0.1233, TopK Acc=0.7708, TopK mIoU=0.2959
+  Processing sample 7106 for Brightness=0.02, Saturation=0.10
+logits.shape = torch.Size([34, 352, 352]), len(prompts) = 34
+GT label counts: Counter({1160: 159940, 367: 82142, 1605: 65402, 187: 23938, 1349: 19028, 86: 14842, 14: 11240, 88: 6411, 33: 2181, 359: 1040, 147: 275, 3888: 268, 313: 157, 1350: 36})
+Predicted label counts (top1): Counter({14: 374715, 5192: 11540, 1605: 641, 3088: 4})
+    Metrics for sample 7106 @ B=0.02/S=0.10: Acc=0.0284, mIoU=0.0018, TopK Acc=0.1981, TopK mIoU=0.0685
+  Processing sample 7106 for Brightness=0.01, Saturation=0.05
+logits.shape = torch.Size([34, 352, 352]), len(prompts) = 34
+GT label counts: Counter({1160: 159940, 367: 82142, 1605: 65402, 187: 23938, 1349: 19028, 86: 14842, 14: 11240, 88: 6411, 33: 2181, 359: 1040, 147: 275, 3888: 268, 313: 157, 1350: 36})
+Predicted label counts (top1): Counter({3088: 386675, 1605: 121, 14: 104})
+    Metrics for sample 7106 @ B=0.01/S=0.05: Acc=0.0001, mIoU=0.0003, TopK Acc=0.1981, TopK mIoU=0.1330
+
+Processing sample 592 for visualization...
+  Computed original prediction for sample 592
+  Processing sample 592 for Brightness=1.00, Saturation=1.00
+logits.shape = torch.Size([42, 352, 352]), len(prompts) = 42
+GT label counts: Counter({529: 90660, 1160: 52533, 1605: 36036, 525: 18977, 14: 12765, 1293: 4803, 2513: 4526, 235: 3389, 1145: 2965, 86: 2591, 442: 2004, 980: 1390, 834: 1376, 781: 1205, 2497: 775, 1700: 748, 343: 696, 0: 627, 131: 623, 1879: 493, 2037: 365})
+Predicted label counts (top1): Counter({525: 65044, 1160: 55905, 14: 42977, 529: 23689, 1605: 14876, 436: 11590, 343: 9652, 235: 2920, 2513: 2711, 2683: 2331, 2497: 2133, 442: 1948, 2037: 1865, 1227: 1314, 980: 369, 1293: 214, 1045: 9})
+    Metrics for sample 592 @ B=1.00/S=1.00: Acc=0.4636, mIoU=0.1277, TopK Acc=0.8775, TopK mIoU=0.3453
+    Stored variant prediction for sample 592
+  Processing sample 592 for Brightness=0.50, Saturation=0.70
+logits.shape = torch.Size([42, 352, 352]), len(prompts) = 42
+GT label counts: Counter({529: 90660, 1160: 52533, 1605: 36036, 525: 18977, 14: 12765, 1293: 4803, 2513: 4526, 235: 3389, 1145: 2965, 86: 2591, 442: 2004, 980: 1390, 834: 1376, 781: 1205, 2497: 775, 1700: 748, 343: 696, 0: 627, 131: 623, 1879: 493, 2037: 365})
+Predicted label counts (top1): Counter({525: 63935, 1160: 58339, 14: 51115, 529: 18252, 1605: 16546, 436: 11759, 343: 7947, 2513: 2968, 235: 2616, 980: 2584, 2683: 2176, 2497: 718, 1293: 195, 1879: 144, 2037: 121, 442: 97, 1227: 19, 1045: 16})
+    Metrics for sample 592 @ B=0.50/S=0.70: Acc=0.4452, mIoU=0.1183, TopK Acc=0.8842, TopK mIoU=0.4565
+    Stored variant prediction for sample 592
+  Processing sample 592 for Brightness=0.20, Saturation=0.50
+logits.shape = torch.Size([42, 352, 352]), len(prompts) = 42
+GT label counts: Counter({529: 90660, 1160: 52533, 1605: 36036, 525: 18977, 14: 12765, 1293: 4803, 2513: 4526, 235: 3389, 1145: 2965, 86: 2591, 442: 2004, 980: 1390, 834: 1376, 781: 1205, 2497: 775, 1700: 748, 343: 696, 0: 627, 131: 623, 1879: 493, 2037: 365})
+Predicted label counts (top1): Counter({1160: 56612, 529: 56414, 14: 43994, 2497: 17708, 525: 16268, 2037: 16076, 1605: 13620, 1293: 5403, 343: 5077, 2683: 2047, 235: 1814, 5419: 1547, 980: 1363, 436: 833, 86: 769, 1227: 2})
+    Metrics for sample 592 @ B=0.20/S=0.50: Acc=0.5311, mIoU=0.1029, TopK Acc=0.7836, TopK mIoU=0.3525
+    Stored variant prediction for sample 592
+  Processing sample 592 for Brightness=0.10, Saturation=0.20
+logits.shape = torch.Size([42, 352, 352]), len(prompts) = 42
+GT label counts: Counter({529: 90660, 1160: 52533, 1605: 36036, 525: 18977, 14: 12765, 1293: 4803, 2513: 4526, 235: 3389, 1145: 2965, 86: 2591, 442: 2004, 980: 1390, 834: 1376, 781: 1205, 2497: 775, 1700: 748, 343: 696, 0: 627, 131: 623, 1879: 493, 2037: 365})
+Predicted label counts (top1): Counter({14: 59064, 1160: 59002, 525: 30911, 1227: 23427, 529: 16327, 1605: 13630, 343: 12633, 86: 12427, 2037: 9198, 2497: 1269, 2683: 1111, 834: 548})
+    Metrics for sample 592 @ B=0.10/S=0.20: Acc=0.3760, mIoU=0.0718, TopK Acc=0.7343, TopK mIoU=0.2209
+    Stored variant prediction for sample 592
+  Processing sample 592 for Brightness=0.05, Saturation=0.10
+logits.shape = torch.Size([42, 352, 352]), len(prompts) = 42
+GT label counts: Counter({529: 90660, 1160: 52533, 1605: 36036, 525: 18977, 14: 12765, 1293: 4803, 2513: 4526, 235: 3389, 1145: 2965, 86: 2591, 442: 2004, 980: 1390, 834: 1376, 781: 1205, 2497: 775, 1700: 748, 343: 696, 0: 627, 131: 623, 1879: 493, 2037: 365})
+Predicted label counts (top1): Counter({14: 102094, 1160: 55673, 94: 22562, 918: 22398, 1605: 17017, 529: 10020, 1227: 3778, 436: 3025, 525: 1438, 86: 1395, 2683: 109, 343: 37, 1045: 1})
+    Metrics for sample 592 @ B=0.05/S=0.10: Acc=0.3158, mIoU=0.0508, TopK Acc=0.5350, TopK mIoU=0.1132
+    Stored variant prediction for sample 592
+  Processing sample 592 for Brightness=0.02, Saturation=0.10
+logits.shape = torch.Size([42, 352, 352]), len(prompts) = 42
+GT label counts: Counter({529: 90660, 1160: 52533, 1605: 36036, 525: 18977, 14: 12765, 1293: 4803, 2513: 4526, 235: 3389, 1145: 2965, 86: 2591, 442: 2004, 980: 1390, 834: 1376, 781: 1205, 2497: 775, 1700: 748, 343: 696, 0: 627, 131: 623, 1879: 493, 2037: 365})
+Predicted label counts (top1): Counter({14: 239059, 24: 488})
+    Metrics for sample 592 @ B=0.02/S=0.10: Acc=0.0559, mIoU=0.0024, TopK Acc=0.2964, TopK mIoU=0.1393
+    Stored variant prediction for sample 592
+  Processing sample 592 for Brightness=0.01, Saturation=0.05
+logits.shape = torch.Size([42, 352, 352]), len(prompts) = 42
+GT label counts: Counter({529: 90660, 1160: 52533, 1605: 36036, 525: 18977, 14: 12765, 1293: 4803, 2513: 4526, 235: 3389, 1145: 2965, 86: 2591, 442: 2004, 980: 1390, 834: 1376, 781: 1205, 2497: 775, 1700: 748, 343: 696, 0: 627, 131: 623, 1879: 493, 2037: 365})
+Predicted label counts (top1): Counter({14: 150795, 1605: 86483, 24: 2269})
+    Metrics for sample 592 @ B=0.01/S=0.05: Acc=0.1137, mIoU=0.0116, TopK Acc=0.2856, TopK mIoU=0.0674
+    Stored variant prediction for sample 592
+  Generating full variation visualization for sample 592...
+  Saved extended visualization to: ./benchmark/clipseg_visualizations/sample_000592_variation.png
+  Processing sample 8281 for Brightness=1.00, Saturation=1.00
+logits.shape = torch.Size([41, 352, 352]), len(prompts) = 41
+GT label counts: Counter({1605: 101782, 1160: 85533, 436: 37529, 14: 35444, 529: 29156, 447: 14931, 0: 14402, 831: 13881, 941: 10282, 295: 10141, 187: 9104, 128: 7873, 2528: 6901, 3262: 3440, 6: 1708, 2909: 1303, 1539: 1026, 1349: 958, 112: 854, 460: 351, 1916: 301})
+Predicted label counts (top1): Counter({1160: 89109, 1605: 70282, 14: 44782, 2856: 35960, 1349: 23316, 187: 17677, 262: 17125, 128: 16817, 831: 13736, 941: 10747, 525: 8173, 693: 7338, 436: 6605, 3355: 5965, 295: 5720, 529: 4179, 3408: 3714, 447: 3549, 918: 1247, 0: 322, 3262: 321, 2808: 210, 541: 6})
+    Metrics for sample 8281 @ B=1.00/S=1.00: Acc=0.5100, mIoU=0.1142, TopK Acc=0.7606, TopK mIoU=0.3115
+  Processing sample 8281 for Brightness=0.50, Saturation=0.70
+logits.shape = torch.Size([41, 352, 352]), len(prompts) = 41
+GT label counts: Counter({1605: 101782, 1160: 85533, 436: 37529, 14: 35444, 529: 29156, 447: 14931, 0: 14402, 831: 13881, 941: 10282, 295: 10141, 187: 9104, 128: 7873, 2528: 6901, 3262: 3440, 6: 1708, 2909: 1303, 1539: 1026, 1349: 958, 112: 854, 460: 351, 1916: 301})
+Predicted label counts (top1): Counter({1160: 89205, 1605: 77424, 2856: 43173, 14: 38342, 1349: 21667, 128: 18581, 187: 16312, 831: 13071, 436: 11199, 941: 11113, 262: 8616, 3355: 7532, 693: 7450, 529: 6306, 295: 5107, 447: 2857, 525: 2237, 0: 1852, 3262: 1755, 3408: 1025, 2808: 1017, 918: 808, 541: 185, 5394: 66})
+    Metrics for sample 8281 @ B=0.50/S=0.70: Acc=0.5204, mIoU=0.1077, TopK Acc=0.7325, TopK mIoU=0.2562
+  Processing sample 8281 for Brightness=0.20, Saturation=0.50
+logits.shape = torch.Size([41, 352, 352]), len(prompts) = 41
+GT label counts: Counter({1605: 101782, 1160: 85533, 436: 37529, 14: 35444, 529: 29156, 447: 14931, 0: 14402, 831: 13881, 941: 10282, 295: 10141, 187: 9104, 128: 7873, 2528: 6901, 3262: 3440, 6: 1708, 2909: 1303, 1539: 1026, 1349: 958, 112: 854, 460: 351, 1916: 301})
+Predicted label counts (top1): Counter({1160: 81077, 1605: 68518, 14: 58009, 2856: 57364, 831: 19235, 262: 17607, 525: 17080, 128: 16495, 187: 8980, 295: 8880, 1349: 8133, 436: 7782, 447: 7279, 941: 3164, 0: 2721, 2808: 2133, 3408: 1292, 3262: 742, 529: 291, 693: 118})
+    Metrics for sample 8281 @ B=0.20/S=0.50: Acc=0.4753, mIoU=0.1055, TopK Acc=0.6786, TopK mIoU=0.2271
+  Processing sample 8281 for Brightness=0.10, Saturation=0.20
+logits.shape = torch.Size([41, 352, 352]), len(prompts) = 41
+GT label counts: Counter({1605: 101782, 1160: 85533, 436: 37529, 14: 35444, 529: 29156, 447: 14931, 0: 14402, 831: 13881, 941: 10282, 295: 10141, 187: 9104, 128: 7873, 2528: 6901, 3262: 3440, 6: 1708, 2909: 1303, 1539: 1026, 1349: 958, 112: 854, 460: 351, 1916: 301})
+Predicted label counts (top1): Counter({1605: 84089, 1160: 78819, 2856: 64817, 1349: 35417, 525: 26758, 14: 24743, 295: 14831, 187: 14379, 3262: 11126, 436: 9446, 831: 7152, 447: 6794, 529: 6462, 745: 1031, 0: 562, 262: 297, 2278: 151, 941: 24, 1539: 2})
+    Metrics for sample 8281 @ B=0.10/S=0.20: Acc=0.4055, mIoU=0.0642, TopK Acc=0.6272, TopK mIoU=0.1794
+  Processing sample 8281 for Brightness=0.05, Saturation=0.10
+logits.shape = torch.Size([41, 352, 352]), len(prompts) = 41
+GT label counts: Counter({1605: 101782, 1160: 85533, 436: 37529, 14: 35444, 529: 29156, 447: 14931, 0: 14402, 831: 13881, 941: 10282, 295: 10141, 187: 9104, 128: 7873, 2528: 6901, 3262: 3440, 6: 1708, 2909: 1303, 1539: 1026, 1349: 958, 112: 854, 460: 351, 1916: 301})
+Predicted label counts (top1): Counter({1160: 99321, 1605: 65640, 2856: 55802, 529: 42328, 14: 39804, 447: 29321, 831: 16525, 525: 13126, 941: 10489, 262: 8584, 918: 2933, 187: 1373, 745: 1150, 0: 486, 2278: 18})
+    Metrics for sample 8281 @ B=0.05/S=0.10: Acc=0.3883, mIoU=0.0578, TopK Acc=0.5903, TopK mIoU=0.1426
+  Processing sample 8281 for Brightness=0.02, Saturation=0.10
+logits.shape = torch.Size([41, 352, 352]), len(prompts) = 41
+GT label counts: Counter({1605: 101782, 1160: 85533, 436: 37529, 14: 35444, 529: 29156, 447: 14931, 0: 14402, 831: 13881, 941: 10282, 295: 10141, 187: 9104, 128: 7873, 2528: 6901, 3262: 3440, 6: 1708, 2909: 1303, 1539: 1026, 1349: 958, 112: 854, 460: 351, 1916: 301})
+Predicted label counts (top1): Counter({745: 267925, 14: 118750, 2909: 225})
+    Metrics for sample 8281 @ B=0.02/S=0.10: Acc=0.0223, mIoU=0.0027, TopK Acc=0.3573, TopK mIoU=0.0776
+  Processing sample 8281 for Brightness=0.01, Saturation=0.05
+logits.shape = torch.Size([41, 352, 352]), len(prompts) = 41
+GT label counts: Counter({1605: 101782, 1160: 85533, 436: 37529, 14: 35444, 529: 29156, 447: 14931, 0: 14402, 831: 13881, 941: 10282, 295: 10141, 187: 9104, 128: 7873, 2528: 6901, 3262: 3440, 6: 1708, 2909: 1303, 1539: 1026, 1349: 958, 112: 854, 460: 351, 1916: 301})
+Predicted label counts (top1): Counter({745: 244491, 0: 140203, 14: 2206})
+    Metrics for sample 8281 @ B=0.01/S=0.05: Acc=0.0303, mIoU=0.0038, TopK Acc=0.3953, TopK mIoU=0.1457
+
+Processing sample 1183 for visualization...
+  Computed original prediction for sample 1183
+  Processing sample 1183 for Brightness=1.00, Saturation=1.00
+logits.shape = torch.Size([32, 352, 352]), len(prompts) = 32
+GT label counts: Counter({1605: 68293, 1393: 43803, 1160: 41049, 348: 21926, 14: 17961, 0: 11098, 514: 10793, 251: 10490, 698: 7944, 88: 4094, 200: 1664, 831: 432})
+Predicted label counts (top1): Counter({785: 114188, 1393: 37691, 1160: 35383, 348: 21133, 1605: 13401, 251: 7705, 514: 6596, 88: 2903, 14: 547})
+    Metrics for sample 1183 @ B=1.00/S=1.00: Acc=0.4703, mIoU=0.2839, TopK Acc=0.9491, TopK mIoU=0.6636
+    Stored variant prediction for sample 1183
+  Processing sample 1183 for Brightness=0.50, Saturation=0.70
+logits.shape = torch.Size([32, 352, 352]), len(prompts) = 32
+GT label counts: Counter({1605: 68293, 1393: 43803, 1160: 41049, 348: 21926, 14: 17961, 0: 11098, 514: 10793, 251: 10490, 698: 7944, 88: 4094, 200: 1664, 831: 432})
+Predicted label counts (top1): Counter({785: 140122, 1393: 35701, 1160: 34995, 348: 17951, 251: 3571, 1605: 2298, 514: 2270, 88: 1498, 909: 732, 14: 342, 200: 67})
+    Metrics for sample 1183 @ B=0.50/S=0.70: Acc=0.3914, mIoU=0.2160, TopK Acc=0.9457, TopK mIoU=0.7002
+    Stored variant prediction for sample 1183
+  Processing sample 1183 for Brightness=0.20, Saturation=0.50
+logits.shape = torch.Size([32, 352, 352]), len(prompts) = 32
+GT label counts: Counter({1605: 68293, 1393: 43803, 1160: 41049, 348: 21926, 14: 17961, 0: 11098, 514: 10793, 251: 10490, 698: 7944, 88: 4094, 200: 1664, 831: 432})
+Predicted label counts (top1): Counter({785: 116320, 1393: 38083, 1160: 34391, 348: 17278, 1605: 16545, 251: 13703, 514: 1640, 88: 954, 14: 633})
+    Metrics for sample 1183 @ B=0.20/S=0.50: Acc=0.4453, mIoU=0.2269, TopK Acc=0.8964, TopK mIoU=0.5929
+    Stored variant prediction for sample 1183
+  Processing sample 1183 for Brightness=0.10, Saturation=0.20
+logits.shape = torch.Size([32, 352, 352]), len(prompts) = 32
+GT label counts: Counter({1605: 68293, 1393: 43803, 1160: 41049, 348: 21926, 14: 17961, 0: 11098, 514: 10793, 251: 10490, 698: 7944, 88: 4094, 200: 1664, 831: 432})
+Predicted label counts (top1): Counter({785: 105882, 1393: 38123, 1605: 34810, 1160: 32698, 348: 20865, 88: 5935, 251: 1081, 909: 139, 14: 14})
+    Metrics for sample 1183 @ B=0.10/S=0.20: Acc=0.5275, mIoU=0.2465, TopK Acc=0.8502, TopK mIoU=0.5783
+    Stored variant prediction for sample 1183
+  Processing sample 1183 for Brightness=0.05, Saturation=0.10
+logits.shape = torch.Size([32, 352, 352]), len(prompts) = 32
+GT label counts: Counter({1605: 68293, 1393: 43803, 1160: 41049, 348: 21926, 14: 17961, 0: 11098, 514: 10793, 251: 10490, 698: 7944, 88: 4094, 200: 1664, 831: 432})
+Predicted label counts (top1): Counter({785: 168059, 1605: 54260, 348: 11946, 1160: 2657, 88: 1710, 983: 429, 200: 398, 14: 88})
+    Metrics for sample 1183 @ B=0.05/S=0.10: Acc=0.1765, mIoU=0.0723, TopK Acc=0.6602, TopK mIoU=0.4129
+    Stored variant prediction for sample 1183
+  Processing sample 1183 for Brightness=0.02, Saturation=0.10
+logits.shape = torch.Size([32, 352, 352]), len(prompts) = 32
+GT label counts: Counter({1605: 68293, 1393: 43803, 1160: 41049, 348: 21926, 14: 17961, 0: 11098, 514: 10793, 251: 10490, 698: 7944, 88: 4094, 200: 1664, 831: 432})
+Predicted label counts (top1): Counter({14: 212905, 983: 26202, 1605: 440})
+    Metrics for sample 1183 @ B=0.02/S=0.10: Acc=0.0904, mIoU=0.0063, TopK Acc=0.4979, TopK mIoU=0.1631
+    Stored variant prediction for sample 1183
+  Processing sample 1183 for Brightness=0.01, Saturation=0.05
+logits.shape = torch.Size([32, 352, 352]), len(prompts) = 32
+GT label counts: Counter({1605: 68293, 1393: 43803, 1160: 41049, 348: 21926, 14: 17961, 0: 11098, 514: 10793, 251: 10490, 698: 7944, 88: 4094, 200: 1664, 831: 432})
+Predicted label counts (top1): Counter({983: 239521, 14: 26})
+    Metrics for sample 1183 @ B=0.01/S=0.05: Acc=0.0000, mIoU=0.0000, TopK Acc=0.4064, TopK mIoU=0.1613
+    Stored variant prediction for sample 1183
+  Generating full variation visualization for sample 1183...
+  Saved extended visualization to: ./benchmark/clipseg_visualizations/sample_001183_variation.png
+  Processing sample 5500 for Brightness=1.00, Saturation=1.00
+logits.shape = torch.Size([28, 352, 352]), len(prompts) = 28
+GT label counts: Counter({251: 211444, 1393: 43242, 1605: 39421, 1160: 36615, 14: 27017, 2: 19912, 2533: 6915, 1879: 2334})
+Predicted label counts (top1): Counter({251: 211940, 1160: 43708, 14: 40468, 1605: 30212, 1219: 26338, 1393: 19299, 525: 5806, 2: 4924, 452: 2032, 2533: 1917, 352: 256})
+    Metrics for sample 5500 @ B=1.00/S=1.00: Acc=0.7563, mIoU=0.2598, TopK Acc=0.9713, TopK mIoU=0.6555
+  Processing sample 5500 for Brightness=0.50, Saturation=0.70
+logits.shape = torch.Size([28, 352, 352]), len(prompts) = 28
+GT label counts: Counter({251: 211444, 1393: 43242, 1605: 39421, 1160: 36615, 14: 27017, 2: 19912, 2533: 6915, 1879: 2334})
+Predicted label counts (top1): Counter({251: 210362, 1160: 46120, 1605: 39610, 14: 28989, 1219: 22071, 1393: 19367, 525: 10839, 2533: 3252, 452: 3151, 2: 3139})
+    Metrics for sample 5500 @ B=0.50/S=0.70: Acc=0.7677, mIoU=0.2951, TopK Acc=0.9587, TopK mIoU=0.5561
+  Processing sample 5500 for Brightness=0.20, Saturation=0.50
+logits.shape = torch.Size([28, 352, 352]), len(prompts) = 28
+GT label counts: Counter({251: 211444, 1393: 43242, 1605: 39421, 1160: 36615, 14: 27017, 2: 19912, 2533: 6915, 1879: 2334})
+Predicted label counts (top1): Counter({251: 206652, 1160: 45720, 1605: 38796, 1393: 34297, 14: 23586, 525: 21009, 1219: 7090, 452: 4763, 2: 3229, 2533: 1758})
+    Metrics for sample 5500 @ B=0.20/S=0.50: Acc=0.7880, mIoU=0.3000, TopK Acc=0.9558, TopK mIoU=0.5580
+  Processing sample 5500 for Brightness=0.10, Saturation=0.20
+logits.shape = torch.Size([28, 352, 352]), len(prompts) = 28
+GT label counts: Counter({251: 211444, 1393: 43242, 1605: 39421, 1160: 36615, 14: 27017, 2: 19912, 2533: 6915, 1879: 2334})
+Predicted label counts (top1): Counter({251: 199324, 1160: 48958, 1605: 40588, 14: 38925, 1219: 20876, 1393: 18401, 4369: 9686, 2: 6515, 525: 3489, 2911: 122, 37: 16})
+    Metrics for sample 5500 @ B=0.10/S=0.20: Acc=0.7543, mIoU=0.2304, TopK Acc=0.9479, TopK mIoU=0.4642
+  Processing sample 5500 for Brightness=0.05, Saturation=0.10
+logits.shape = torch.Size([28, 352, 352]), len(prompts) = 28
+GT label counts: Counter({251: 211444, 1393: 43242, 1605: 39421, 1160: 36615, 14: 27017, 2: 19912, 2533: 6915, 1879: 2334})
+Predicted label counts (top1): Counter({251: 126492, 14: 122800, 1605: 53543, 1160: 41961, 1219: 32331, 2: 9696, 525: 77})
+    Metrics for sample 5500 @ B=0.05/S=0.10: Acc=0.5569, mIoU=0.2438, TopK Acc=0.9048, TopK mIoU=0.6007
+  Processing sample 5500 for Brightness=0.02, Saturation=0.10
+logits.shape = torch.Size([28, 352, 352]), len(prompts) = 28
+GT label counts: Counter({251: 211444, 1393: 43242, 1605: 39421, 1160: 36615, 14: 27017, 2: 19912, 2533: 6915, 1879: 2334})
+Predicted label counts (top1): Counter({2: 386900})
+    Metrics for sample 5500 @ B=0.02/S=0.10: Acc=0.0515, mIoU=0.0064, TopK Acc=0.2232, TopK mIoU=0.2578
+  Processing sample 5500 for Brightness=0.01, Saturation=0.05
+logits.shape = torch.Size([28, 352, 352]), len(prompts) = 28
+GT label counts: Counter({251: 211444, 1393: 43242, 1605: 39421, 1160: 36615, 14: 27017, 2: 19912, 2533: 6915, 1879: 2334})
+Predicted label counts (top1): Counter({352: 267944, 2: 118873, 1605: 52, 14: 31})
+    Metrics for sample 5500 @ B=0.01/S=0.05: Acc=0.0002, mIoU=0.0002, TopK Acc=0.2232, TopK mIoU=0.2417
+  Processing sample 9531 for Brightness=1.00, Saturation=1.00
+logits.shape = torch.Size([25, 352, 352]), len(prompts) = 25
+GT label counts: Counter({1160: 143838, 14: 85359, 187: 74006, 88: 56903, 100: 1505})
+Predicted label counts (top1): Counter({1160: 167402, 187: 103536, 14: 59881, 88: 30665, 3227: 126, 3254: 1})
+    Metrics for sample 9531 @ B=1.00/S=1.00: Acc=0.7800, mIoU=0.3357, TopK Acc=0.9758, TopK mIoU=0.8377
+  Processing sample 9531 for Brightness=0.50, Saturation=0.70
+logits.shape = torch.Size([25, 352, 352]), len(prompts) = 25
+GT label counts: Counter({1160: 143838, 14: 85359, 187: 74006, 88: 56903, 100: 1505})
+Predicted label counts (top1): Counter({1160: 157598, 187: 110034, 14: 66167, 88: 27277, 2572: 535})
+    Metrics for sample 9531 @ B=0.50/S=0.70: Acc=0.7635, mIoU=0.3770, TopK Acc=0.9654, TopK mIoU=0.8624
+  Processing sample 9531 for Brightness=0.20, Saturation=0.50
+logits.shape = torch.Size([25, 352, 352]), len(prompts) = 25
+GT label counts: Counter({1160: 143838, 14: 85359, 187: 74006, 88: 56903, 100: 1505})
+Predicted label counts (top1): Counter({187: 135607, 1160: 125352, 14: 68410, 88: 20731, 2572: 7683, 169: 3725, 3254: 103})
+    Metrics for sample 9531 @ B=0.20/S=0.50: Acc=0.6734, mIoU=0.2443, TopK Acc=0.9256, TopK mIoU=0.6175
+  Processing sample 9531 for Brightness=0.10, Saturation=0.20
+logits.shape = torch.Size([25, 352, 352]), len(prompts) = 25
+GT label counts: Counter({1160: 143838, 14: 85359, 187: 74006, 88: 56903, 100: 1505})
+Predicted label counts (top1): Counter({1160: 129698, 187: 116980, 14: 79374, 88: 32973, 2572: 2586})
+    Metrics for sample 9531 @ B=0.10/S=0.20: Acc=0.6818, mIoU=0.3286, TopK Acc=0.9939, TopK mIoU=0.9885
+  Processing sample 9531 for Brightness=0.05, Saturation=0.10
+logits.shape = torch.Size([25, 352, 352]), len(prompts) = 25
+GT label counts: Counter({1160: 143838, 14: 85359, 187: 74006, 88: 56903, 100: 1505})
+Predicted label counts (top1): Counter({1178: 211726, 14: 133639, 88: 6675, 4592: 6576, 2572: 2991, 187: 4})
+    Metrics for sample 9531 @ B=0.05/S=0.10: Acc=0.1084, mIoU=0.0323, TopK Acc=0.7008, TopK mIoU=0.4015
+  Processing sample 9531 for Brightness=0.02, Saturation=0.10
+logits.shape = torch.Size([25, 352, 352]), len(prompts) = 25
+GT label counts: Counter({1160: 143838, 14: 85359, 187: 74006, 88: 56903, 100: 1505})
+Predicted label counts (top1): Counter({14: 360749, 1178: 862})
+    Metrics for sample 9531 @ B=0.02/S=0.10: Acc=0.2356, mIoU=0.0393, TopK Acc=0.2402, TopK mIoU=0.2062
+  Processing sample 9531 for Brightness=0.01, Saturation=0.05
+logits.shape = torch.Size([25, 352, 352]), len(prompts) = 25
+GT label counts: Counter({1160: 143838, 14: 85359, 187: 74006, 88: 56903, 100: 1505})
+Predicted label counts (top1): Counter({14: 361091, 100: 520})
+    Metrics for sample 9531 @ B=0.01/S=0.05: Acc=0.2346, mIoU=0.0469, TopK Acc=0.2402, TopK mIoU=0.2474
+  Processing sample 543 for Brightness=1.00, Saturation=1.00
+logits.shape = torch.Size([25, 352, 352]), len(prompts) = 25
+GT label counts: Counter({1054: 123819, 348: 56010, 1605: 40520, 1160: 13703, 14: 5495})
+Predicted label counts (top1): Counter({1054: 126447, 348: 47519, 5158: 32550, 1160: 15100, 3966: 11925, 14: 5103, 1605: 903})
+    Metrics for sample 543 @ B=1.00/S=1.00: Acc=0.7389, mIoU=0.3621, TopK Acc=0.9744, TopK mIoU=0.6947
+  Processing sample 543 for Brightness=0.50, Saturation=0.70
+logits.shape = torch.Size([25, 352, 352]), len(prompts) = 25
+GT label counts: Counter({1054: 123819, 348: 56010, 1605: 40520, 1160: 13703, 14: 5495})
+Predicted label counts (top1): Counter({1054: 124217, 348: 50340, 1605: 23183, 1160: 15130, 5158: 13125, 3966: 9209, 14: 4343})
+    Metrics for sample 543 @ B=0.50/S=0.70: Acc=0.8212, mIoU=0.4268, TopK Acc=0.9792, TopK mIoU=0.6767
+  Processing sample 543 for Brightness=0.20, Saturation=0.50
+logits.shape = torch.Size([25, 352, 352]), len(prompts) = 25
+GT label counts: Counter({1054: 123819, 348: 56010, 1605: 40520, 1160: 13703, 14: 5495})
+Predicted label counts (top1): Counter({14: 206711, 1325: 10789, 1160: 10399, 1605: 7516, 1054: 2909, 2721: 771, 88: 452})
+    Metrics for sample 543 @ B=0.20/S=0.50: Acc=0.1046, mIoU=0.1205, TopK Acc=0.8855, TopK mIoU=0.7804
+  Processing sample 543 for Brightness=0.10, Saturation=0.20
+logits.shape = torch.Size([25, 352, 352]), len(prompts) = 25
+GT label counts: Counter({1054: 123819, 348: 56010, 1605: 40520, 1160: 13703, 14: 5495})
+Predicted label counts (top1): Counter({14: 205204, 4691: 20935, 1605: 13408})
+    Metrics for sample 543 @ B=0.10/S=0.20: Acc=0.0247, mIoU=0.0059, TopK Acc=0.4125, TopK mIoU=0.3311
+  Processing sample 543 for Brightness=0.05, Saturation=0.10
+logits.shape = torch.Size([25, 352, 352]), len(prompts) = 25
+GT label counts: Counter({1054: 123819, 348: 56010, 1605: 40520, 1160: 13703, 14: 5495})
+Predicted label counts (top1): Counter({4691: 239497, 348: 50})
+    Metrics for sample 543 @ B=0.05/S=0.10: Acc=0.0000, mIoU=0.0000, TopK Acc=0.4259, TopK mIoU=0.5000
+  Processing sample 543 for Brightness=0.02, Saturation=0.10
+logits.shape = torch.Size([25, 352, 352]), len(prompts) = 25
+GT label counts: Counter({1054: 123819, 348: 56010, 1605: 40520, 1160: 13703, 14: 5495})
+Predicted label counts (top1): Counter({4691: 239532, 14: 15})
+    Metrics for sample 543 @ B=0.02/S=0.10: Acc=0.0000, mIoU=0.0000, TopK Acc=0.1921, TopK mIoU=0.3334
+  Processing sample 543 for Brightness=0.01, Saturation=0.05
+logits.shape = torch.Size([25, 352, 352]), len(prompts) = 25
+GT label counts: Counter({1054: 123819, 348: 56010, 1605: 40520, 1160: 13703, 14: 5495})
+Predicted label counts (top1): Counter({4691: 239537, 14: 10})
+    Metrics for sample 543 @ B=0.01/S=0.05: Acc=0.0000, mIoU=0.0000, TopK Acc=0.1926, TopK mIoU=0.3337
+  Processing sample 883 for Brightness=1.00, Saturation=1.00
+logits.shape = torch.Size([39, 352, 352]), len(prompts) = 39
+GT label counts: Counter({3578: 70187, 1160: 33053, 529: 29126, 253: 25058, 251: 22265, 14: 16718, 1605: 10604, 485: 8866, 131: 6399, 54: 4989, 4587: 3198, 339: 2655, 88: 2337, 0: 1890, 330: 1250, 2533: 485, 831: 467})
+Predicted label counts (top1): Counter({251: 105263, 1160: 39818, 14: 17764, 5519: 16978, 1605: 16544, 485: 10856, 88: 6968, 3578: 6513, 253: 5616, 831: 5015, 54: 2682, 339: 2658, 330: 1246, 4587: 797, 118: 399, 529: 389, 477: 41})
+    Metrics for sample 883 @ B=1.00/S=1.00: Acc=0.3607, mIoU=0.1874, TopK Acc=0.8880, TopK mIoU=0.6303
+  Processing sample 883 for Brightness=0.50, Saturation=0.70
+logits.shape = torch.Size([39, 352, 352]), len(prompts) = 39
+GT label counts: Counter({3578: 70187, 1160: 33053, 529: 29126, 253: 25058, 251: 22265, 14: 16718, 1605: 10604, 485: 8866, 131: 6399, 54: 4989, 4587: 3198, 339: 2655, 88: 2337, 0: 1890, 330: 1250, 2533: 485, 831: 467})
+Predicted label counts (top1): Counter({251: 108733, 1160: 40053, 14: 21291, 1605: 17933, 88: 11784, 5519: 11488, 3578: 11303, 485: 11242, 54: 2234, 330: 1364, 253: 951, 529: 372, 118: 345, 4587: 240, 385: 214})
+    Metrics for sample 883 @ B=0.50/S=0.70: Acc=0.3773, mIoU=0.1792, TopK Acc=0.8600, TopK mIoU=0.5753
+  Processing sample 883 for Brightness=0.20, Saturation=0.50
+logits.shape = torch.Size([39, 352, 352]), len(prompts) = 39
+GT label counts: Counter({3578: 70187, 1160: 33053, 529: 29126, 253: 25058, 251: 22265, 14: 16718, 1605: 10604, 485: 8866, 131: 6399, 54: 4989, 4587: 3198, 339: 2655, 88: 2337, 0: 1890, 330: 1250, 2533: 485, 831: 467})
+Predicted label counts (top1): Counter({251: 79471, 3578: 50204, 1160: 38658, 14: 30895, 529: 21145, 1605: 10519, 485: 4172, 330: 1831, 118: 1645, 477: 591, 88: 407, 351: 9})
+    Metrics for sample 883 @ B=0.20/S=0.50: Acc=0.4985, mIoU=0.1424, TopK Acc=0.8111, TopK mIoU=0.4955
+  Processing sample 883 for Brightness=0.10, Saturation=0.20
+logits.shape = torch.Size([39, 352, 352]), len(prompts) = 39
+GT label counts: Counter({3578: 70187, 1160: 33053, 529: 29126, 253: 25058, 251: 22265, 14: 16718, 1605: 10604, 485: 8866, 131: 6399, 54: 4989, 4587: 3198, 339: 2655, 88: 2337, 0: 1890, 330: 1250, 2533: 485, 831: 467})
+Predicted label counts (top1): Counter({251: 133292, 1605: 35940, 1160: 27254, 3578: 20552, 14: 15885, 118: 5739, 330: 869, 253: 9, 477: 4, 351: 3})
+    Metrics for sample 883 @ B=0.10/S=0.20: Acc=0.3014, mIoU=0.0638, TopK Acc=0.7370, TopK mIoU=0.3967
+  Processing sample 883 for Brightness=0.05, Saturation=0.10
+logits.shape = torch.Size([39, 352, 352]), len(prompts) = 39
+GT label counts: Counter({3578: 70187, 1160: 33053, 529: 29126, 253: 25058, 251: 22265, 14: 16718, 1605: 10604, 485: 8866, 131: 6399, 54: 4989, 4587: 3198, 339: 2655, 88: 2337, 0: 1890, 330: 1250, 2533: 485, 831: 467})
+Predicted label counts (top1): Counter({14: 192307, 1605: 24892, 251: 17737, 548: 2243, 330: 1606, 339: 504, 253: 258})
+    Metrics for sample 883 @ B=0.05/S=0.10: Acc=0.0585, mIoU=0.0057, TopK Acc=0.3743, TopK mIoU=0.1771
+  Processing sample 883 for Brightness=0.02, Saturation=0.10
+logits.shape = torch.Size([39, 352, 352]), len(prompts) = 39
+GT label counts: Counter({3578: 70187, 1160: 33053, 529: 29126, 253: 25058, 251: 22265, 14: 16718, 1605: 10604, 485: 8866, 131: 6399, 54: 4989, 4587: 3198, 339: 2655, 88: 2337, 0: 1890, 330: 1250, 2533: 485, 831: 467})
+Predicted label counts (top1): Counter({14: 239534, 1605: 13})
+    Metrics for sample 883 @ B=0.02/S=0.10: Acc=0.0698, mIoU=0.0041, TopK Acc=0.2319, TopK mIoU=0.1814
+  Processing sample 883 for Brightness=0.01, Saturation=0.05
+logits.shape = torch.Size([39, 352, 352]), len(prompts) = 39
+GT label counts: Counter({3578: 70187, 1160: 33053, 529: 29126, 253: 25058, 251: 22265, 14: 16718, 1605: 10604, 485: 8866, 131: 6399, 54: 4989, 4587: 3198, 339: 2655, 88: 2337, 0: 1890, 330: 1250, 2533: 485, 831: 467})
+Predicted label counts (top1): Counter({0: 231967, 14: 7580})
+    Metrics for sample 883 @ B=0.01/S=0.05: Acc=0.0041, mIoU=0.0018, TopK Acc=0.2281, TopK mIoU=0.2309
+  Processing sample 35 for Brightness=1.00, Saturation=1.00
+logits.shape = torch.Size([43, 352, 352]), len(prompts) = 43
+GT label counts: Counter({485: 49946, 1027: 37230, 86: 29456, 1605: 26722, 0: 20054, 14: 18032, 1759: 14394, 529: 8683, 88: 5792, 54: 4943, 2533: 4507, 941: 4464, 936: 4395, 2057: 2849, 447: 2470, 4686: 1598, 970: 1538, 1482: 955, 280: 677, 2507: 557, 1350: 285})
+Predicted label counts (top1): Counter({485: 71530, 1605: 55411, 3179: 35430, 510: 13898, 5113: 13207, 88: 9464, 529: 7386, 941: 5662, 2507: 5477, 14: 5433, 234: 4996, 936: 4116, 970: 3704, 86: 2819, 54: 533, 1482: 234, 3713: 96, 4686: 92, 447: 15, 4765: 12, 3781: 12, 4355: 12, 3745: 8})
+    Metrics for sample 35 @ B=1.00/S=1.00: Acc=0.4708, mIoU=0.1048, TopK Acc=0.7066, TopK mIoU=0.2647
+  Processing sample 35 for Brightness=0.50, Saturation=0.70
+logits.shape = torch.Size([43, 352, 352]), len(prompts) = 43
+GT label counts: Counter({485: 49946, 1027: 37230, 86: 29456, 1605: 26722, 0: 20054, 14: 18032, 1759: 14394, 529: 8683, 88: 5792, 54: 4943, 2533: 4507, 941: 4464, 936: 4395, 2057: 2849, 447: 2470, 4686: 1598, 970: 1538, 1482: 955, 280: 677, 2507: 557, 1350: 285})
+Predicted label counts (top1): Counter({1605: 65255, 485: 62153, 3179: 33717, 5113: 13858, 88: 8465, 510: 8119, 1027: 7405, 941: 6871, 14: 5658, 86: 4578, 993: 4559, 54: 3999, 936: 3858, 529: 3518, 234: 3486, 447: 1720, 2507: 977, 2045: 958, 280: 190, 4765: 81, 5532: 77, 2533: 22, 3781: 16, 4355: 7})
+    Metrics for sample 35 @ B=0.50/S=0.70: Acc=0.4583, mIoU=0.1073, TopK Acc=0.7668, TopK mIoU=0.2904
+  Processing sample 35 for Brightness=0.20, Saturation=0.50
+logits.shape = torch.Size([43, 352, 352]), len(prompts) = 43
+GT label counts: Counter({485: 49946, 1027: 37230, 86: 29456, 1605: 26722, 0: 20054, 14: 18032, 1759: 14394, 529: 8683, 88: 5792, 54: 4943, 2533: 4507, 941: 4464, 936: 4395, 2057: 2849, 447: 2470, 4686: 1598, 970: 1538, 1482: 955, 280: 677, 2507: 557, 1350: 285})
+Predicted label counts (top1): Counter({1605: 75954, 485: 62635, 3179: 35527, 14: 27072, 993: 13389, 88: 10415, 234: 3463, 941: 3171, 86: 2364, 4765: 1924, 529: 1076, 54: 892, 936: 749, 5113: 343, 280: 319, 2045: 254})
+    Metrics for sample 35 @ B=0.20/S=0.50: Acc=0.3513, mIoU=0.0556, TopK Acc=0.7255, TopK mIoU=0.2732
+  Processing sample 35 for Brightness=0.10, Saturation=0.20
+logits.shape = torch.Size([43, 352, 352]), len(prompts) = 43
+GT label counts: Counter({485: 49946, 1027: 37230, 86: 29456, 1605: 26722, 0: 20054, 14: 18032, 1759: 14394, 529: 8683, 88: 5792, 54: 4943, 2533: 4507, 941: 4464, 936: 4395, 2057: 2849, 447: 2470, 4686: 1598, 970: 1538, 1482: 955, 280: 677, 2507: 557, 1350: 285})
+Predicted label counts (top1): Counter({1605: 59751, 485: 54583, 14: 50097, 88: 28240, 86: 25951, 3179: 6804, 2507: 5420, 1027: 5417, 54: 2186, 234: 603, 4765: 259, 2533: 219, 280: 17})
+    Metrics for sample 35 @ B=0.10/S=0.20: Acc=0.3333, mIoU=0.0614, TopK Acc=0.6411, TopK mIoU=0.2048
+  Processing sample 35 for Brightness=0.05, Saturation=0.10
+logits.shape = torch.Size([43, 352, 352]), len(prompts) = 43
+GT label counts: Counter({485: 49946, 1027: 37230, 86: 29456, 1605: 26722, 0: 20054, 14: 18032, 1759: 14394, 529: 8683, 88: 5792, 54: 4943, 2533: 4507, 941: 4464, 936: 4395, 2057: 2849, 447: 2470, 4686: 1598, 970: 1538, 1482: 955, 280: 677, 2507: 557, 1350: 285})
+Predicted label counts (top1): Counter({14: 93836, 1605: 63713, 485: 38181, 88: 18112, 529: 8985, 86: 7158, 2507: 2988, 4765: 2666, 510: 2457, 2533: 1000, 234: 338, 1027: 113})
+    Metrics for sample 35 @ B=0.05/S=0.10: Acc=0.1676, mIoU=0.0304, TopK Acc=0.5845, TopK mIoU=0.1702
+  Processing sample 35 for Brightness=0.02, Saturation=0.10
+logits.shape = torch.Size([43, 352, 352]), len(prompts) = 43
+GT label counts: Counter({485: 49946, 1027: 37230, 86: 29456, 1605: 26722, 0: 20054, 14: 18032, 1759: 14394, 529: 8683, 88: 5792, 54: 4943, 2533: 4507, 941: 4464, 936: 4395, 2057: 2849, 447: 2470, 4686: 1598, 970: 1538, 1482: 955, 280: 677, 2507: 557, 1350: 285})
+Predicted label counts (top1): Counter({2045: 239102, 14: 445})
+    Metrics for sample 35 @ B=0.02/S=0.10: Acc=0.0000, mIoU=0.0000, TopK Acc=0.2275, TopK mIoU=0.0994
+  Processing sample 35 for Brightness=0.01, Saturation=0.05
+logits.shape = torch.Size([43, 352, 352]), len(prompts) = 43
+GT label counts: Counter({485: 49946, 1027: 37230, 86: 29456, 1605: 26722, 0: 20054, 14: 18032, 1759: 14394, 529: 8683, 88: 5792, 54: 4943, 2533: 4507, 941: 4464, 936: 4395, 2057: 2849, 447: 2470, 4686: 1598, 970: 1538, 1482: 955, 280: 677, 2507: 557, 1350: 285})
+Predicted label counts (top1): Counter({3745: 113982, 1605: 74972, 14: 50593})
+    Metrics for sample 35 @ B=0.01/S=0.05: Acc=0.0586, mIoU=0.0072, TopK Acc=0.2593, TopK mIoU=0.0756
+  Processing sample 3011 for Brightness=1.00, Saturation=1.00
+logits.shape = torch.Size([32, 352, 352]), len(prompts) = 32
+GT label counts: Counter({0: 119346, 1605: 53966, 2909: 33805, 5158: 10061, 54: 9738, 98: 9053, 86: 7407, 14: 6116, 812: 4410, 662: 3400, 2533: 3329})
+Predicted label counts (top1): Counter({1672: 73423, 54: 53403, 1605: 42995, 14: 34877, 86: 21836, 2909: 12678, 812: 5452, 5158: 5115, 318: 4795, 5618: 3735, 1879: 1547, 1015: 455, 2533: 185, 1302: 93, 1012: 40, 1110: 2})
+    Metrics for sample 3011 @ B=1.00/S=1.00: Acc=0.2378, mIoU=0.1064, TopK Acc=0.4198, TopK mIoU=0.2930
+  Processing sample 3011 for Brightness=0.50, Saturation=0.70
+logits.shape = torch.Size([32, 352, 352]), len(prompts) = 32
+GT label counts: Counter({0: 119346, 1605: 53966, 2909: 33805, 5158: 10061, 54: 9738, 98: 9053, 86: 7407, 14: 6116, 812: 4410, 662: 3400, 2533: 3329})
+Predicted label counts (top1): Counter({1672: 74762, 54: 52250, 1605: 43082, 14: 26750, 86: 23977, 2909: 17188, 5158: 5950, 812: 5272, 5618: 3726, 1302: 3457, 2533: 1769, 557: 1018, 1879: 759, 1015: 598, 318: 67, 1012: 6})
+    Metrics for sample 3011 @ B=0.50/S=0.70: Acc=0.2340, mIoU=0.1054, TopK Acc=0.4249, TopK mIoU=0.2906
+  Processing sample 3011 for Brightness=0.20, Saturation=0.50
+logits.shape = torch.Size([32, 352, 352]), len(prompts) = 32
+GT label counts: Counter({0: 119346, 1605: 53966, 2909: 33805, 5158: 10061, 54: 9738, 98: 9053, 86: 7407, 14: 6116, 812: 4410, 662: 3400, 2533: 3329})
+Predicted label counts (top1): Counter({1672: 82566, 54: 47542, 14: 39707, 1605: 35600, 86: 29536, 2909: 7462, 812: 5437, 2533: 4474, 1302: 4240, 1012: 2582, 1879: 715, 557: 478, 1110: 292})
+    Metrics for sample 3011 @ B=0.20/S=0.50: Acc=0.1679, mIoU=0.0883, TopK Acc=0.4134, TopK mIoU=0.3224
+  Processing sample 3011 for Brightness=0.10, Saturation=0.20
+logits.shape = torch.Size([32, 352, 352]), len(prompts) = 32
+GT label counts: Counter({0: 119346, 1605: 53966, 2909: 33805, 5158: 10061, 54: 9738, 98: 9053, 86: 7407, 14: 6116, 812: 4410, 662: 3400, 2533: 3329})
+Predicted label counts (top1): Counter({1672: 54712, 14: 41326, 1605: 39735, 86: 37598, 1012: 29712, 54: 24781, 98: 22629, 1513: 4044, 2909: 2016, 1879: 1472, 557: 1259, 1302: 859, 1110: 378, 812: 60, 5158: 45, 1015: 5})
+    Metrics for sample 3011 @ B=0.10/S=0.20: Acc=0.1246, mIoU=0.0280, TopK Acc=0.4292, TopK mIoU=0.2975
+  Processing sample 3011 for Brightness=0.05, Saturation=0.10
+logits.shape = torch.Size([32, 352, 352]), len(prompts) = 32
+GT label counts: Counter({0: 119346, 1605: 53966, 2909: 33805, 5158: 10061, 54: 9738, 98: 9053, 86: 7407, 14: 6116, 812: 4410, 662: 3400, 2533: 3329})
+Predicted label counts (top1): Counter({98: 124845, 14: 46181, 1605: 39185, 86: 25479, 662: 14291, 5158: 10581, 2909: 52, 185: 17})
+    Metrics for sample 3011 @ B=0.05/S=0.10: Acc=0.1671, mIoU=0.0667, TopK Acc=0.3560, TopK mIoU=0.3101
+  Processing sample 3011 for Brightness=0.02, Saturation=0.10
+logits.shape = torch.Size([32, 352, 352]), len(prompts) = 32
+GT label counts: Counter({0: 119346, 1605: 53966, 2909: 33805, 5158: 10061, 54: 9738, 98: 9053, 86: 7407, 14: 6116, 812: 4410, 662: 3400, 2533: 3329})
+Predicted label counts (top1): Counter({14: 260583, 2909: 32, 1605: 16})
+    Metrics for sample 3011 @ B=0.02/S=0.10: Acc=0.0235, mIoU=0.0022, TopK Acc=0.3809, TopK mIoU=0.2338
+  Processing sample 3011 for Brightness=0.01, Saturation=0.05
+logits.shape = torch.Size([32, 352, 352]), len(prompts) = 32
+GT label counts: Counter({0: 119346, 1605: 53966, 2909: 33805, 5158: 10061, 54: 9738, 98: 9053, 86: 7407, 14: 6116, 812: 4410, 662: 3400, 2533: 3329})
+Predicted label counts (top1): Counter({14: 259309, 1605: 1054, 2909: 268})
+    Metrics for sample 3011 @ B=0.01/S=0.05: Acc=0.0240, mIoU=0.0024, TopK Acc=0.3602, TopK mIoU=0.1838
+  Processing sample 5458 for Brightness=1.00, Saturation=1.00
+logits.shape = torch.Size([32, 352, 352]), len(prompts) = 32
+GT label counts: Counter({251: 139478, 14: 70628, 1160: 68757, 525: 68215, 698: 17253, 130: 8605, 391: 7314, 1605: 4858, 308: 1559, 2315: 233})
+Predicted label counts (top1): Counter({1160: 139691, 251: 125065, 1605: 36868, 14: 29906, 698: 21916, 308: 13991, 391: 10731, 601: 4066, 525: 2287, 59: 1351, 3001: 880, 130: 148})
+    Metrics for sample 5458 @ B=1.00/S=1.00: Acc=0.5160, mIoU=0.1271, TopK Acc=0.9155, TopK mIoU=0.4644
+  Processing sample 5458 for Brightness=0.50, Saturation=0.70
+logits.shape = torch.Size([32, 352, 352]), len(prompts) = 32
+GT label counts: Counter({251: 139478, 14: 70628, 1160: 68757, 525: 68215, 698: 17253, 130: 8605, 391: 7314, 1605: 4858, 308: 1559, 2315: 233})
+Predicted label counts (top1): Counter({1160: 139189, 251: 133396, 1605: 33253, 14: 25642, 391: 23064, 698: 10299, 601: 8006, 308: 6761, 130: 3556, 3001: 1683, 525: 1376, 59: 675})
+    Metrics for sample 5458 @ B=0.50/S=0.70: Acc=0.5266, mIoU=0.1229, TopK Acc=0.9145, TopK mIoU=0.4972
+  Processing sample 5458 for Brightness=0.20, Saturation=0.50
+logits.shape = torch.Size([32, 352, 352]), len(prompts) = 32
+GT label counts: Counter({251: 139478, 14: 70628, 1160: 68757, 525: 68215, 698: 17253, 130: 8605, 391: 7314, 1605: 4858, 308: 1559, 2315: 233})
+Predicted label counts (top1): Counter({1160: 138571, 251: 128922, 1605: 45824, 391: 25709, 698: 18295, 14: 10244, 130: 6830, 601: 5373, 308: 4929, 3001: 1516, 59: 598, 525: 89})
+    Metrics for sample 5458 @ B=0.20/S=0.50: Acc=0.4969, mIoU=0.1126, TopK Acc=0.9135, TopK mIoU=0.5021
+  Processing sample 5458 for Brightness=0.10, Saturation=0.20
+logits.shape = torch.Size([32, 352, 352]), len(prompts) = 32
+GT label counts: Counter({251: 139478, 14: 70628, 1160: 68757, 525: 68215, 698: 17253, 130: 8605, 391: 7314, 1605: 4858, 308: 1559, 2315: 233})
+Predicted label counts (top1): Counter({251: 146978, 1160: 125287, 1605: 57084, 698: 20172, 14: 16462, 2315: 11644, 130: 5993, 391: 1678, 59: 1551, 3242: 51})
+    Metrics for sample 5458 @ B=0.10/S=0.20: Acc=0.4750, mIoU=0.1067, TopK Acc=0.9478, TopK mIoU=0.6866
+  Processing sample 5458 for Brightness=0.05, Saturation=0.10
+logits.shape = torch.Size([32, 352, 352]), len(prompts) = 32
+GT label counts: Counter({251: 139478, 14: 70628, 1160: 68757, 525: 68215, 698: 17253, 130: 8605, 391: 7314, 1605: 4858, 308: 1559, 2315: 233})
+Predicted label counts (top1): Counter({14: 125107, 251: 115656, 1160: 62383, 1605: 43630, 308: 20018, 2484: 12767, 59: 5013, 698: 1938, 391: 374, 3242: 14})
+    Metrics for sample 5458 @ B=0.05/S=0.10: Acc=0.3503, mIoU=0.0763, TopK Acc=0.7836, TopK mIoU=0.4686
+  Processing sample 5458 for Brightness=0.02, Saturation=0.10
+logits.shape = torch.Size([32, 352, 352]), len(prompts) = 32
+GT label counts: Counter({251: 139478, 14: 70628, 1160: 68757, 525: 68215, 698: 17253, 130: 8605, 391: 7314, 1605: 4858, 308: 1559, 2315: 233})
+Predicted label counts (top1): Counter({14: 386181, 347: 718, 130: 1})
+    Metrics for sample 5458 @ B=0.02/S=0.10: Acc=0.1809, mIoU=0.0164, TopK Acc=0.2169, TopK mIoU=0.1960
+  Processing sample 5458 for Brightness=0.01, Saturation=0.05
+logits.shape = torch.Size([32, 352, 352]), len(prompts) = 32
+GT label counts: Counter({251: 139478, 14: 70628, 1160: 68757, 525: 68215, 698: 17253, 130: 8605, 391: 7314, 1605: 4858, 308: 1559, 2315: 233})
+Predicted label counts (top1): Counter({14: 308630, 1605: 78188, 347: 82})
+    Metrics for sample 5458 @ B=0.01/S=0.05: Acc=0.0922, mIoU=0.0126, TopK Acc=0.2180, TopK mIoU=0.1346
+
+Processing sample 6948 for visualization...
+  Computed original prediction for sample 6948
+  Processing sample 6948 for Brightness=1.00, Saturation=1.00
+logits.shape = torch.Size([28, 352, 352]), len(prompts) = 28
+GT label counts: Counter({1605: 192336, 1160: 68708, 14: 58286, 1349: 45530, 662: 9729, 128: 5605, 1780: 4343, 461: 2363})
+Predicted label counts (top1): Counter({1605: 198799, 1160: 71049, 1349: 50325, 14: 48149, 662: 11897, 1780: 5812, 3641: 551, 4984: 298, 1934: 20})
+    Metrics for sample 6948 @ B=1.00/S=1.00: Acc=0.8923, mIoU=0.4055, TopK Acc=0.9929, TopK mIoU=0.7463
+    Stored variant prediction for sample 6948
+  Processing sample 6948 for Brightness=0.50, Saturation=0.70
+logits.shape = torch.Size([28, 352, 352]), len(prompts) = 28
+GT label counts: Counter({1605: 192336, 1160: 68708, 14: 58286, 1349: 45530, 662: 9729, 128: 5605, 1780: 4343, 461: 2363})
+Predicted label counts (top1): Counter({1605: 222109, 1160: 71308, 1349: 42265, 14: 31754, 662: 12518, 1780: 5593, 3641: 1117, 98: 236})
+    Metrics for sample 6948 @ B=0.50/S=0.70: Acc=0.8257, mIoU=0.3844, TopK Acc=0.9903, TopK mIoU=0.7009
+    Stored variant prediction for sample 6948
+  Processing sample 6948 for Brightness=0.20, Saturation=0.50
+logits.shape = torch.Size([28, 352, 352]), len(prompts) = 28
+GT label counts: Counter({1605: 192336, 1160: 68708, 14: 58286, 1349: 45530, 662: 9729, 128: 5605, 1780: 4343, 461: 2363})
+Predicted label counts (top1): Counter({1605: 189912, 14: 76690, 1160: 73935, 1349: 28239, 662: 11970, 1780: 6088, 5180: 66})
+    Metrics for sample 6948 @ B=0.20/S=0.50: Acc=0.8865, mIoU=0.4841, TopK Acc=0.9907, TopK mIoU=0.8923
+    Stored variant prediction for sample 6948
+  Processing sample 6948 for Brightness=0.10, Saturation=0.20
+logits.shape = torch.Size([28, 352, 352]), len(prompts) = 28
+GT label counts: Counter({1605: 192336, 1160: 68708, 14: 58286, 1349: 45530, 662: 9729, 128: 5605, 1780: 4343, 461: 2363})
+Predicted label counts (top1): Counter({1605: 164352, 1349: 84167, 1160: 82676, 14: 43563, 662: 12131, 5180: 11})
+    Metrics for sample 6948 @ B=0.10/S=0.20: Acc=0.7522, mIoU=0.3296, TopK Acc=0.9830, TopK mIoU=0.8066
+    Stored variant prediction for sample 6948
+  Processing sample 6948 for Brightness=0.05, Saturation=0.10
+logits.shape = torch.Size([28, 352, 352]), len(prompts) = 28
+GT label counts: Counter({1605: 192336, 1160: 68708, 14: 58286, 1349: 45530, 662: 9729, 128: 5605, 1780: 4343, 461: 2363})
+Predicted label counts (top1): Counter({14: 386900})
+    Metrics for sample 6948 @ B=0.05/S=0.10: Acc=0.1506, mIoU=0.0188, TopK Acc=0.6749, TopK mIoU=0.3030
+    Stored variant prediction for sample 6948
+  Processing sample 6948 for Brightness=0.02, Saturation=0.10
+logits.shape = torch.Size([28, 352, 352]), len(prompts) = 28
+GT label counts: Counter({1605: 192336, 1160: 68708, 14: 58286, 1349: 45530, 662: 9729, 128: 5605, 1780: 4343, 461: 2363})
+Predicted label counts (top1): Counter({14: 386387, 1605: 500, 5180: 13})
+    Metrics for sample 6948 @ B=0.02/S=0.10: Acc=0.1503, mIoU=0.0167, TopK Acc=0.6478, TopK mIoU=0.1443
+    Stored variant prediction for sample 6948
+  Processing sample 6948 for Brightness=0.01, Saturation=0.05
+logits.shape = torch.Size([28, 352, 352]), len(prompts) = 28
+GT label counts: Counter({1605: 192336, 1160: 68708, 14: 58286, 1349: 45530, 662: 9729, 128: 5605, 1780: 4343, 461: 2363})
+Predicted label counts (top1): Counter({2774: 274852, 1605: 57659, 14: 54389})
+    Metrics for sample 6948 @ B=0.01/S=0.05: Acc=0.0816, mIoU=0.0199, TopK Acc=0.6478, TopK mIoU=0.1849
+    Stored variant prediction for sample 6948
+  Generating full variation visualization for sample 6948...
+  Saved extended visualization to: ./benchmark/clipseg_visualizations/sample_006948_variation.png
+  Processing sample 4605 for Brightness=1.00, Saturation=1.00
+logits.shape = torch.Size([29, 352, 352]), len(prompts) = 29
+GT label counts: Counter({14: 51420, 504: 49808, 485: 44355, 1605: 32241, 2909: 29265, 529: 24336, 1163: 13378, 86: 8968, 187: 6860})
+Predicted label counts (top1): Counter({1301: 64521, 1605: 41977, 529: 33751, 3876: 29284, 4997: 27420, 187: 21824, 14: 11975, 3895: 9519, 2312: 7814, 2909: 7411, 86: 4793, 1110: 264, 815: 78})
+    Metrics for sample 4605 @ B=1.00/S=1.00: Acc=0.2640, mIoU=0.1036, TopK Acc=0.6851, TopK mIoU=0.3240
+  Processing sample 4605 for Brightness=0.50, Saturation=0.70
+logits.shape = torch.Size([29, 352, 352]), len(prompts) = 29
+GT label counts: Counter({14: 51420, 504: 49808, 485: 44355, 1605: 32241, 2909: 29265, 529: 24336, 1163: 13378, 86: 8968, 187: 6860})
+Predicted label counts (top1): Counter({1301: 51489, 1605: 46237, 2312: 37216, 3876: 29853, 3895: 24696, 529: 18192, 4997: 16734, 187: 16008, 86: 9614, 14: 7641, 1110: 2703, 2909: 177, 815: 41, 504: 30})
+    Metrics for sample 4605 @ B=0.50/S=0.70: Acc=0.2517, mIoU=0.1276, TopK Acc=0.6723, TopK mIoU=0.3336
+  Processing sample 4605 for Brightness=0.20, Saturation=0.50
+logits.shape = torch.Size([29, 352, 352]), len(prompts) = 29
+GT label counts: Counter({14: 51420, 504: 49808, 485: 44355, 1605: 32241, 2909: 29265, 529: 24336, 1163: 13378, 86: 8968, 187: 6860})
+Predicted label counts (top1): Counter({2312: 98372, 1605: 44956, 1301: 42519, 86: 24374, 3895: 18828, 3876: 15369, 187: 6527, 14: 6027, 4997: 3189, 1110: 466, 349: 3, 2909: 1})
+    Metrics for sample 4605 @ B=0.20/S=0.50: Acc=0.1618, mIoU=0.0609, TopK Acc=0.6378, TopK mIoU=0.3307
+  Processing sample 4605 for Brightness=0.10, Saturation=0.20
+logits.shape = torch.Size([29, 352, 352]), len(prompts) = 29
+GT label counts: Counter({14: 51420, 504: 49808, 485: 44355, 1605: 32241, 2909: 29265, 529: 24336, 1163: 13378, 86: 8968, 187: 6860})
+Predicted label counts (top1): Counter({2312: 95255, 1605: 40748, 271: 30560, 3876: 24449, 4: 19198, 485: 18373, 14: 14798, 86: 9465, 3895: 4546, 2909: 2125, 349: 586, 529: 236, 504: 225, 1301: 52, 187: 15})
+    Metrics for sample 4605 @ B=0.10/S=0.20: Acc=0.1631, mIoU=0.0566, TopK Acc=0.7056, TopK mIoU=0.3317
+  Processing sample 4605 for Brightness=0.05, Saturation=0.10
+logits.shape = torch.Size([29, 352, 352]), len(prompts) = 29
+GT label counts: Counter({14: 51420, 504: 49808, 485: 44355, 1605: 32241, 2909: 29265, 529: 24336, 1163: 13378, 86: 8968, 187: 6860})
+Predicted label counts (top1): Counter({14: 74712, 1605: 59395, 349: 53219, 271: 34065, 1301: 28179, 187: 9133, 3107: 1724, 2312: 204})
+    Metrics for sample 4605 @ B=0.05/S=0.10: Acc=0.0817, mIoU=0.0103, TopK Acc=0.5043, TopK mIoU=0.1958
+  Processing sample 4605 for Brightness=0.02, Saturation=0.10
+logits.shape = torch.Size([29, 352, 352]), len(prompts) = 29
+GT label counts: Counter({14: 51420, 504: 49808, 485: 44355, 1605: 32241, 2909: 29265, 529: 24336, 1163: 13378, 86: 8968, 187: 6860})
+Predicted label counts (top1): Counter({14: 257819, 2909: 2812})
+    Metrics for sample 4605 @ B=0.02/S=0.10: Acc=0.1973, mIoU=0.0222, TopK Acc=0.4185, TopK mIoU=0.2281
+  Processing sample 4605 for Brightness=0.01, Saturation=0.05
+logits.shape = torch.Size([29, 352, 352]), len(prompts) = 29
+GT label counts: Counter({14: 51420, 504: 49808, 485: 44355, 1605: 32241, 2909: 29265, 529: 24336, 1163: 13378, 86: 8968, 187: 6860})
+Predicted label counts (top1): Counter({14: 259855, 1605: 694, 2909: 82})
+    Metrics for sample 4605 @ B=0.01/S=0.05: Acc=0.1973, mIoU=0.0220, TopK Acc=0.4709, TopK mIoU=0.2722
+  Processing sample 7911 for Brightness=1.00, Saturation=1.00
+logits.shape = torch.Size([41, 352, 352]), len(prompts) = 41
+GT label counts: Counter({14: 74143, 86: 50892, 1160: 42072, 1349: 41361, 88: 33564, 187: 29515, 0: 25753, 234: 22317, 1605: 21624, 391: 13467, 918: 11356, 1038: 6681, 54: 4478, 1916: 4337, 836: 1903, 970: 1547, 556: 1458, 530: 255, 167: 106, 938: 71})
+Predicted label counts (top1): Counter({1612: 79934, 1160: 70107, 88: 42175, 1349: 37362, 86: 33580, 1605: 28870, 1038: 28837, 14: 28810, 918: 12808, 0: 8253, 187: 7025, 391: 3018, 4343: 2241, 836: 1855, 54: 1455, 970: 535, 234: 34, 1916: 1})
+    Metrics for sample 7911 @ B=1.00/S=1.00: Acc=0.4278, mIoU=0.2111, TopK Acc=0.7950, TopK mIoU=0.4770
+  Processing sample 7911 for Brightness=0.50, Saturation=0.70
+logits.shape = torch.Size([41, 352, 352]), len(prompts) = 41
+GT label counts: Counter({14: 74143, 86: 50892, 1160: 42072, 1349: 41361, 88: 33564, 187: 29515, 0: 25753, 234: 22317, 1605: 21624, 391: 13467, 918: 11356, 1038: 6681, 54: 4478, 1916: 4337, 836: 1903, 970: 1547, 556: 1458, 530: 255, 167: 106, 938: 71})
+Predicted label counts (top1): Counter({1612: 67730, 1160: 63168, 1038: 55838, 88: 44421, 14: 39362, 86: 30520, 1605: 21539, 918: 17180, 187: 11992, 1349: 11364, 54: 7432, 606: 7110, 0: 3214, 234: 1799, 391: 1542, 836: 1483, 970: 1206})
+    Metrics for sample 7911 @ B=0.50/S=0.70: Acc=0.3711, mIoU=0.1947, TopK Acc=0.7736, TopK mIoU=0.4430
+  Processing sample 7911 for Brightness=0.20, Saturation=0.50
+logits.shape = torch.Size([41, 352, 352]), len(prompts) = 41
+GT label counts: Counter({14: 74143, 86: 50892, 1160: 42072, 1349: 41361, 88: 33564, 187: 29515, 0: 25753, 234: 22317, 1605: 21624, 391: 13467, 918: 11356, 1038: 6681, 54: 4478, 1916: 4337, 836: 1903, 970: 1547, 556: 1458, 530: 255, 167: 106, 938: 71})
+Predicted label counts (top1): Counter({1612: 66367, 1038: 58763, 1160: 58225, 88: 56259, 1605: 51100, 14: 25805, 86: 23236, 918: 18759, 187: 9985, 0: 9909, 606: 5898, 1349: 1443, 54: 652, 530: 499})
+    Metrics for sample 7911 @ B=0.20/S=0.50: Acc=0.3225, mIoU=0.1217, TopK Acc=0.7144, TopK mIoU=0.3787
+  Processing sample 7911 for Brightness=0.10, Saturation=0.20
+logits.shape = torch.Size([41, 352, 352]), len(prompts) = 41
+GT label counts: Counter({14: 74143, 86: 50892, 1160: 42072, 1349: 41361, 88: 33564, 187: 29515, 0: 25753, 234: 22317, 1605: 21624, 391: 13467, 918: 11356, 1038: 6681, 54: 4478, 1916: 4337, 836: 1903, 970: 1547, 556: 1458, 530: 255, 167: 106, 938: 71})
+Predicted label counts (top1): Counter({88: 134259, 1605: 68155, 1612: 43496, 1038: 35044, 14: 31743, 1349: 17180, 918: 17168, 1160: 16138, 187: 10192, 0: 10158, 234: 2360, 606: 892, 54: 109, 391: 6})
+    Metrics for sample 7911 @ B=0.10/S=0.20: Acc=0.2163, mIoU=0.0802, TopK Acc=0.7223, TopK mIoU=0.3549
+  Processing sample 7911 for Brightness=0.05, Saturation=0.10
+logits.shape = torch.Size([41, 352, 352]), len(prompts) = 41
+GT label counts: Counter({14: 74143, 86: 50892, 1160: 42072, 1349: 41361, 88: 33564, 187: 29515, 0: 25753, 234: 22317, 1605: 21624, 391: 13467, 918: 11356, 1038: 6681, 54: 4478, 1916: 4337, 836: 1903, 970: 1547, 556: 1458, 530: 255, 167: 106, 938: 71})
+Predicted label counts (top1): Counter({88: 119039, 14: 85267, 1612: 69420, 187: 32912, 1349: 32658, 1160: 25773, 1038: 11593, 54: 6041, 1605: 2112, 0: 2085})
+    Metrics for sample 7911 @ B=0.05/S=0.10: Acc=0.1910, mIoU=0.0498, TopK Acc=0.6528, TopK mIoU=0.2592
+  Processing sample 7911 for Brightness=0.02, Saturation=0.10
+logits.shape = torch.Size([41, 352, 352]), len(prompts) = 41
+GT label counts: Counter({14: 74143, 86: 50892, 1160: 42072, 1349: 41361, 88: 33564, 187: 29515, 0: 25753, 234: 22317, 1605: 21624, 391: 13467, 918: 11356, 1038: 6681, 54: 4478, 1916: 4337, 836: 1903, 970: 1547, 556: 1458, 530: 255, 167: 106, 938: 71})
+Predicted label counts (top1): Counter({14: 386900})
+    Metrics for sample 7911 @ B=0.02/S=0.10: Acc=0.1916, mIoU=0.0096, TopK Acc=0.4388, TopK mIoU=0.1735
+  Processing sample 7911 for Brightness=0.01, Saturation=0.05
+logits.shape = torch.Size([41, 352, 352]), len(prompts) = 41
+GT label counts: Counter({14: 74143, 86: 50892, 1160: 42072, 1349: 41361, 88: 33564, 187: 29515, 0: 25753, 234: 22317, 1605: 21624, 391: 13467, 918: 11356, 1038: 6681, 54: 4478, 1916: 4337, 836: 1903, 970: 1547, 556: 1458, 530: 255, 167: 106, 938: 71})
+Predicted label counts (top1): Counter({606: 365938, 14: 16212, 0: 4735, 1605: 15})
+    Metrics for sample 7911 @ B=0.01/S=0.05: Acc=0.0041, mIoU=0.0009, TopK Acc=0.3141, TopK mIoU=0.1301
+  Processing sample 4046 for Brightness=1.00, Saturation=1.00
+logits.shape = torch.Size([37, 352, 352]), len(prompts) = 37
+GT label counts: Counter({1605: 52640, 1160: 50260, 941: 48667, 187: 22696, 485: 18701, 14: 14282, 88: 12585, 235: 11204, 436: 10081, 295: 6080, 936: 5251, 0: 3142, 556: 1950, 970: 1240, 391: 943, 918: 666, 938: 243})
+Predicted label counts (top1): Counter({1160: 53208, 1605: 52548, 941: 48366, 88: 22703, 436: 22259, 485: 21387, 100: 11266, 936: 8054, 0: 6299, 673: 5177, 14: 4939, 295: 1802, 235: 1003, 4002: 997, 970: 318, 187: 144, 1116: 143, 4839: 18})
+    Metrics for sample 4046 @ B=1.00/S=1.00: Acc=0.7008, mIoU=0.2304, TopK Acc=0.8669, TopK mIoU=0.4336
+  Processing sample 4046 for Brightness=0.50, Saturation=0.70
+logits.shape = torch.Size([37, 352, 352]), len(prompts) = 37
+GT label counts: Counter({1605: 52640, 1160: 50260, 941: 48667, 187: 22696, 485: 18701, 14: 14282, 88: 12585, 235: 11204, 436: 10081, 295: 6080, 936: 5251, 0: 3142, 556: 1950, 970: 1240, 391: 943, 918: 666, 938: 243})
+Predicted label counts (top1): Counter({1605: 57633, 1160: 52623, 941: 47286, 485: 24978, 88: 21919, 436: 21597, 936: 9064, 100: 8525, 0: 4828, 673: 2599, 4839: 2474, 14: 2101, 4002: 1416, 235: 1326, 295: 1090, 970: 1003, 3021: 90, 187: 79})
+    Metrics for sample 4046 @ B=0.50/S=0.70: Acc=0.6919, mIoU=0.2106, TopK Acc=0.8360, TopK mIoU=0.4436
+  Processing sample 4046 for Brightness=0.20, Saturation=0.50
+logits.shape = torch.Size([37, 352, 352]), len(prompts) = 37
+GT label counts: Counter({1605: 52640, 1160: 50260, 941: 48667, 187: 22696, 485: 18701, 14: 14282, 88: 12585, 235: 11204, 436: 10081, 295: 6080, 936: 5251, 0: 3142, 556: 1950, 970: 1240, 391: 943, 918: 666, 938: 243})
+Predicted label counts (top1): Counter({295: 71058, 1160: 50375, 1605: 33098, 88: 29639, 14: 25459, 485: 22878, 100: 20334, 235: 2715, 0: 2455, 1349: 1031, 3021: 977, 936: 526, 4839: 58, 918: 28})
+    Metrics for sample 4046 @ B=0.20/S=0.50: Acc=0.4225, mIoU=0.1384, TopK Acc=0.7948, TopK mIoU=0.4004
+  Processing sample 4046 for Brightness=0.10, Saturation=0.20
+logits.shape = torch.Size([37, 352, 352]), len(prompts) = 37
+GT label counts: Counter({1605: 52640, 1160: 50260, 941: 48667, 187: 22696, 485: 18701, 14: 14282, 88: 12585, 235: 11204, 436: 10081, 295: 6080, 936: 5251, 0: 3142, 556: 1950, 970: 1240, 391: 943, 918: 666, 938: 243})
+Predicted label counts (top1): Counter({100: 76933, 1605: 70652, 1160: 44025, 485: 32041, 295: 25729, 14: 11251})
+    Metrics for sample 4046 @ B=0.10/S=0.20: Acc=0.3255, mIoU=0.0786, TopK Acc=0.4750, TopK mIoU=0.1953
+  Processing sample 4046 for Brightness=0.05, Saturation=0.10
+logits.shape = torch.Size([37, 352, 352]), len(prompts) = 37
+GT label counts: Counter({1605: 52640, 1160: 50260, 941: 48667, 187: 22696, 485: 18701, 14: 14282, 88: 12585, 235: 11204, 436: 10081, 295: 6080, 936: 5251, 0: 3142, 556: 1950, 970: 1240, 391: 943, 918: 666, 938: 243})
+Predicted label counts (top1): Counter({100: 115781, 1605: 62775, 295: 37794, 4839: 16672, 1160: 16320, 970: 8940, 14: 2096, 485: 212, 187: 41})
+    Metrics for sample 4046 @ B=0.05/S=0.10: Acc=0.1436, mIoU=0.0264, TopK Acc=0.4191, TopK mIoU=0.2042
+  Processing sample 4046 for Brightness=0.02, Saturation=0.10
+logits.shape = torch.Size([37, 352, 352]), len(prompts) = 37
+GT label counts: Counter({1605: 52640, 1160: 50260, 941: 48667, 187: 22696, 485: 18701, 14: 14282, 88: 12585, 235: 11204, 436: 10081, 295: 6080, 936: 5251, 0: 3142, 556: 1950, 970: 1240, 391: 943, 918: 666, 938: 243})
+Predicted label counts (top1): Counter({14: 260212, 98: 406, 0: 13})
+    Metrics for sample 4046 @ B=0.02/S=0.10: Acc=0.0540, mIoU=0.0030, TopK Acc=0.2696, TopK mIoU=0.1227
+  Processing sample 4046 for Brightness=0.01, Saturation=0.05
+logits.shape = torch.Size([37, 352, 352]), len(prompts) = 37
+GT label counts: Counter({1605: 52640, 1160: 50260, 941: 48667, 187: 22696, 485: 18701, 14: 14282, 88: 12585, 235: 11204, 436: 10081, 295: 6080, 936: 5251, 0: 3142, 556: 1950, 970: 1240, 391: 943, 918: 666, 938: 243})
+Predicted label counts (top1): Counter({14: 154998, 0: 105633})
+    Metrics for sample 4046 @ B=0.01/S=0.05: Acc=0.0304, mIoU=0.0031, TopK Acc=0.2688, TopK mIoU=0.0678
+  Processing sample 7974 for Brightness=1.00, Saturation=1.00
+logits.shape = torch.Size([37, 352, 352]), len(prompts) = 37
+GT label counts: Counter({1322: 121029, 251: 71862, 271: 47929, 1393: 23372, 0: 17866, 14: 16237, 3945: 15853, 662: 15455, 2909: 14849, 1605: 14350, 1160: 6801, 698: 6590, 3440: 5280, 2533: 5119, 461: 2116, 317: 1528, 447: 664})
+Predicted label counts (top1): Counter({1605: 123495, 251: 110020, 1160: 27001, 1393: 25936, 317: 24150, 14: 18984, 662: 15960, 2533: 14263, 2909: 11693, 3440: 6079, 1322: 3505, 271: 2599, 9: 2156, 324: 711, 3945: 201, 1936: 135, 2826: 12})
+    Metrics for sample 7974 @ B=1.00/S=1.00: Acc=0.3474, mIoU=0.1533, TopK Acc=0.6965, TopK mIoU=0.4957
+  Processing sample 7974 for Brightness=0.50, Saturation=0.70
+logits.shape = torch.Size([37, 352, 352]), len(prompts) = 37
+GT label counts: Counter({1322: 121029, 251: 71862, 271: 47929, 1393: 23372, 0: 17866, 14: 16237, 3945: 15853, 662: 15455, 2909: 14849, 1605: 14350, 1160: 6801, 698: 6590, 3440: 5280, 2533: 5119, 461: 2116, 317: 1528, 447: 664})
+Predicted label counts (top1): Counter({1605: 128994, 251: 106963, 1160: 28155, 1393: 26159, 317: 25091, 662: 18304, 14: 17305, 2533: 13367, 2909: 8535, 3440: 5459, 324: 3195, 9: 2654, 271: 1077, 4872: 1016, 3945: 409, 1322: 217})
+    Metrics for sample 7974 @ B=0.50/S=0.70: Acc=0.3289, mIoU=0.1477, TopK Acc=0.6556, TopK mIoU=0.4860
+  Processing sample 7974 for Brightness=0.20, Saturation=0.50
+logits.shape = torch.Size([37, 352, 352]), len(prompts) = 37
+GT label counts: Counter({1322: 121029, 251: 71862, 271: 47929, 1393: 23372, 0: 17866, 14: 16237, 3945: 15853, 662: 15455, 2909: 14849, 1605: 14350, 1160: 6801, 698: 6590, 3440: 5280, 2533: 5119, 461: 2116, 317: 1528, 447: 664})
+Predicted label counts (top1): Counter({1605: 111366, 251: 96957, 2909: 46845, 1160: 37885, 1393: 33054, 14: 18435, 662: 14426, 317: 10292, 3440: 8653, 324: 5600, 271: 2699, 447: 683, 3945: 5})
+    Metrics for sample 7974 @ B=0.20/S=0.50: Acc=0.3285, mIoU=0.1387, TopK Acc=0.7012, TopK mIoU=0.5045
+  Processing sample 7974 for Brightness=0.10, Saturation=0.20
+logits.shape = torch.Size([37, 352, 352]), len(prompts) = 37
+GT label counts: Counter({1322: 121029, 251: 71862, 271: 47929, 1393: 23372, 0: 17866, 14: 16237, 3945: 15853, 662: 15455, 2909: 14849, 1605: 14350, 1160: 6801, 698: 6590, 3440: 5280, 2533: 5119, 461: 2116, 317: 1528, 447: 664})
+Predicted label counts (top1): Counter({1605: 104770, 251: 83341, 2909: 41210, 1160: 33629, 1393: 32666, 14: 27237, 3945: 18532, 662: 16161, 271: 14200, 2826: 9503, 1322: 2910, 853: 1632, 3440: 955, 698: 154})
+    Metrics for sample 7974 @ B=0.10/S=0.20: Acc=0.2932, mIoU=0.1088, TopK Acc=0.6823, TopK mIoU=0.3856
+  Processing sample 7974 for Brightness=0.05, Saturation=0.10
+logits.shape = torch.Size([37, 352, 352]), len(prompts) = 37
+GT label counts: Counter({1322: 121029, 251: 71862, 271: 47929, 1393: 23372, 0: 17866, 14: 16237, 3945: 15853, 662: 15455, 2909: 14849, 1605: 14350, 1160: 6801, 698: 6590, 3440: 5280, 2533: 5119, 461: 2116, 317: 1528, 447: 664})
+Predicted label counts (top1): Counter({1605: 104738, 14: 86238, 251: 78877, 1160: 35673, 3945: 25179, 2826: 22861, 4872: 11409, 317: 8612, 1322: 7010, 698: 1860, 662: 1523, 2909: 1126, 918: 901, 1393: 745, 3440: 82, 447: 66})
+    Metrics for sample 7974 @ B=0.05/S=0.10: Acc=0.2049, mIoU=0.0571, TopK Acc=0.6596, TopK mIoU=0.3918
+  Processing sample 7974 for Brightness=0.02, Saturation=0.10
+logits.shape = torch.Size([37, 352, 352]), len(prompts) = 37
+GT label counts: Counter({1322: 121029, 251: 71862, 271: 47929, 1393: 23372, 0: 17866, 14: 16237, 3945: 15853, 662: 15455, 2909: 14849, 1605: 14350, 1160: 6801, 698: 6590, 3440: 5280, 2533: 5119, 461: 2116, 317: 1528, 447: 664})
+Predicted label counts (top1): Counter({2909: 367643, 2134: 9624, 791: 9430, 14: 203})
+    Metrics for sample 7974 @ B=0.02/S=0.10: Acc=0.0384, mIoU=0.0021, TopK Acc=0.3068, TopK mIoU=0.1322
+  Processing sample 7974 for Brightness=0.01, Saturation=0.05
+logits.shape = torch.Size([37, 352, 352]), len(prompts) = 37
+GT label counts: Counter({1322: 121029, 251: 71862, 271: 47929, 1393: 23372, 0: 17866, 14: 16237, 3945: 15853, 662: 15455, 2909: 14849, 1605: 14350, 1160: 6801, 698: 6590, 3440: 5280, 2533: 5119, 461: 2116, 317: 1528, 447: 664})
+Predicted label counts (top1): Counter({14: 385459, 2909: 893, 1605: 548})
+    Metrics for sample 7974 @ B=0.01/S=0.05: Acc=0.0881, mIoU=0.0025, TopK Acc=0.4821, TopK mIoU=0.2355
+  Processing sample 2673 for Brightness=1.00, Saturation=1.00
+logits.shape = torch.Size([26, 352, 352]), len(prompts) = 26
+GT label counts: Counter({1605: 111117, 14: 61059, 525: 32232, 187: 27553, 1160: 23634, 88: 5036})
+Predicted label counts (top1): Counter({1605: 83289, 4165: 34528, 187: 31136, 88: 30780, 14: 30762, 1160: 23106, 1982: 18021, 1199: 3896, 104: 2512, 504: 1374, 5149: 1227})
+    Metrics for sample 2673 @ B=1.00/S=1.00: Acc=0.5512, mIoU=0.2009, TopK Acc=0.8557, TopK mIoU=0.4467
+  Processing sample 2673 for Brightness=0.50, Saturation=0.70
+logits.shape = torch.Size([26, 352, 352]), len(prompts) = 26
+GT label counts: Counter({1605: 111117, 14: 61059, 525: 32232, 187: 27553, 1160: 23634, 88: 5036})
+Predicted label counts (top1): Counter({1605: 90851, 14: 31097, 4165: 30484, 88: 28090, 1160: 27155, 187: 26570, 1982: 20125, 1199: 2779, 504: 1944, 104: 999, 3: 537})
+    Metrics for sample 2673 @ B=0.50/S=0.70: Acc=0.5664, mIoU=0.2022, TopK Acc=0.8704, TopK mIoU=0.5745
+  Processing sample 2673 for Brightness=0.20, Saturation=0.50
+logits.shape = torch.Size([26, 352, 352]), len(prompts) = 26
+GT label counts: Counter({1605: 111117, 14: 61059, 525: 32232, 187: 27553, 1160: 23634, 88: 5036})
+Predicted label counts (top1): Counter({1605: 90000, 1982: 36267, 4165: 34139, 88: 31784, 1160: 23855, 187: 22082, 14: 17515, 504: 4963, 397: 19, 1199: 7})
+    Metrics for sample 2673 @ B=0.20/S=0.50: Acc=0.4357, mIoU=0.1573, TopK Acc=0.8651, TopK mIoU=0.5635
+  Processing sample 2673 for Brightness=0.10, Saturation=0.20
+logits.shape = torch.Size([26, 352, 352]), len(prompts) = 26
+GT label counts: Counter({1605: 111117, 14: 61059, 525: 32232, 187: 27553, 1160: 23634, 88: 5036})
+Predicted label counts (top1): Counter({1605: 82870, 88: 38294, 14: 32798, 1982: 31795, 1160: 27369, 187: 19170, 4165: 19068, 504: 6546, 397: 2115, 4651: 594, 1199: 12})
+    Metrics for sample 2673 @ B=0.10/S=0.20: Acc=0.3446, mIoU=0.1126, TopK Acc=0.8050, TopK mIoU=0.3614
+  Processing sample 2673 for Brightness=0.05, Saturation=0.10
+logits.shape = torch.Size([26, 352, 352]), len(prompts) = 26
+GT label counts: Counter({1605: 111117, 14: 61059, 525: 32232, 187: 27553, 1160: 23634, 88: 5036})
+Predicted label counts (top1): Counter({14: 147929, 88: 41560, 1605: 31443, 187: 15964, 504: 15082, 1160: 7104, 1982: 1471, 4165: 78})
+    Metrics for sample 2673 @ B=0.05/S=0.10: Acc=0.1779, mIoU=0.0825, TopK Acc=0.7558, TopK mIoU=0.3314
+  Processing sample 2673 for Brightness=0.02, Saturation=0.10
+logits.shape = torch.Size([26, 352, 352]), len(prompts) = 26
+GT label counts: Counter({1605: 111117, 14: 61059, 525: 32232, 187: 27553, 1160: 23634, 88: 5036})
+Predicted label counts (top1): Counter({1199: 167998, 14: 92592, 1605: 41})
+    Metrics for sample 2673 @ B=0.02/S=0.10: Acc=0.1314, mIoU=0.0410, TopK Acc=0.7513, TopK mIoU=0.4286
+  Processing sample 2673 for Brightness=0.01, Saturation=0.05
+logits.shape = torch.Size([26, 352, 352]), len(prompts) = 26
+GT label counts: Counter({1605: 111117, 14: 61059, 525: 32232, 187: 27553, 1160: 23634, 88: 5036})
+Predicted label counts (top1): Counter({1199: 259483, 14: 1121, 1605: 27})
+    Metrics for sample 2673 @ B=0.01/S=0.05: Acc=0.0016, mIoU=0.0009, TopK Acc=0.6606, TopK mIoU=0.2857
+  Processing sample 7413 for Brightness=1.00, Saturation=1.00
+logits.shape = torch.Size([29, 352, 352]), len(prompts) = 29
+GT label counts: Counter({1605: 134255, 1160: 97101, 187: 89599, 1054: 18107, 128: 16050, 2590: 15616, 54: 6648, 14: 5554, 391: 3970})
+Predicted label counts (top1): Counter({1160: 106686, 187: 86951, 1605: 86388, 14: 56408, 2590: 18536, 1054: 14896, 54: 9486, 391: 2396, 483: 2369, 4: 1571, 5555: 458, 344: 293, 2826: 263, 128: 97, 141: 84, 3888: 11, 941: 7})
+    Metrics for sample 7413 @ B=1.00/S=1.00: Acc=0.7696, mIoU=0.2889, TopK Acc=0.9745, TopK mIoU=0.5775
+  Processing sample 7413 for Brightness=0.50, Saturation=0.70
+logits.shape = torch.Size([29, 352, 352]), len(prompts) = 29
+GT label counts: Counter({1605: 134255, 1160: 97101, 187: 89599, 1054: 18107, 128: 16050, 2590: 15616, 54: 6648, 14: 5554, 391: 3970})
+Predicted label counts (top1): Counter({1160: 105600, 1605: 95786, 187: 86711, 14: 45405, 2590: 17253, 141: 7980, 1054: 7489, 391: 6338, 54: 6188, 2789: 2996, 128: 2408, 2826: 2094, 4: 391, 483: 229, 344: 32})
+    Metrics for sample 7413 @ B=0.50/S=0.70: Acc=0.7643, mIoU=0.3270, TopK Acc=0.9783, TopK mIoU=0.6797
+  Processing sample 7413 for Brightness=0.20, Saturation=0.50
+logits.shape = torch.Size([29, 352, 352]), len(prompts) = 29
+GT label counts: Counter({1605: 134255, 1160: 97101, 187: 89599, 1054: 18107, 128: 16050, 2590: 15616, 54: 6648, 14: 5554, 391: 3970})
+Predicted label counts (top1): Counter({1160: 123620, 1605: 103348, 187: 79580, 14: 28998, 2590: 17641, 141: 10703, 391: 10659, 1054: 6045, 54: 4578, 4: 784, 5555: 701, 2789: 152, 483: 91})
+    Metrics for sample 7413 @ B=0.20/S=0.50: Acc=0.7296, mIoU=0.3016, TopK Acc=0.9240, TopK mIoU=0.5932
+  Processing sample 7413 for Brightness=0.10, Saturation=0.20
+logits.shape = torch.Size([29, 352, 352]), len(prompts) = 29
+GT label counts: Counter({1605: 134255, 1160: 97101, 187: 89599, 1054: 18107, 128: 16050, 2590: 15616, 54: 6648, 14: 5554, 391: 3970})
+Predicted label counts (top1): Counter({187: 134317, 1605: 104115, 1160: 95740, 2590: 22122, 14: 21709, 483: 4011, 54: 3785, 4: 762, 2789: 250, 141: 89})
+    Metrics for sample 7413 @ B=0.10/S=0.20: Acc=0.5939, mIoU=0.1983, TopK Acc=0.8481, TopK mIoU=0.4555
+  Processing sample 7413 for Brightness=0.05, Saturation=0.10
+logits.shape = torch.Size([29, 352, 352]), len(prompts) = 29
+GT label counts: Counter({1605: 134255, 1160: 97101, 187: 89599, 1054: 18107, 128: 16050, 2590: 15616, 54: 6648, 14: 5554, 391: 3970})
+Predicted label counts (top1): Counter({1160: 113092, 14: 101864, 187: 57792, 2789: 49081, 1605: 33829, 54: 23005, 5555: 4881, 391: 1643, 2590: 1478, 941: 235})
+    Metrics for sample 7413 @ B=0.05/S=0.10: Acc=0.4459, mIoU=0.1404, TopK Acc=0.7695, TopK mIoU=0.4129
+  Processing sample 7413 for Brightness=0.02, Saturation=0.10
+logits.shape = torch.Size([29, 352, 352]), len(prompts) = 29
+GT label counts: Counter({1605: 134255, 1160: 97101, 187: 89599, 1054: 18107, 128: 16050, 2590: 15616, 54: 6648, 14: 5554, 391: 3970})
+Predicted label counts (top1): Counter({14: 342001, 2789: 44734, 3624: 159, 2826: 6})
+    Metrics for sample 7413 @ B=0.02/S=0.10: Acc=0.0110, mIoU=0.0010, TopK Acc=0.3614, TopK mIoU=0.0855
+  Processing sample 7413 for Brightness=0.01, Saturation=0.05
+logits.shape = torch.Size([29, 352, 352]), len(prompts) = 29
+GT label counts: Counter({1605: 134255, 1160: 97101, 187: 89599, 1054: 18107, 128: 16050, 2590: 15616, 54: 6648, 14: 5554, 391: 3970})
+Predicted label counts (top1): Counter({2789: 381337, 14: 5532, 3624: 16, 1605: 15})
+    Metrics for sample 7413 @ B=0.01/S=0.05: Acc=0.0001, mIoU=0.0001, TopK Acc=0.3719, TopK mIoU=0.2299
+  Processing sample 850 for Brightness=1.00, Saturation=1.00
+logits.shape = torch.Size([36, 352, 352]), len(prompts) = 36
+GT label counts: Counter({529: 107368, 14: 24739, 86: 19160, 308: 14224, 54: 13825, 1160: 10933, 1605: 10825, 187: 9934, 5072: 9650, 2888: 5745, 131: 4333, 235: 3791, 525: 3010, 3457: 985, 56: 518, 1700: 507})
+Predicted label counts (top1): Counter({1605: 66791, 529: 41198, 86: 23414, 14: 20285, 1160: 13927, 131: 12428, 308: 11843, 187: 10917, 3457: 8336, 2888: 7487, 525: 6894, 1425: 5970, 1700: 3372, 235: 2693, 56: 2633, 2386: 463, 54: 430, 1060: 342, 5072: 92, 1395: 32})
+    Metrics for sample 850 @ B=1.00/S=1.00: Acc=0.4242, mIoU=0.1781, TopK Acc=0.8798, TopK mIoU=0.5249
+  Processing sample 850 for Brightness=0.50, Saturation=0.70
+logits.shape = torch.Size([36, 352, 352]), len(prompts) = 36
+GT label counts: Counter({529: 107368, 14: 24739, 86: 19160, 308: 14224, 54: 13825, 1160: 10933, 1605: 10825, 187: 9934, 5072: 9650, 2888: 5745, 131: 4333, 235: 3791, 525: 3010, 3457: 985, 56: 518, 1700: 507})
+Predicted label counts (top1): Counter({1605: 64358, 529: 38984, 14: 29526, 86: 22152, 131: 21444, 1160: 13451, 308: 11239, 1425: 6646, 2386: 6396, 2888: 6358, 3457: 4888, 525: 4363, 187: 4056, 56: 2796, 857: 1058, 235: 1048, 5072: 334, 4736: 255, 54: 195})
+    Metrics for sample 850 @ B=0.50/S=0.70: Acc=0.4108, mIoU=0.1772, TopK Acc=0.8358, TopK mIoU=0.5512
+  Processing sample 850 for Brightness=0.20, Saturation=0.50
+logits.shape = torch.Size([36, 352, 352]), len(prompts) = 36
+GT label counts: Counter({529: 107368, 14: 24739, 86: 19160, 308: 14224, 54: 13825, 1160: 10933, 1605: 10825, 187: 9934, 5072: 9650, 2888: 5745, 131: 4333, 235: 3791, 525: 3010, 3457: 985, 56: 518, 1700: 507})
+Predicted label counts (top1): Counter({1605: 70536, 529: 32009, 14: 25303, 86: 20332, 1160: 17116, 131: 15222, 308: 10483, 2888: 9944, 1425: 8284, 4736: 7528, 56: 5626, 235: 4126, 187: 4074, 525: 3786, 1395: 2631, 1700: 1180, 3457: 921, 5072: 324, 41: 92, 374: 30})
+    Metrics for sample 850 @ B=0.20/S=0.50: Acc=0.3477, mIoU=0.1182, TopK Acc=0.8813, TopK mIoU=0.4947
+  Processing sample 850 for Brightness=0.10, Saturation=0.20
+logits.shape = torch.Size([36, 352, 352]), len(prompts) = 36
+GT label counts: Counter({529: 107368, 14: 24739, 86: 19160, 308: 14224, 54: 13825, 1160: 10933, 1605: 10825, 187: 9934, 5072: 9650, 2888: 5745, 131: 4333, 235: 3791, 525: 3010, 3457: 985, 56: 518, 1700: 507})
+Predicted label counts (top1): Counter({1160: 58369, 1605: 53075, 14: 42265, 3457: 30759, 308: 18896, 187: 14356, 235: 6937, 2888: 5851, 1060: 2720, 86: 1975, 529: 1887, 525: 1342, 131: 547, 1425: 210, 41: 179, 5072: 179})
+    Metrics for sample 850 @ B=0.10/S=0.20: Acc=0.1397, mIoU=0.0355, TopK Acc=0.5438, TopK mIoU=0.3662
+  Processing sample 850 for Brightness=0.05, Saturation=0.10
+logits.shape = torch.Size([36, 352, 352]), len(prompts) = 36
+GT label counts: Counter({529: 107368, 14: 24739, 86: 19160, 308: 14224, 54: 13825, 1160: 10933, 1605: 10825, 187: 9934, 5072: 9650, 2888: 5745, 131: 4333, 235: 3791, 525: 3010, 3457: 985, 56: 518, 1700: 507})
+Predicted label counts (top1): Counter({14: 114204, 1160: 69944, 177: 22664, 308: 7687, 525: 6602, 86: 5094, 1060: 5043, 41: 4066, 187: 3955, 1605: 288})
+    Metrics for sample 850 @ B=0.05/S=0.10: Acc=0.0961, mIoU=0.0184, TopK Acc=0.4545, TopK mIoU=0.1792
+  Processing sample 850 for Brightness=0.02, Saturation=0.10
+logits.shape = torch.Size([36, 352, 352]), len(prompts) = 36
+GT label counts: Counter({529: 107368, 14: 24739, 86: 19160, 308: 14224, 54: 13825, 1160: 10933, 1605: 10825, 187: 9934, 5072: 9650, 2888: 5745, 131: 4333, 235: 3791, 525: 3010, 3457: 985, 56: 518, 1700: 507})
+Predicted label counts (top1): Counter({14: 238973, 1605: 574})
+    Metrics for sample 850 @ B=0.02/S=0.10: Acc=0.1057, mIoU=0.0098, TopK Acc=0.2292, TopK mIoU=0.1334
+  Processing sample 850 for Brightness=0.01, Saturation=0.05
+logits.shape = torch.Size([36, 352, 352]), len(prompts) = 36
+GT label counts: Counter({529: 107368, 14: 24739, 86: 19160, 308: 14224, 54: 13825, 1160: 10933, 1605: 10825, 187: 9934, 5072: 9650, 2888: 5745, 131: 4333, 235: 3791, 525: 3010, 3457: 985, 56: 518, 1700: 507})
+Predicted label counts (top1): Counter({14: 180976, 1605: 58571})
+    Metrics for sample 850 @ B=0.01/S=0.05: Acc=0.1091, mIoU=0.0131, TopK Acc=0.2011, TopK mIoU=0.1020
+
+Processing sample 4903 for visualization...
+  Computed original prediction for sample 4903
+  Processing sample 4903 for Brightness=1.00, Saturation=1.00
+logits.shape = torch.Size([34, 352, 352]), len(prompts) = 34
+GT label counts: Counter({815: 89227, 1605: 84849, 14: 18294, 23: 12120, 253: 11206, 54: 10138, 436: 9428, 131: 8063, 382: 6225, 1903: 5774, 2421: 2849, 698: 1415, 483: 1043})
+Predicted label counts (top1): Counter({815: 115727, 1605: 81469, 54: 16176, 684: 10251, 23: 10239, 253: 10077, 736: 5621, 1903: 2987, 14: 2493, 436: 2386, 698: 2166, 3769: 1024, 525: 15})
+    Metrics for sample 4903 @ B=1.00/S=1.00: Acc=0.6530, mIoU=0.2179, TopK Acc=0.9078, TopK mIoU=0.5014
+    Stored variant prediction for sample 4903
+  Processing sample 4903 for Brightness=0.50, Saturation=0.70
+logits.shape = torch.Size([34, 352, 352]), len(prompts) = 34
+GT label counts: Counter({815: 89227, 1605: 84849, 14: 18294, 23: 12120, 253: 11206, 54: 10138, 436: 9428, 131: 8063, 382: 6225, 1903: 5774, 2421: 2849, 698: 1415, 483: 1043})
+Predicted label counts (top1): Counter({815: 127128, 1605: 72860, 54: 21582, 253: 11388, 3769: 10401, 684: 6212, 736: 5219, 436: 1795, 14: 1421, 23: 1370, 698: 1255})
+    Metrics for sample 4903 @ B=0.50/S=0.70: Acc=0.6090, mIoU=0.1598, TopK Acc=0.9097, TopK mIoU=0.5299
+    Stored variant prediction for sample 4903
+  Processing sample 4903 for Brightness=0.20, Saturation=0.50
+logits.shape = torch.Size([34, 352, 352]), len(prompts) = 34
+GT label counts: Counter({815: 89227, 1605: 84849, 14: 18294, 23: 12120, 253: 11206, 54: 10138, 436: 9428, 131: 8063, 382: 6225, 1903: 5774, 2421: 2849, 698: 1415, 483: 1043})
+Predicted label counts (top1): Counter({1605: 163362, 815: 33145, 684: 17826, 54: 14547, 23: 11578, 14: 10053, 253: 5624, 436: 2047, 736: 1682, 3769: 665, 525: 91, 73: 11})
+    Metrics for sample 4903 @ B=0.20/S=0.50: Acc=0.4249, mIoU=0.1228, TopK Acc=0.8917, TopK mIoU=0.4134
+    Stored variant prediction for sample 4903
+  Processing sample 4903 for Brightness=0.10, Saturation=0.20
+logits.shape = torch.Size([34, 352, 352]), len(prompts) = 34
+GT label counts: Counter({815: 89227, 1605: 84849, 14: 18294, 23: 12120, 253: 11206, 54: 10138, 436: 9428, 131: 8063, 382: 6225, 1903: 5774, 2421: 2849, 698: 1415, 483: 1043})
+Predicted label counts (top1): Counter({1605: 79432, 253: 74746, 815: 36415, 736: 15451, 14: 12860, 23: 11996, 684: 11362, 54: 9750, 436: 8217, 73: 269, 3769: 133})
+    Metrics for sample 4903 @ B=0.10/S=0.20: Acc=0.3256, mIoU=0.1329, TopK Acc=0.8583, TopK mIoU=0.3399
+    Stored variant prediction for sample 4903
+  Processing sample 4903 for Brightness=0.05, Saturation=0.10
+logits.shape = torch.Size([34, 352, 352]), len(prompts) = 34
+GT label counts: Counter({815: 89227, 1605: 84849, 14: 18294, 23: 12120, 253: 11206, 54: 10138, 436: 9428, 131: 8063, 382: 6225, 1903: 5774, 2421: 2849, 698: 1415, 483: 1043})
+Predicted label counts (top1): Counter({14: 181331, 736: 20428, 253: 19506, 54: 14907, 684: 12880, 73: 7114, 3769: 3551, 815: 776, 1605: 123, 23: 11, 382: 3, 2374: 1})
+    Metrics for sample 4903 @ B=0.05/S=0.10: Acc=0.0575, mIoU=0.0070, TopK Acc=0.7829, TopK mIoU=0.2097
+    Stored variant prediction for sample 4903
+  Processing sample 4903 for Brightness=0.02, Saturation=0.10
+logits.shape = torch.Size([34, 352, 352]), len(prompts) = 34
+GT label counts: Counter({815: 89227, 1605: 84849, 14: 18294, 23: 12120, 253: 11206, 54: 10138, 436: 9428, 131: 8063, 382: 6225, 1903: 5774, 2421: 2849, 698: 1415, 483: 1043})
+Predicted label counts (top1): Counter({3769: 259784, 14: 847})
+    Metrics for sample 4903 @ B=0.02/S=0.10: Acc=0.0001, mIoU=0.0001, TopK Acc=0.4852, TopK mIoU=0.2851
+    Stored variant prediction for sample 4903
+  Processing sample 4903 for Brightness=0.01, Saturation=0.05
+logits.shape = torch.Size([34, 352, 352]), len(prompts) = 34
+GT label counts: Counter({815: 89227, 1605: 84849, 14: 18294, 23: 12120, 253: 11206, 54: 10138, 436: 9428, 131: 8063, 382: 6225, 1903: 5774, 2421: 2849, 698: 1415, 483: 1043})
+Predicted label counts (top1): Counter({3769: 260631})
+    Metrics for sample 4903 @ B=0.01/S=0.05: Acc=0.0000, mIoU=0.0000, TopK Acc=0.4644, TopK mIoU=0.2857
+    Stored variant prediction for sample 4903
+  Generating full variation visualization for sample 4903...
+  Saved extended visualization to: ./benchmark/clipseg_visualizations/sample_004903_variation.png
+  Processing sample 2846 for Brightness=1.00, Saturation=1.00
+logits.shape = torch.Size([32, 352, 352]), len(prompts) = 32
+GT label counts: Counter({1605: 75743, 529: 49203, 1160: 35078, 86: 27315, 106: 22434, 525: 18924, 460: 13501, 447: 11288, 14: 3571, 2172: 2637, 918: 937})
+Predicted label counts (top1): Counter({1605: 70126, 529: 57123, 1160: 39752, 86: 35981, 918: 15261, 106: 13816, 525: 11172, 184: 8166, 447: 5000, 460: 3049, 14: 820, 1227: 365})
+    Metrics for sample 2846 @ B=1.00/S=1.00: Acc=0.7213, mIoU=0.3249, TopK Acc=0.9194, TopK mIoU=0.6319
+  Processing sample 2846 for Brightness=0.50, Saturation=0.70
+logits.shape = torch.Size([32, 352, 352]), len(prompts) = 32
+GT label counts: Counter({1605: 75743, 529: 49203, 1160: 35078, 86: 27315, 106: 22434, 525: 18924, 460: 13501, 447: 11288, 14: 3571, 2172: 2637, 918: 937})
+Predicted label counts (top1): Counter({1605: 68139, 529: 53044, 1160: 39618, 86: 39030, 447: 31972, 525: 19677, 460: 5558, 106: 3207, 14: 347, 1227: 39})
+    Metrics for sample 2846 @ B=0.50/S=0.70: Acc=0.7439, mIoU=0.3640, TopK Acc=0.9287, TopK mIoU=0.6759
+  Processing sample 2846 for Brightness=0.20, Saturation=0.50
+logits.shape = torch.Size([32, 352, 352]), len(prompts) = 32
+GT label counts: Counter({1605: 75743, 529: 49203, 1160: 35078, 86: 27315, 106: 22434, 525: 18924, 460: 13501, 447: 11288, 14: 3571, 2172: 2637, 918: 937})
+Predicted label counts (top1): Counter({529: 71046, 1605: 60732, 86: 42311, 1160: 40787, 447: 23662, 460: 11043, 525: 7876, 106: 1919, 1227: 827, 14: 428})
+    Metrics for sample 2846 @ B=0.20/S=0.50: Acc=0.6878, mIoU=0.3071, TopK Acc=0.9073, TopK mIoU=0.6193
+  Processing sample 2846 for Brightness=0.10, Saturation=0.20
+logits.shape = torch.Size([32, 352, 352]), len(prompts) = 32
+GT label counts: Counter({1605: 75743, 529: 49203, 1160: 35078, 86: 27315, 106: 22434, 525: 18924, 460: 13501, 447: 11288, 14: 3571, 2172: 2637, 918: 937})
+Predicted label counts (top1): Counter({1160: 89515, 1605: 56196, 86: 53917, 447: 21325, 460: 14650, 14: 10578, 529: 4362, 106: 4034, 525: 3185, 1227: 1623, 725: 1246})
+    Metrics for sample 2846 @ B=0.10/S=0.20: Acc=0.4842, mIoU=0.1816, TopK Acc=0.7369, TopK mIoU=0.4208
+  Processing sample 2846 for Brightness=0.05, Saturation=0.10
+logits.shape = torch.Size([32, 352, 352]), len(prompts) = 32
+GT label counts: Counter({1605: 75743, 529: 49203, 1160: 35078, 86: 27315, 106: 22434, 525: 18924, 460: 13501, 447: 11288, 14: 3571, 2172: 2637, 918: 937})
+Predicted label counts (top1): Counter({14: 80645, 1605: 61112, 86: 29777, 1160: 25039, 1227: 17975, 525: 15672, 529: 14620, 725: 12565, 447: 3226})
+    Metrics for sample 2846 @ B=0.05/S=0.10: Acc=0.3678, mIoU=0.1531, TopK Acc=0.6451, TopK mIoU=0.2617
+  Processing sample 2846 for Brightness=0.02, Saturation=0.10
+logits.shape = torch.Size([32, 352, 352]), len(prompts) = 32
+GT label counts: Counter({1605: 75743, 529: 49203, 1160: 35078, 86: 27315, 106: 22434, 525: 18924, 460: 13501, 447: 11288, 14: 3571, 2172: 2637, 918: 937})
+Predicted label counts (top1): Counter({14: 234831, 1605: 25800})
+    Metrics for sample 2846 @ B=0.02/S=0.10: Acc=0.0462, mIoU=0.0099, TopK Acc=0.5583, TopK mIoU=0.2881
+  Processing sample 2846 for Brightness=0.01, Saturation=0.05
+logits.shape = torch.Size([32, 352, 352]), len(prompts) = 32
+GT label counts: Counter({1605: 75743, 529: 49203, 1160: 35078, 86: 27315, 106: 22434, 525: 18924, 460: 13501, 447: 11288, 14: 3571, 2172: 2637, 918: 937})
+Predicted label counts (top1): Counter({14: 239733, 1605: 20898})
+    Metrics for sample 2846 @ B=0.01/S=0.05: Acc=0.0352, mIoU=0.0071, TopK Acc=0.3904, TopK mIoU=0.0780
+  Processing sample 7771 for Brightness=1.00, Saturation=1.00
+logits.shape = torch.Size([28, 352, 352]), len(prompts) = 28
+GT label counts: Counter({1160: 154143, 88: 88559, 86: 48752, 1605: 40407, 334: 31972, 187: 12557, 14: 9560, 359: 950})
+Predicted label counts (top1): Counter({1160: 150994, 88: 72970, 86: 56764, 1605: 33310, 1406: 27789, 334: 19104, 187: 14410, 14: 9763, 2053: 1055, 296: 481, 359: 260})
+    Metrics for sample 7771 @ B=1.00/S=1.00: Acc=0.8310, mIoU=0.4126, TopK Acc=0.9666, TopK mIoU=0.6920
+  Processing sample 7771 for Brightness=0.50, Saturation=0.70
+logits.shape = torch.Size([28, 352, 352]), len(prompts) = 28
+GT label counts: Counter({1160: 154143, 88: 88559, 86: 48752, 1605: 40407, 334: 31972, 187: 12557, 14: 9560, 359: 950})
+Predicted label counts (top1): Counter({1160: 150245, 86: 57064, 88: 53913, 1406: 47259, 1605: 37558, 334: 16508, 187: 13692, 14: 5336, 2053: 3224, 296: 1718, 359: 383})
+    Metrics for sample 7771 @ B=0.50/S=0.70: Acc=0.7736, mIoU=0.3924, TopK Acc=0.9541, TopK mIoU=0.6142
+  Processing sample 7771 for Brightness=0.20, Saturation=0.50
+logits.shape = torch.Size([28, 352, 352]), len(prompts) = 28
+GT label counts: Counter({1160: 154143, 88: 88559, 86: 48752, 1605: 40407, 334: 31972, 187: 12557, 14: 9560, 359: 950})
+Predicted label counts (top1): Counter({1160: 143851, 86: 59282, 88: 50510, 1406: 42699, 1605: 39513, 14: 14781, 187: 14195, 296: 8891, 55: 6648, 2053: 6530})
+    Metrics for sample 7771 @ B=0.20/S=0.50: Acc=0.6892, mIoU=0.2704, TopK Acc=0.9029, TopK mIoU=0.4846
+  Processing sample 7771 for Brightness=0.10, Saturation=0.20
+logits.shape = torch.Size([28, 352, 352]), len(prompts) = 28
+GT label counts: Counter({1160: 154143, 88: 88559, 86: 48752, 1605: 40407, 334: 31972, 187: 12557, 14: 9560, 359: 950})
+Predicted label counts (top1): Counter({1160: 122455, 187: 72585, 88: 57509, 1605: 48701, 86: 40291, 1406: 20381, 14: 20108, 2053: 4772, 6: 98})
+    Metrics for sample 7771 @ B=0.10/S=0.20: Acc=0.5680, mIoU=0.2076, TopK Acc=0.8489, TopK mIoU=0.3870
+  Processing sample 7771 for Brightness=0.05, Saturation=0.10
+logits.shape = torch.Size([28, 352, 352]), len(prompts) = 28
+GT label counts: Counter({1160: 154143, 88: 88559, 86: 48752, 1605: 40407, 334: 31972, 187: 12557, 14: 9560, 359: 950})
+Predicted label counts (top1): Counter({14: 126261, 88: 82777, 1605: 76739, 1160: 70701, 2053: 18277, 308: 6288, 187: 4610, 86: 825, 1406: 422})
+    Metrics for sample 7771 @ B=0.05/S=0.10: Acc=0.3798, mIoU=0.1117, TopK Acc=0.7530, TopK mIoU=0.3255
+  Processing sample 7771 for Brightness=0.02, Saturation=0.10
+logits.shape = torch.Size([28, 352, 352]), len(prompts) = 28
+GT label counts: Counter({1160: 154143, 88: 88559, 86: 48752, 1605: 40407, 334: 31972, 187: 12557, 14: 9560, 359: 950})
+Predicted label counts (top1): Counter({14: 279014, 1605: 75630, 2348: 16650, 2053: 15556, 3536: 50})
+    Metrics for sample 7771 @ B=0.02/S=0.10: Acc=0.0503, mIoU=0.0137, TopK Acc=0.1291, TopK mIoU=0.0400
+  Processing sample 7771 for Brightness=0.01, Saturation=0.05
+logits.shape = torch.Size([28, 352, 352]), len(prompts) = 28
+GT label counts: Counter({1160: 154143, 88: 88559, 86: 48752, 1605: 40407, 334: 31972, 187: 12557, 14: 9560, 359: 950})
+Predicted label counts (top1): Counter({3536: 385420, 14: 916, 1605: 564})
+    Metrics for sample 7771 @ B=0.01/S=0.05: Acc=0.0004, mIoU=0.0004, TopK Acc=0.1334, TopK mIoU=0.2206
+  Processing sample 3532 for Brightness=1.00, Saturation=1.00
+logits.shape = torch.Size([33, 352, 352]), len(prompts) = 33
+GT label counts: Counter({1605: 102938, 1160: 53413, 86: 37889, 88: 33315, 14: 13346, 782: 13281, 447: 1735, 23: 1725, 980: 968, 986: 876, 881: 680, 1259: 418, 1770: 47})
+Predicted label counts (top1): Counter({1605: 80238, 1160: 51142, 88: 45916, 14: 37984, 86: 26359, 743: 6768, 2435: 5032, 986: 2934, 1371: 1959, 1259: 1197, 447: 543, 442: 311, 872: 126, 782: 112, 693: 10})
+    Metrics for sample 3532 @ B=1.00/S=1.00: Acc=0.6846, mIoU=0.1547, TopK Acc=0.9185, TopK mIoU=0.4152
+  Processing sample 3532 for Brightness=0.50, Saturation=0.70
+logits.shape = torch.Size([33, 352, 352]), len(prompts) = 33
+GT label counts: Counter({1605: 102938, 1160: 53413, 86: 37889, 88: 33315, 14: 13346, 782: 13281, 447: 1735, 23: 1725, 980: 968, 986: 876, 881: 680, 1259: 418, 1770: 47})
+Predicted label counts (top1): Counter({1605: 83711, 1160: 48018, 88: 47240, 14: 38730, 86: 26390, 2435: 3923, 743: 3711, 986: 3655, 1371: 2921, 447: 928, 1259: 750, 442: 467, 782: 187})
+    Metrics for sample 3532 @ B=0.50/S=0.70: Acc=0.6875, mIoU=0.1774, TopK Acc=0.9299, TopK mIoU=0.3892
+  Processing sample 3532 for Brightness=0.20, Saturation=0.50
+logits.shape = torch.Size([33, 352, 352]), len(prompts) = 33
+GT label counts: Counter({1605: 102938, 1160: 53413, 86: 37889, 88: 33315, 14: 13346, 782: 13281, 447: 1735, 23: 1725, 980: 968, 986: 876, 881: 680, 1259: 418, 1770: 47})
+Predicted label counts (top1): Counter({1605: 87977, 1160: 55931, 88: 39700, 14: 34762, 86: 26596, 743: 8880, 2435: 6467, 1259: 270, 447: 33, 693: 15})
+    Metrics for sample 3532 @ B=0.20/S=0.50: Acc=0.7090, mIoU=0.1816, TopK Acc=0.9242, TopK mIoU=0.3657
+  Processing sample 3532 for Brightness=0.10, Saturation=0.20
+logits.shape = torch.Size([33, 352, 352]), len(prompts) = 33
+GT label counts: Counter({1605: 102938, 1160: 53413, 86: 37889, 88: 33315, 14: 13346, 782: 13281, 447: 1735, 23: 1725, 980: 968, 986: 876, 881: 680, 1259: 418, 1770: 47})
+Predicted label counts (top1): Counter({1605: 89576, 1160: 65335, 88: 31033, 14: 25517, 86: 23932, 743: 13784, 693: 5408, 447: 2678, 0: 2357, 782: 1011})
+    Metrics for sample 3532 @ B=0.10/S=0.20: Acc=0.6622, mIoU=0.1498, TopK Acc=0.9222, TopK mIoU=0.3397
+  Processing sample 3532 for Brightness=0.05, Saturation=0.10
+logits.shape = torch.Size([33, 352, 352]), len(prompts) = 33
+GT label counts: Counter({1605: 102938, 1160: 53413, 86: 37889, 88: 33315, 14: 13346, 782: 13281, 447: 1735, 23: 1725, 980: 968, 986: 876, 881: 680, 1259: 418, 1770: 47})
+Predicted label counts (top1): Counter({1605: 79708, 693: 39717, 1160: 36589, 88: 34333, 14: 32007, 86: 23727, 743: 7354, 0: 6562, 782: 530, 1259: 104})
+    Metrics for sample 3532 @ B=0.05/S=0.10: Acc=0.5496, mIoU=0.1178, TopK Acc=0.8308, TopK mIoU=0.2617
+  Processing sample 3532 for Brightness=0.02, Saturation=0.10
+logits.shape = torch.Size([33, 352, 352]), len(prompts) = 33
+GT label counts: Counter({1605: 102938, 1160: 53413, 86: 37889, 88: 33315, 14: 13346, 782: 13281, 447: 1735, 23: 1725, 980: 968, 986: 876, 881: 680, 1259: 418, 1770: 47})
+Predicted label counts (top1): Counter({14: 256928, 782: 3703})
+    Metrics for sample 3532 @ B=0.02/S=0.10: Acc=0.0511, mIoU=0.0040, TopK Acc=0.6587, TopK mIoU=0.3193
+  Processing sample 3532 for Brightness=0.01, Saturation=0.05
+logits.shape = torch.Size([33, 352, 352]), len(prompts) = 33
+GT label counts: Counter({1605: 102938, 1160: 53413, 86: 37889, 88: 33315, 14: 13346, 782: 13281, 447: 1735, 23: 1725, 980: 968, 986: 876, 881: 680, 1259: 418, 1770: 47})
+Predicted label counts (top1): Counter({782: 259486, 14: 597, 313: 523, 23: 25})
+    Metrics for sample 3532 @ B=0.01/S=0.05: Acc=0.0510, mIoU=0.0037, TopK Acc=0.5035, TopK mIoU=0.2182
+  Processing sample 4098 for Brightness=1.00, Saturation=1.00
+logits.shape = torch.Size([25, 352, 352]), len(prompts) = 25
+GT label counts: Counter({1605: 212005, 1160: 23379, 14: 12340, 226: 12235, 112: 672})
+Predicted label counts (top1): Counter({1605: 215533, 1160: 28808, 226: 13616, 14: 1625, 112: 1025, 1391: 24})
+    Metrics for sample 4098 @ B=1.00/S=1.00: Acc=0.9278, mIoU=0.4942, TopK Acc=0.9988, TopK mIoU=0.9674
+  Processing sample 4098 for Brightness=0.50, Saturation=0.70
+logits.shape = torch.Size([25, 352, 352]), len(prompts) = 25
+GT label counts: Counter({1605: 212005, 1160: 23379, 14: 12340, 226: 12235, 112: 672})
+Predicted label counts (top1): Counter({1605: 213894, 1160: 28360, 226: 14082, 14: 3656, 112: 639})
+    Metrics for sample 4098 @ B=0.50/S=0.70: Acc=0.9215, mIoU=0.5895, TopK Acc=0.9999, TopK mIoU=0.9910
+  Processing sample 4098 for Brightness=0.20, Saturation=0.50
+logits.shape = torch.Size([25, 352, 352]), len(prompts) = 25
+GT label counts: Counter({1605: 212005, 1160: 23379, 14: 12340, 226: 12235, 112: 672})
+Predicted label counts (top1): Counter({1605: 168862, 14: 40683, 1160: 28458, 226: 22628})
+    Metrics for sample 4098 @ B=0.20/S=0.50: Acc=0.7749, mIoU=0.4318, TopK Acc=0.9990, TopK mIoU=0.9186
+  Processing sample 4098 for Brightness=0.10, Saturation=0.20
+logits.shape = torch.Size([25, 352, 352]), len(prompts) = 25
+GT label counts: Counter({1605: 212005, 1160: 23379, 14: 12340, 226: 12235, 112: 672})
+Predicted label counts (top1): Counter({1605: 143860, 14: 58219, 226: 39604, 1160: 18948})
+    Metrics for sample 4098 @ B=0.10/S=0.20: Acc=0.6170, mIoU=0.2500, TopK Acc=0.9934, TopK mIoU=0.7831
+  Processing sample 4098 for Brightness=0.05, Saturation=0.10
+logits.shape = torch.Size([25, 352, 352]), len(prompts) = 25
+GT label counts: Counter({1605: 212005, 1160: 23379, 14: 12340, 226: 12235, 112: 672})
+Predicted label counts (top1): Counter({14: 252930, 477: 7701})
+    Metrics for sample 4098 @ B=0.05/S=0.10: Acc=0.0464, mIoU=0.0080, TopK Acc=0.9237, TopK mIoU=0.3813
+  Processing sample 4098 for Brightness=0.02, Saturation=0.10
+logits.shape = torch.Size([25, 352, 352]), len(prompts) = 25
+GT label counts: Counter({1605: 212005, 1160: 23379, 14: 12340, 226: 12235, 112: 672})
+Predicted label counts (top1): Counter({14: 221348, 3664: 39283})
+    Metrics for sample 4098 @ B=0.02/S=0.10: Acc=0.0406, mIoU=0.0079, TopK Acc=0.9505, TopK mIoU=0.4978
+  Processing sample 4098 for Brightness=0.01, Saturation=0.05
+logits.shape = torch.Size([25, 352, 352]), len(prompts) = 25
+GT label counts: Counter({1605: 212005, 1160: 23379, 14: 12340, 226: 12235, 112: 672})
+Predicted label counts (top1): Counter({3664: 260611, 14: 20})
+    Metrics for sample 4098 @ B=0.01/S=0.05: Acc=0.0000, mIoU=0.0000, TopK Acc=0.8608, TopK mIoU=0.3333
+  Processing sample 2232 for Brightness=1.00, Saturation=1.00
+logits.shape = torch.Size([25, 352, 352]), len(prompts) = 25
+GT label counts: Counter({1160: 110220, 1605: 108787, 271: 23948, 14: 13643, 1349: 4033})
+Predicted label counts (top1): Counter({1160: 112430, 1605: 104129, 271: 21304, 2829: 5864, 14: 4817, 1371: 3238, 4539: 3165, 368: 3047, 1349: 2637})
+    Metrics for sample 2232 @ B=1.00/S=1.00: Acc=0.8871, mIoU=0.3646, TopK Acc=0.9888, TopK mIoU=0.6143
+  Processing sample 2232 for Brightness=0.50, Saturation=0.70
+logits.shape = torch.Size([25, 352, 352]), len(prompts) = 25
+GT label counts: Counter({1160: 110220, 1605: 108787, 271: 23948, 14: 13643, 1349: 4033})
+Predicted label counts (top1): Counter({1160: 114122, 1605: 103468, 271: 21648, 2829: 7570, 14: 4178, 368: 3423, 1349: 3133, 4539: 1586, 1371: 1503})
+    Metrics for sample 2232 @ B=0.50/S=0.70: Acc=0.8876, mIoU=0.3780, TopK Acc=0.9901, TopK mIoU=0.6076
+  Processing sample 2232 for Brightness=0.20, Saturation=0.50
+logits.shape = torch.Size([25, 352, 352]), len(prompts) = 25
+GT label counts: Counter({1160: 110220, 1605: 108787, 271: 23948, 14: 13643, 1349: 4033})
+Predicted label counts (top1): Counter({1160: 113798, 1605: 112419, 271: 16501, 14: 9833, 368: 4816, 4539: 3249, 4701: 15})
+    Metrics for sample 2232 @ B=0.20/S=0.50: Acc=0.8979, mIoU=0.3318, TopK Acc=0.9929, TopK mIoU=0.7001
+  Processing sample 2232 for Brightness=0.10, Saturation=0.20
+logits.shape = torch.Size([25, 352, 352]), len(prompts) = 25
+GT label counts: Counter({1160: 110220, 1605: 108787, 271: 23948, 14: 13643, 1349: 4033})
+Predicted label counts (top1): Counter({1160: 109562, 1605: 60736, 1349: 39850, 14: 28830, 368: 21169, 501: 462, 4701: 22})
+    Metrics for sample 2232 @ B=0.10/S=0.20: Acc=0.6615, mIoU=0.2117, TopK Acc=0.9689, TopK mIoU=0.4880
+  Processing sample 2232 for Brightness=0.05, Saturation=0.10
+logits.shape = torch.Size([25, 352, 352]), len(prompts) = 25
+GT label counts: Counter({1160: 110220, 1605: 108787, 271: 23948, 14: 13643, 1349: 4033})
+Predicted label counts (top1): Counter({1605: 102645, 14: 83703, 1160: 52291, 4701: 10093, 4539: 6602, 271: 2256, 365: 1801, 368: 1218, 501: 22})
+    Metrics for sample 2232 @ B=0.05/S=0.10: Acc=0.5799, mIoU=0.1378, TopK Acc=0.9707, TopK mIoU=0.5133
+  Processing sample 2232 for Brightness=0.02, Saturation=0.10
+logits.shape = torch.Size([25, 352, 352]), len(prompts) = 25
+GT label counts: Counter({1160: 110220, 1605: 108787, 271: 23948, 14: 13643, 1349: 4033})
+Predicted label counts (top1): Counter({14: 260509, 1605: 122})
+    Metrics for sample 2232 @ B=0.02/S=0.10: Acc=0.0528, mIoU=0.0107, TopK Acc=0.4697, TopK mIoU=0.2180
+  Processing sample 2232 for Brightness=0.01, Saturation=0.05
+logits.shape = torch.Size([25, 352, 352]), len(prompts) = 25
+GT label counts: Counter({1160: 110220, 1605: 108787, 271: 23948, 14: 13643, 1349: 4033})
+Predicted label counts (top1): Counter({14: 154025, 1605: 106606})
+    Metrics for sample 2232 @ B=0.01/S=0.05: Acc=0.3195, mIoU=0.1172, TopK Acc=0.4697, TopK mIoU=0.1828
+  Processing sample 7933 for Brightness=1.00, Saturation=1.00
+logits.shape = torch.Size([28, 352, 352]), len(prompts) = 28
+GT label counts: Counter({485: 214805, 1160: 79681, 88: 39030, 14: 28031, 831: 14778, 1605: 4941, 2004: 4908, 1497: 726})
+Predicted label counts (top1): Counter({1160: 90902, 3238: 74492, 1605: 72614, 14: 49091, 88: 34607, 525: 24009, 2004: 15443, 485: 14159, 831: 7784, 546: 2874, 881: 909, 759: 16})
+    Metrics for sample 7933 @ B=1.00/S=1.00: Acc=0.3312, mIoU=0.1680, TopK Acc=0.7319, TopK mIoU=0.3794
+  Processing sample 7933 for Brightness=0.50, Saturation=0.70
+logits.shape = torch.Size([28, 352, 352]), len(prompts) = 28
+GT label counts: Counter({485: 214805, 1160: 79681, 88: 39030, 14: 28031, 831: 14778, 1605: 4941, 2004: 4908, 1497: 726})
+Predicted label counts (top1): Counter({14: 98261, 1160: 83698, 3238: 66017, 88: 33626, 1605: 31594, 525: 31526, 485: 16419, 831: 14725, 2004: 7130, 546: 3610, 3310: 167, 3621: 110, 3358: 17})
+    Metrics for sample 7933 @ B=0.50/S=0.70: Acc=0.3388, mIoU=0.2068, TopK Acc=0.5810, TopK mIoU=0.3022
+  Processing sample 7933 for Brightness=0.20, Saturation=0.50
+logits.shape = torch.Size([28, 352, 352]), len(prompts) = 28
+GT label counts: Counter({485: 214805, 1160: 79681, 88: 39030, 14: 28031, 831: 14778, 1605: 4941, 2004: 4908, 1497: 726})
+Predicted label counts (top1): Counter({14: 112301, 1605: 74608, 1160: 69380, 88: 39473, 3238: 37208, 485: 18288, 2004: 17669, 831: 13876, 525: 4097})
+    Metrics for sample 7933 @ B=0.20/S=0.50: Acc=0.3226, mIoU=0.2309, TopK Acc=0.7594, TopK mIoU=0.3939
+  Processing sample 7933 for Brightness=0.10, Saturation=0.20
+logits.shape = torch.Size([28, 352, 352]), len(prompts) = 28
+GT label counts: Counter({485: 214805, 1160: 79681, 88: 39030, 14: 28031, 831: 14778, 1605: 4941, 2004: 4908, 1497: 726})
+Predicted label counts (top1): Counter({14: 119686, 1605: 78139, 1160: 59094, 88: 54802, 3238: 39711, 831: 19897, 485: 9371, 2004: 4190, 525: 1464, 421: 546})
+    Metrics for sample 7933 @ B=0.10/S=0.20: Acc=0.2956, mIoU=0.1631, TopK Acc=0.4755, TopK mIoU=0.2930
+  Processing sample 7933 for Brightness=0.05, Saturation=0.10
+logits.shape = torch.Size([28, 352, 352]), len(prompts) = 28
+GT label counts: Counter({485: 214805, 1160: 79681, 88: 39030, 14: 28031, 831: 14778, 1605: 4941, 2004: 4908, 1497: 726})
+Predicted label counts (top1): Counter({14: 194667, 1160: 56586, 1605: 48242, 88: 42026, 1790: 25035, 485: 9484, 1497: 8960, 525: 1148, 831: 603, 3238: 149})
+    Metrics for sample 7933 @ B=0.05/S=0.10: Acc=0.2359, mIoU=0.0909, TopK Acc=0.4029, TopK mIoU=0.2140
+  Processing sample 7933 for Brightness=0.02, Saturation=0.10
+logits.shape = torch.Size([28, 352, 352]), len(prompts) = 28
+GT label counts: Counter({485: 214805, 1160: 79681, 88: 39030, 14: 28031, 831: 14778, 1605: 4941, 2004: 4908, 1497: 726})
+Predicted label counts (top1): Counter({14: 386900})
+    Metrics for sample 7933 @ B=0.02/S=0.10: Acc=0.0725, mIoU=0.0091, TopK Acc=0.0852, TopK mIoU=0.1342
+  Processing sample 7933 for Brightness=0.01, Saturation=0.05
+logits.shape = torch.Size([28, 352, 352]), len(prompts) = 28
+GT label counts: Counter({485: 214805, 1160: 79681, 88: 39030, 14: 28031, 831: 14778, 1605: 4941, 2004: 4908, 1497: 726})
+Predicted label counts (top1): Counter({14: 273877, 1605: 113023})
+    Metrics for sample 7933 @ B=0.01/S=0.05: Acc=0.0602, mIoU=0.0104, TopK Acc=0.0852, TopK mIoU=0.0183
+  Processing sample 7136 for Brightness=1.00, Saturation=1.00
+logits.shape = torch.Size([34, 352, 352]), len(prompts) = 34
+GT label counts: Counter({251: 109860, 1160: 101521, 436: 40713, 1605: 32322, 14: 27722, 698: 14352, 0: 13872, 2909: 13374, 1054: 11273, 662: 9909, 2533: 7443, 88: 2276, 2315: 1491, 606: 772})
+Predicted label counts (top1): Counter({1160: 112299, 251: 98666, 14: 35436, 436: 33956, 88: 33653, 1605: 29345, 662: 12445, 2533: 8341, 1054: 7934, 2877: 5214, 2909: 4184, 2925: 3169, 554: 1699, 3622: 506, 1434: 34, 2971: 19})
+    Metrics for sample 7136 @ B=1.00/S=1.00: Acc=0.7105, mIoU=0.2179, TopK Acc=0.9225, TopK mIoU=0.5563
+  Processing sample 7136 for Brightness=0.50, Saturation=0.70
+logits.shape = torch.Size([34, 352, 352]), len(prompts) = 34
+GT label counts: Counter({251: 109860, 1160: 101521, 436: 40713, 1605: 32322, 14: 27722, 698: 14352, 0: 13872, 2909: 13374, 1054: 11273, 662: 9909, 2533: 7443, 88: 2276, 2315: 1491, 606: 772})
+Predicted label counts (top1): Counter({1160: 110604, 251: 97389, 14: 46293, 436: 38037, 1605: 27894, 88: 24860, 1054: 12149, 662: 11551, 2533: 7937, 554: 4145, 3622: 3155, 2909: 1285, 606: 961, 2925: 578, 3242: 55, 698: 7})
+    Metrics for sample 7136 @ B=0.50/S=0.70: Acc=0.7219, mIoU=0.2489, TopK Acc=0.9211, TopK mIoU=0.4971
+  Processing sample 7136 for Brightness=0.20, Saturation=0.50
+logits.shape = torch.Size([34, 352, 352]), len(prompts) = 34
+GT label counts: Counter({251: 109860, 1160: 101521, 436: 40713, 1605: 32322, 14: 27722, 698: 14352, 0: 13872, 2909: 13374, 1054: 11273, 662: 9909, 2533: 7443, 88: 2276, 2315: 1491, 606: 772})
+Predicted label counts (top1): Counter({1160: 108194, 251: 105702, 14: 58044, 436: 41518, 1605: 27133, 88: 18328, 2533: 10042, 1054: 9409, 2925: 4471, 662: 1788, 554: 1251, 606: 988, 3622: 17, 698: 15})
+    Metrics for sample 7136 @ B=0.20/S=0.50: Acc=0.7275, mIoU=0.2320, TopK Acc=0.9087, TopK mIoU=0.6092
+  Processing sample 7136 for Brightness=0.10, Saturation=0.20
+logits.shape = torch.Size([34, 352, 352]), len(prompts) = 34
+GT label counts: Counter({251: 109860, 1160: 101521, 436: 40713, 1605: 32322, 14: 27722, 698: 14352, 0: 13872, 2909: 13374, 1054: 11273, 662: 9909, 2533: 7443, 88: 2276, 2315: 1491, 606: 772})
+Predicted label counts (top1): Counter({1160: 102987, 251: 90922, 14: 49343, 2925: 49288, 1605: 24791, 1434: 20523, 1054: 20350, 662: 12776, 436: 10887, 2533: 4939, 606: 94})
+    Metrics for sample 7136 @ B=0.10/S=0.20: Acc=0.6084, mIoU=0.2149, TopK Acc=0.8769, TopK mIoU=0.5540
+  Processing sample 7136 for Brightness=0.05, Saturation=0.10
+logits.shape = torch.Size([34, 352, 352]), len(prompts) = 34
+GT label counts: Counter({251: 109860, 1160: 101521, 436: 40713, 1605: 32322, 14: 27722, 698: 14352, 0: 13872, 2909: 13374, 1054: 11273, 662: 9909, 2533: 7443, 88: 2276, 2315: 1491, 606: 772})
+Predicted label counts (top1): Counter({14: 126993, 1160: 89364, 1054: 74326, 88: 54329, 2925: 22337, 1605: 10402, 54: 6195, 606: 2740, 436: 214})
+    Metrics for sample 7136 @ B=0.05/S=0.10: Acc=0.3019, mIoU=0.0666, TopK Acc=0.6392, TopK mIoU=0.2279
+  Processing sample 7136 for Brightness=0.02, Saturation=0.10
+logits.shape = torch.Size([34, 352, 352]), len(prompts) = 34
+GT label counts: Counter({251: 109860, 1160: 101521, 436: 40713, 1605: 32322, 14: 27722, 698: 14352, 0: 13872, 2909: 13374, 1054: 11273, 662: 9909, 2533: 7443, 88: 2276, 2315: 1491, 606: 772})
+Predicted label counts (top1): Counter({14: 386004, 2909: 759, 3179: 137})
+    Metrics for sample 7136 @ B=0.02/S=0.10: Acc=0.1069, mIoU=0.0048, TopK Acc=0.2256, TopK mIoU=0.1359
+  Processing sample 7136 for Brightness=0.01, Saturation=0.05
+logits.shape = torch.Size([34, 352, 352]), len(prompts) = 34
+GT label counts: Counter({251: 109860, 1160: 101521, 436: 40713, 1605: 32322, 14: 27722, 698: 14352, 0: 13872, 2909: 13374, 1054: 11273, 662: 9909, 2533: 7443, 88: 2276, 2315: 1491, 606: 772})
+Predicted label counts (top1): Counter({3242: 386897, 2909: 3})
+    Metrics for sample 7136 @ B=0.01/S=0.05: Acc=0.0000, mIoU=0.0000, TopK Acc=0.2257, TopK mIoU=0.2026
+
+Processing sample 9915 for visualization...
+  Computed original prediction for sample 9915
+  Processing sample 9915 for Brightness=1.00, Saturation=1.00
+logits.shape = torch.Size([28, 352, 352]), len(prompts) = 28
+GT label counts: Counter({1160: 106141, 14: 79114, 1605: 75441, 88: 54914, 936: 22680, 187: 15258, 1831: 5217, 1349: 2846})
+Predicted label counts (top1): Counter({1160: 125916, 1605: 72877, 88: 71029, 187: 44039, 14: 18618, 936: 13913, 1012: 5543, 1040: 5257, 1349: 1772, 3622: 1583, 1060: 1064})
+    Metrics for sample 9915 @ B=1.00/S=1.00: Acc=0.7082, mIoU=0.2980, TopK Acc=0.8935, TopK mIoU=0.5752
+    Stored variant prediction for sample 9915
+  Processing sample 9915 for Brightness=0.50, Saturation=0.70
+logits.shape = torch.Size([28, 352, 352]), len(prompts) = 28
+GT label counts: Counter({1160: 106141, 14: 79114, 1605: 75441, 88: 54914, 936: 22680, 187: 15258, 1831: 5217, 1349: 2846})
+Predicted label counts (top1): Counter({1160: 124609, 88: 75860, 1605: 73870, 187: 39915, 14: 20938, 936: 12202, 1012: 6931, 1831: 2990, 1060: 1682, 1040: 1328, 3622: 1286})
+    Metrics for sample 9915 @ B=0.50/S=0.70: Acc=0.7072, mIoU=0.2625, TopK Acc=0.8761, TopK mIoU=0.5396
+    Stored variant prediction for sample 9915
+  Processing sample 9915 for Brightness=0.20, Saturation=0.50
+logits.shape = torch.Size([28, 352, 352]), len(prompts) = 28
+GT label counts: Counter({1160: 106141, 14: 79114, 1605: 75441, 88: 54914, 936: 22680, 187: 15258, 1831: 5217, 1349: 2846})
+Predicted label counts (top1): Counter({1160: 113431, 88: 91932, 1605: 56696, 14: 33520, 187: 28287, 1040: 16165, 936: 13267, 1012: 7624, 1060: 689})
+    Metrics for sample 9915 @ B=0.20/S=0.50: Acc=0.6682, mIoU=0.2729, TopK Acc=0.8218, TopK mIoU=0.5620
+    Stored variant prediction for sample 9915
+  Processing sample 9915 for Brightness=0.10, Saturation=0.20
+logits.shape = torch.Size([28, 352, 352]), len(prompts) = 28
+GT label counts: Counter({1160: 106141, 14: 79114, 1605: 75441, 88: 54914, 936: 22680, 187: 15258, 1831: 5217, 1349: 2846})
+Predicted label counts (top1): Counter({88: 106599, 1160: 94205, 1605: 52522, 187: 41738, 14: 29327, 936: 17565, 1040: 17510, 1012: 1493, 1203: 607, 1060: 45})
+    Metrics for sample 9915 @ B=0.10/S=0.20: Acc=0.5960, mIoU=0.2136, TopK Acc=0.7529, TopK mIoU=0.3285
+    Stored variant prediction for sample 9915
+  Processing sample 9915 for Brightness=0.05, Saturation=0.10
+logits.shape = torch.Size([28, 352, 352]), len(prompts) = 28
+GT label counts: Counter({1160: 106141, 14: 79114, 1605: 75441, 88: 54914, 936: 22680, 187: 15258, 1831: 5217, 1349: 2846})
+Predicted label counts (top1): Counter({88: 100713, 1160: 88126, 187: 61286, 14: 45985, 1605: 34879, 936: 15640, 1012: 12478, 1040: 2504})
+    Metrics for sample 9915 @ B=0.05/S=0.10: Acc=0.4911, mIoU=0.2018, TopK Acc=0.8510, TopK mIoU=0.5158
+    Stored variant prediction for sample 9915
+  Processing sample 9915 for Brightness=0.02, Saturation=0.10
+logits.shape = torch.Size([28, 352, 352]), len(prompts) = 28
+GT label counts: Counter({1160: 106141, 14: 79114, 1605: 75441, 88: 54914, 936: 22680, 187: 15258, 1831: 5217, 1349: 2846})
+Predicted label counts (top1): Counter({14: 361611})
+    Metrics for sample 9915 @ B=0.02/S=0.10: Acc=0.2188, mIoU=0.0273, TopK Acc=0.4274, TopK mIoU=0.1596
+    Stored variant prediction for sample 9915
+  Processing sample 9915 for Brightness=0.01, Saturation=0.05
+logits.shape = torch.Size([28, 352, 352]), len(prompts) = 28
+GT label counts: Counter({1160: 106141, 14: 79114, 1605: 75441, 88: 54914, 936: 22680, 187: 15258, 1831: 5217, 1349: 2846})
+Predicted label counts (top1): Counter({14: 326371, 1605: 30410, 3652: 4830})
+    Metrics for sample 9915 @ B=0.01/S=0.05: Acc=0.2088, mIoU=0.0296, TopK Acc=0.4418, TopK mIoU=0.2350
+    Stored variant prediction for sample 9915
+  Generating full variation visualization for sample 9915...
+  Saved extended visualization to: ./benchmark/clipseg_visualizations/sample_009915_variation.png
+  Processing sample 9030 for Brightness=1.00, Saturation=1.00
+logits.shape = torch.Size([26, 352, 352]), len(prompts) = 26
+GT label counts: Counter({1605: 127455, 14: 78247, 1160: 68301, 187: 54095, 88: 41094, 1349: 17708})
+Predicted label counts (top1): Counter({1605: 119659, 1160: 78913, 785: 50908, 721: 46394, 187: 42661, 14: 21684, 1349: 20215, 88: 3171, 4755: 2945, 2354: 249, 3236: 96, 1130: 5})
+    Metrics for sample 9030 @ B=1.00/S=1.00: Acc=0.6688, mIoU=0.2842, TopK Acc=0.8604, TopK mIoU=0.6365
+  Processing sample 9030 for Brightness=0.50, Saturation=0.70
+logits.shape = torch.Size([26, 352, 352]), len(prompts) = 26
+GT label counts: Counter({1605: 127455, 14: 78247, 1160: 68301, 187: 54095, 88: 41094, 1349: 17708})
+Predicted label counts (top1): Counter({1605: 123601, 1160: 73143, 721: 61818, 785: 41379, 187: 37109, 1349: 16313, 1130: 14902, 14: 8069, 88: 6303, 3236: 2400, 4755: 1834, 2354: 29})
+    Metrics for sample 9030 @ B=0.50/S=0.70: Acc=0.6196, mIoU=0.2609, TopK Acc=0.8529, TopK mIoU=0.5062
+  Processing sample 9030 for Brightness=0.20, Saturation=0.50
+logits.shape = torch.Size([26, 352, 352]), len(prompts) = 26
+GT label counts: Counter({1605: 127455, 14: 78247, 1160: 68301, 187: 54095, 88: 41094, 1349: 17708})
+Predicted label counts (top1): Counter({1605: 126830, 785: 83763, 1160: 67409, 187: 38119, 1349: 19322, 1130: 14029, 88: 11071, 2354: 10383, 3236: 8793, 14: 5783, 271: 1398})
+    Metrics for sample 9030 @ B=0.20/S=0.50: Acc=0.6482, mIoU=0.3262, TopK Acc=0.8488, TopK mIoU=0.5145
+  Processing sample 9030 for Brightness=0.10, Saturation=0.20
+logits.shape = torch.Size([26, 352, 352]), len(prompts) = 26
+GT label counts: Counter({1605: 127455, 14: 78247, 1160: 68301, 187: 54095, 88: 41094, 1349: 17708})
+Predicted label counts (top1): Counter({1605: 124132, 785: 88648, 1160: 63139, 1349: 38289, 14: 37066, 88: 17983, 187: 11919, 3236: 5588, 271: 136})
+    Metrics for sample 9030 @ B=0.10/S=0.20: Acc=0.5761, mIoU=0.2949, TopK Acc=0.8844, TopK mIoU=0.6381
+  Processing sample 9030 for Brightness=0.05, Saturation=0.10
+logits.shape = torch.Size([26, 352, 352]), len(prompts) = 26
+GT label counts: Counter({1605: 127455, 14: 78247, 1160: 68301, 187: 54095, 88: 41094, 1349: 17708})
+Predicted label counts (top1): Counter({1605: 152581, 3236: 94015, 1160: 68632, 14: 34164, 88: 27070, 271: 4951, 1349: 3264, 187: 1791, 785: 431, 721: 1})
+    Metrics for sample 9030 @ B=0.05/S=0.10: Acc=0.4702, mIoU=0.1629, TopK Acc=0.8102, TopK mIoU=0.4269
+  Processing sample 9030 for Brightness=0.02, Saturation=0.10
+logits.shape = torch.Size([26, 352, 352]), len(prompts) = 26
+GT label counts: Counter({1605: 127455, 14: 78247, 1160: 68301, 187: 54095, 88: 41094, 1349: 17708})
+Predicted label counts (top1): Counter({2213: 377241, 14: 9659})
+    Metrics for sample 9030 @ B=0.02/S=0.10: Acc=0.0000, mIoU=0.0000, TopK Acc=0.5317, TopK mIoU=0.2701
+  Processing sample 9030 for Brightness=0.01, Saturation=0.05
+logits.shape = torch.Size([26, 352, 352]), len(prompts) = 26
+GT label counts: Counter({1605: 127455, 14: 78247, 1160: 68301, 187: 54095, 88: 41094, 1349: 17708})
+Predicted label counts (top1): Counter({14: 185341, 2213: 179640, 1605: 11218, 1907: 10701})
+    Metrics for sample 9030 @ B=0.01/S=0.05: Acc=0.1059, mIoU=0.0244, TopK Acc=0.5317, TopK mIoU=0.1716
+  Processing sample 952 for Brightness=1.00, Saturation=1.00
+logits.shape = torch.Size([28, 352, 352]), len(prompts) = 28
+GT label counts: Counter({1160: 75273, 1605: 74004, 226: 29198, 1349: 27123, 3945: 16673, 14: 14606, 831: 2189, 4226: 481})
+Predicted label counts (top1): Counter({1160: 94585, 1605: 68456, 226: 36128, 1349: 18300, 14: 7194, 1358: 4982, 3945: 4953, 368: 2984, 4226: 1523, 650: 385, 0: 57})
+    Metrics for sample 952 @ B=1.00/S=1.00: Acc=0.7991, mIoU=0.2766, TopK Acc=0.9668, TopK mIoU=0.4998
+  Processing sample 952 for Brightness=0.50, Saturation=0.70
+logits.shape = torch.Size([28, 352, 352]), len(prompts) = 28
+GT label counts: Counter({1160: 75273, 1605: 74004, 226: 29198, 1349: 27123, 3945: 16673, 14: 14606, 831: 2189, 4226: 481})
+Predicted label counts (top1): Counter({1160: 93196, 1605: 69296, 226: 34708, 1349: 15176, 14: 11899, 1358: 9009, 3945: 4100, 4226: 2143, 831: 20})
+    Metrics for sample 952 @ B=0.50/S=0.70: Acc=0.7651, mIoU=0.3363, TopK Acc=0.9801, TopK mIoU=0.7499
+  Processing sample 952 for Brightness=0.20, Saturation=0.50
+logits.shape = torch.Size([28, 352, 352]), len(prompts) = 28
+GT label counts: Counter({1160: 75273, 1605: 74004, 226: 29198, 1349: 27123, 3945: 16673, 14: 14606, 831: 2189, 4226: 481})
+Predicted label counts (top1): Counter({1160: 90934, 1605: 66645, 226: 39665, 14: 25616, 1349: 14376, 3945: 2256, 2004: 35, 831: 20})
+    Metrics for sample 952 @ B=0.20/S=0.50: Acc=0.7330, mIoU=0.2967, TopK Acc=0.9896, TopK mIoU=0.7612
+  Processing sample 952 for Brightness=0.10, Saturation=0.20
+logits.shape = torch.Size([28, 352, 352]), len(prompts) = 28
+GT label counts: Counter({1160: 75273, 1605: 74004, 226: 29198, 1349: 27123, 3945: 16673, 14: 14606, 831: 2189, 4226: 481})
+Predicted label counts (top1): Counter({1160: 79912, 14: 59853, 1605: 56454, 2004: 30343, 226: 6568, 1349: 4014, 831: 2403})
+    Metrics for sample 952 @ B=0.10/S=0.20: Acc=0.5272, mIoU=0.1819, TopK Acc=0.9505, TopK mIoU=0.6557
+  Processing sample 952 for Brightness=0.05, Saturation=0.10
+logits.shape = torch.Size([28, 352, 352]), len(prompts) = 28
+GT label counts: Counter({1160: 75273, 1605: 74004, 226: 29198, 1349: 27123, 3945: 16673, 14: 14606, 831: 2189, 4226: 481})
+Predicted label counts (top1): Counter({1605: 109475, 4304: 78650, 14: 30693, 2234: 7595, 903: 6672, 0: 4246, 2004: 1925, 4226: 291})
+    Metrics for sample 952 @ B=0.05/S=0.10: Acc=0.2636, mIoU=0.0478, TopK Acc=0.3681, TopK mIoU=0.1381
+  Processing sample 952 for Brightness=0.02, Saturation=0.10
+logits.shape = torch.Size([28, 352, 352]), len(prompts) = 28
+GT label counts: Counter({1160: 75273, 1605: 74004, 226: 29198, 1349: 27123, 3945: 16673, 14: 14606, 831: 2189, 4226: 481})
+Predicted label counts (top1): Counter({14: 143884, 1605: 94354, 0: 1309})
+    Metrics for sample 952 @ B=0.02/S=0.10: Acc=0.2885, mIoU=0.0662, TopK Acc=0.4393, TopK mIoU=0.2008
+  Processing sample 952 for Brightness=0.01, Saturation=0.05
+logits.shape = torch.Size([28, 352, 352]), len(prompts) = 28
+GT label counts: Counter({1160: 75273, 1605: 74004, 226: 29198, 1349: 27123, 3945: 16673, 14: 14606, 831: 2189, 4226: 481})
+Predicted label counts (top1): Counter({1605: 158298, 14: 80133, 0: 1116})
+    Metrics for sample 952 @ B=0.01/S=0.05: Acc=0.3381, mIoU=0.0614, TopK Acc=0.3702, TopK mIoU=0.0730
+  Processing sample 487 for Brightness=1.00, Saturation=1.00
+logits.shape = torch.Size([38, 352, 352]), len(prompts) = 38
+GT label counts: Counter({1054: 53652, 1605: 41032, 308: 36914, 1160: 28567, 14: 17920, 1349: 15689, 1829: 14335, 0: 7456, 391: 6977, 698: 5970, 529: 5539, 209: 1740, 2533: 1315, 54: 1256, 879: 406, 134: 320, 2078: 284, 131: 175})
+Predicted label counts (top1): Counter({1054: 66259, 1605: 35119, 308: 34289, 1160: 32452, 1349: 15691, 879: 13741, 1829: 8905, 1592: 5519, 322: 4784, 134: 4717, 391: 4634, 14: 3989, 529: 3516, 5219: 1571, 3870: 1254, 2533: 1182, 1629: 800, 131: 422, 474: 362, 54: 174, 5132: 167})
+    Metrics for sample 487 @ B=1.00/S=1.00: Acc=0.7042, mIoU=0.1777, TopK Acc=0.9082, TopK mIoU=0.3927
+  Processing sample 487 for Brightness=0.50, Saturation=0.70
+logits.shape = torch.Size([38, 352, 352]), len(prompts) = 38
+GT label counts: Counter({1054: 53652, 1605: 41032, 308: 36914, 1160: 28567, 14: 17920, 1349: 15689, 1829: 14335, 0: 7456, 391: 6977, 698: 5970, 529: 5539, 209: 1740, 2533: 1315, 54: 1256, 879: 406, 134: 320, 2078: 284, 131: 175})
+Predicted label counts (top1): Counter({1054: 65680, 1160: 31215, 308: 29760, 1605: 26060, 1349: 16436, 879: 14557, 322: 12945, 14: 8762, 529: 7777, 1592: 6655, 391: 5656, 134: 4863, 5219: 3493, 2533: 1594, 131: 1335, 3870: 1287, 1629: 1010, 1829: 248, 5132: 162, 54: 29, 505: 23})
+    Metrics for sample 487 @ B=0.50/S=0.70: Acc=0.6186, mIoU=0.1446, TopK Acc=0.9026, TopK mIoU=0.3866
+  Processing sample 487 for Brightness=0.20, Saturation=0.50
+logits.shape = torch.Size([38, 352, 352]), len(prompts) = 38
+GT label counts: Counter({1054: 53652, 1605: 41032, 308: 36914, 1160: 28567, 14: 17920, 1349: 15689, 1829: 14335, 0: 7456, 391: 6977, 698: 5970, 529: 5539, 209: 1740, 2533: 1315, 54: 1256, 879: 406, 134: 320, 2078: 284, 131: 175})
+Predicted label counts (top1): Counter({1054: 63515, 1605: 34928, 14: 30750, 1160: 26176, 308: 24452, 879: 18989, 322: 13552, 391: 8698, 529: 8479, 134: 3036, 5219: 2870, 131: 1708, 1349: 822, 2533: 712, 1629: 267, 3870: 236, 54: 223, 505: 134})
+    Metrics for sample 487 @ B=0.20/S=0.50: Acc=0.5636, mIoU=0.1335, TopK Acc=0.8626, TopK mIoU=0.3416
+  Processing sample 487 for Brightness=0.10, Saturation=0.20
+logits.shape = torch.Size([38, 352, 352]), len(prompts) = 38
+GT label counts: Counter({1054: 53652, 1605: 41032, 308: 36914, 1160: 28567, 14: 17920, 1349: 15689, 1829: 14335, 0: 7456, 391: 6977, 698: 5970, 529: 5539, 209: 1740, 2533: 1315, 54: 1256, 879: 406, 134: 320, 2078: 284, 131: 175})
+Predicted label counts (top1): Counter({1054: 66608, 1605: 46542, 308: 28259, 14: 23965, 1160: 22450, 529: 19947, 879: 19394, 322: 5660, 1349: 3036, 5219: 1929, 391: 1283, 134: 215, 54: 167, 505: 92})
+    Metrics for sample 487 @ B=0.10/S=0.20: Acc=0.5536, mIoU=0.1334, TopK Acc=0.8335, TopK mIoU=0.3826
+  Processing sample 487 for Brightness=0.05, Saturation=0.10
+logits.shape = torch.Size([38, 352, 352]), len(prompts) = 38
+GT label counts: Counter({1054: 53652, 1605: 41032, 308: 36914, 1160: 28567, 14: 17920, 1349: 15689, 1829: 14335, 0: 7456, 391: 6977, 698: 5970, 529: 5539, 209: 1740, 2533: 1315, 54: 1256, 879: 406, 134: 320, 2078: 284, 131: 175})
+Predicted label counts (top1): Counter({14: 68864, 1054: 66513, 1605: 35250, 308: 20206, 322: 14838, 879: 13450, 1160: 10985, 134: 4665, 529: 2120, 5219: 1466, 391: 1190})
+    Metrics for sample 487 @ B=0.05/S=0.10: Acc=0.4080, mIoU=0.0879, TopK Acc=0.7749, TopK mIoU=0.2522
+  Processing sample 487 for Brightness=0.02, Saturation=0.10
+logits.shape = torch.Size([38, 352, 352]), len(prompts) = 38
+GT label counts: Counter({1054: 53652, 1605: 41032, 308: 36914, 1160: 28567, 14: 17920, 1349: 15689, 1829: 14335, 0: 7456, 391: 6977, 698: 5970, 529: 5539, 209: 1740, 2533: 1315, 54: 1256, 879: 406, 134: 320, 2078: 284, 131: 175})
+Predicted label counts (top1): Counter({322: 239254, 1592: 189, 134: 104})
+    Metrics for sample 487 @ B=0.02/S=0.10: Acc=0.0000, mIoU=0.0000, TopK Acc=0.3958, TopK mIoU=0.1980
+  Processing sample 487 for Brightness=0.01, Saturation=0.05
+logits.shape = torch.Size([38, 352, 352]), len(prompts) = 38
+GT label counts: Counter({1054: 53652, 1605: 41032, 308: 36914, 1160: 28567, 14: 17920, 1349: 15689, 1829: 14335, 0: 7456, 391: 6977, 698: 5970, 529: 5539, 209: 1740, 2533: 1315, 54: 1256, 879: 406, 134: 320, 2078: 284, 131: 175})
+Predicted label counts (top1): Counter({322: 239540, 5219: 7})
+    Metrics for sample 487 @ B=0.01/S=0.05: Acc=0.0000, mIoU=0.0000, TopK Acc=0.2781, TopK mIoU=0.1577
+  Processing sample 9143 for Brightness=1.00, Saturation=1.00
+logits.shape = torch.Size([29, 352, 352]), len(prompts) = 29
+GT label counts: Counter({1160: 148891, 187: 89182, 14: 51080, 88: 48119, 1605: 38927, 2315: 3881, 1054: 3234, 23: 2189, 831: 1397})
+Predicted label counts (top1): Counter({3102: 255941, 1160: 101008, 1605: 26118, 2315: 3543, 23: 195, 14: 65, 187: 16, 88: 10, 5234: 4})
+    Metrics for sample 9143 @ B=1.00/S=1.00: Acc=0.3288, mIoU=0.1910, TopK Acc=0.8575, TopK mIoU=0.6173
+  Processing sample 9143 for Brightness=0.50, Saturation=0.70
+logits.shape = torch.Size([29, 352, 352]), len(prompts) = 29
+GT label counts: Counter({1160: 148891, 187: 89182, 14: 51080, 88: 48119, 1605: 38927, 2315: 3881, 1054: 3234, 23: 2189, 831: 1397})
+Predicted label counts (top1): Counter({3102: 259070, 1160: 93858, 1605: 29804, 2315: 2937, 14: 716, 5234: 265, 23: 250})
+    Metrics for sample 9143 @ B=0.50/S=0.70: Acc=0.3212, mIoU=0.1956, TopK Acc=0.8482, TopK mIoU=0.5573
+  Processing sample 9143 for Brightness=0.20, Saturation=0.50
+logits.shape = torch.Size([29, 352, 352]), len(prompts) = 29
+GT label counts: Counter({1160: 148891, 187: 89182, 14: 51080, 88: 48119, 1605: 38927, 2315: 3881, 1054: 3234, 23: 2189, 831: 1397})
+Predicted label counts (top1): Counter({3102: 262979, 1160: 87450, 1605: 32989, 2315: 2896, 14: 561, 5234: 25})
+    Metrics for sample 9143 @ B=0.20/S=0.50: Acc=0.3086, mIoU=0.1800, TopK Acc=0.8634, TopK mIoU=0.6220
+  Processing sample 9143 for Brightness=0.10, Saturation=0.20
+logits.shape = torch.Size([29, 352, 352]), len(prompts) = 29
+GT label counts: Counter({1160: 148891, 187: 89182, 14: 51080, 88: 48119, 1605: 38927, 2315: 3881, 1054: 3234, 23: 2189, 831: 1397})
+Predicted label counts (top1): Counter({3102: 289468, 1160: 57813, 1605: 38867, 2315: 752})
+    Metrics for sample 9143 @ B=0.10/S=0.20: Acc=0.2385, mIoU=0.1393, TopK Acc=0.8151, TopK mIoU=0.6166
+  Processing sample 9143 for Brightness=0.05, Saturation=0.10
+logits.shape = torch.Size([29, 352, 352]), len(prompts) = 29
+GT label counts: Counter({1160: 148891, 187: 89182, 14: 51080, 88: 48119, 1605: 38927, 2315: 3881, 1054: 3234, 23: 2189, 831: 1397})
+Predicted label counts (top1): Counter({3102: 239822, 1160: 57548, 1605: 41697, 14: 24761, 88: 13230, 187: 9842})
+    Metrics for sample 9143 @ B=0.05/S=0.10: Acc=0.2734, mIoU=0.1363, TopK Acc=0.7541, TopK mIoU=0.3633
+  Processing sample 9143 for Brightness=0.02, Saturation=0.10
+logits.shape = torch.Size([29, 352, 352]), len(prompts) = 29
+GT label counts: Counter({1160: 148891, 187: 89182, 14: 51080, 88: 48119, 1605: 38927, 2315: 3881, 1054: 3234, 23: 2189, 831: 1397})
+Predicted label counts (top1): Counter({14: 230516, 1605: 123144, 2860: 27458, 32: 5439, 4450: 265, 110: 78})
+    Metrics for sample 9143 @ B=0.02/S=0.10: Acc=0.0965, mIoU=0.0164, TopK Acc=0.2220, TopK mIoU=0.0458
+  Processing sample 9143 for Brightness=0.01, Saturation=0.05
+logits.shape = torch.Size([29, 352, 352]), len(prompts) = 29
+GT label counts: Counter({1160: 148891, 187: 89182, 14: 51080, 88: 48119, 1605: 38927, 2315: 3881, 1054: 3234, 23: 2189, 831: 1397})
+Predicted label counts (top1): Counter({14: 347855, 1605: 38745, 23: 300})
+    Metrics for sample 9143 @ B=0.01/S=0.05: Acc=0.0993, mIoU=0.0183, TopK Acc=0.2383, TopK mIoU=0.2032
+
+Processing sample 6180 for visualization...
+  Computed original prediction for sample 6180
+  Processing sample 6180 for Brightness=1.00, Saturation=1.00
+logits.shape = torch.Size([24, 352, 352]), len(prompts) = 24
+GT label counts: Counter({485: 202925, 1605: 132297, 14: 26548, 88: 25130})
+Predicted label counts (top1): Counter({485: 177758, 1605: 116180, 2723: 42757, 88: 32107, 14: 15381, 3011: 2717})
+    Metrics for sample 6180 @ B=1.00/S=1.00: Acc=0.7550, mIoU=0.3413, TopK Acc=0.9275, TopK mIoU=0.5885
+    Stored variant prediction for sample 6180
+  Processing sample 6180 for Brightness=0.50, Saturation=0.70
+logits.shape = torch.Size([24, 352, 352]), len(prompts) = 24
+GT label counts: Counter({485: 202925, 1605: 132297, 14: 26548, 88: 25130})
+Predicted label counts (top1): Counter({485: 125209, 1605: 116042, 2723: 92910, 88: 32226, 14: 15153, 3011: 5360})
+    Metrics for sample 6180 @ B=0.50/S=0.70: Acc=0.6324, mIoU=0.3057, TopK Acc=0.9278, TopK mIoU=0.5465
+    Stored variant prediction for sample 6180
+  Processing sample 6180 for Brightness=0.20, Saturation=0.50
+logits.shape = torch.Size([24, 352, 352]), len(prompts) = 24
+GT label counts: Counter({485: 202925, 1605: 132297, 14: 26548, 88: 25130})
+Predicted label counts (top1): Counter({485: 146861, 14: 90830, 2723: 79029, 1605: 49339, 88: 20791, 349: 50})
+    Metrics for sample 6180 @ B=0.20/S=0.50: Acc=0.4699, mIoU=0.2293, TopK Acc=0.9306, TopK mIoU=0.7698
+    Stored variant prediction for sample 6180
+  Processing sample 6180 for Brightness=0.10, Saturation=0.20
+logits.shape = torch.Size([24, 352, 352]), len(prompts) = 24
+GT label counts: Counter({485: 202925, 1605: 132297, 14: 26548, 88: 25130})
+Predicted label counts (top1): Counter({14: 218849, 349: 83654, 88: 48652, 2723: 24866, 1605: 10879})
+    Metrics for sample 6180 @ B=0.10/S=0.20: Acc=0.0435, mIoU=0.0274, TopK Acc=0.6325, TopK mIoU=0.3880
+    Stored variant prediction for sample 6180
+  Processing sample 6180 for Brightness=0.05, Saturation=0.10
+logits.shape = torch.Size([24, 352, 352]), len(prompts) = 24
+GT label counts: Counter({485: 202925, 1605: 132297, 14: 26548, 88: 25130})
+Predicted label counts (top1): Counter({14: 222014, 349: 140456, 2723: 18321, 1605: 6109})
+    Metrics for sample 6180 @ B=0.05/S=0.10: Acc=0.0255, mIoU=0.0102, TopK Acc=0.3955, TopK mIoU=0.2029
+    Stored variant prediction for sample 6180
+  Processing sample 6180 for Brightness=0.02, Saturation=0.10
+logits.shape = torch.Size([24, 352, 352]), len(prompts) = 24
+GT label counts: Counter({485: 202925, 1605: 132297, 14: 26548, 88: 25130})
+Predicted label counts (top1): Counter({14: 386746, 1605: 154})
+    Metrics for sample 6180 @ B=0.02/S=0.10: Acc=0.0675, mIoU=0.0173, TopK Acc=0.4106, TopK mIoU=0.2761
+    Stored variant prediction for sample 6180
+  Processing sample 6180 for Brightness=0.01, Saturation=0.05
+logits.shape = torch.Size([24, 352, 352]), len(prompts) = 24
+GT label counts: Counter({485: 202925, 1605: 132297, 14: 26548, 88: 25130})
+Predicted label counts (top1): Counter({14: 372663, 1605: 14237})
+    Metrics for sample 6180 @ B=0.01/S=0.05: Acc=0.0619, mIoU=0.0424, TopK Acc=0.4106, TopK mIoU=0.2742
+    Stored variant prediction for sample 6180
+  Generating full variation visualization for sample 6180...
+  Saved extended visualization to: ./benchmark/clipseg_visualizations/sample_006180_variation.png
+
+Processing sample 6847 for visualization...
+  Computed original prediction for sample 6847
+  Processing sample 6847 for Brightness=1.00, Saturation=1.00
+logits.shape = torch.Size([29, 352, 352]), len(prompts) = 29
+GT label counts: Counter({1160: 121361, 88: 91622, 14: 59873, 86: 48089, 1605: 31467, 187: 24572, 1349: 7459, 23: 1266, 769: 1191})
+Predicted label counts (top1): Counter({783: 215328, 1160: 107764, 88: 29152, 1605: 27288, 187: 3839, 769: 3352, 86: 177})
+    Metrics for sample 6847 @ B=1.00/S=1.00: Acc=0.3977, mIoU=0.1958, TopK Acc=0.8589, TopK mIoU=0.7938
+    Stored variant prediction for sample 6847
+  Processing sample 6847 for Brightness=0.50, Saturation=0.70
+logits.shape = torch.Size([29, 352, 352]), len(prompts) = 29
+GT label counts: Counter({1160: 121361, 88: 91622, 14: 59873, 86: 48089, 1605: 31467, 187: 24572, 1349: 7459, 23: 1266, 769: 1191})
+Predicted label counts (top1): Counter({783: 224360, 1160: 102700, 1605: 28446, 86: 18060, 769: 7080, 88: 6169, 23: 85})
+    Metrics for sample 6847 @ B=0.50/S=0.70: Acc=0.3689, mIoU=0.1988, TopK Acc=0.8692, TopK mIoU=0.8034
+    Stored variant prediction for sample 6847
+  Processing sample 6847 for Brightness=0.20, Saturation=0.50
+logits.shape = torch.Size([29, 352, 352]), len(prompts) = 29
+GT label counts: Counter({1160: 121361, 88: 91622, 14: 59873, 86: 48089, 1605: 31467, 187: 24572, 1349: 7459, 23: 1266, 769: 1191})
+Predicted label counts (top1): Counter({783: 229511, 1160: 101429, 1605: 29851, 1349: 18708, 769: 6417, 86: 768, 23: 137, 187: 79})
+    Metrics for sample 6847 @ B=0.20/S=0.50: Acc=0.3046, mIoU=0.1549, TopK Acc=0.8771, TopK mIoU=0.8044
+    Stored variant prediction for sample 6847
+  Processing sample 6847 for Brightness=0.10, Saturation=0.20
+logits.shape = torch.Size([29, 352, 352]), len(prompts) = 29
+GT label counts: Counter({1160: 121361, 88: 91622, 14: 59873, 86: 48089, 1605: 31467, 187: 24572, 1349: 7459, 23: 1266, 769: 1191})
+Predicted label counts (top1): Counter({783: 289496, 1160: 82832, 769: 9420, 187: 2579, 86: 1275, 1349: 1162, 14: 136})
+    Metrics for sample 6847 @ B=0.10/S=0.20: Acc=0.2124, mIoU=0.0865, TopK Acc=0.9521, TopK mIoU=0.7757
+    Stored variant prediction for sample 6847
+  Processing sample 6847 for Brightness=0.05, Saturation=0.10
+logits.shape = torch.Size([29, 352, 352]), len(prompts) = 29
+GT label counts: Counter({1160: 121361, 88: 91622, 14: 59873, 86: 48089, 1605: 31467, 187: 24572, 1349: 7459, 23: 1266, 769: 1191})
+Predicted label counts (top1): Counter({1160: 103105, 88: 101972, 14: 86638, 783: 53209, 1605: 29427, 187: 4778, 630: 3890, 86: 3870, 1349: 11})
+    Metrics for sample 6847 @ B=0.05/S=0.10: Acc=0.4093, mIoU=0.1130, TopK Acc=0.8916, TopK mIoU=0.6174
+    Stored variant prediction for sample 6847
+  Processing sample 6847 for Brightness=0.02, Saturation=0.10
+logits.shape = torch.Size([29, 352, 352]), len(prompts) = 29
+GT label counts: Counter({1160: 121361, 88: 91622, 14: 59873, 86: 48089, 1605: 31467, 187: 24572, 1349: 7459, 23: 1266, 769: 1191})
+Predicted label counts (top1): Counter({14: 385764, 23: 1136})
+    Metrics for sample 6847 @ B=0.02/S=0.10: Acc=0.1536, mIoU=0.0171, TopK Acc=0.3061, TopK mIoU=0.3005
+    Stored variant prediction for sample 6847
+  Processing sample 6847 for Brightness=0.01, Saturation=0.05
+logits.shape = torch.Size([29, 352, 352]), len(prompts) = 29
+GT label counts: Counter({1160: 121361, 88: 91622, 14: 59873, 86: 48089, 1605: 31467, 187: 24572, 1349: 7459, 23: 1266, 769: 1191})
+Predicted label counts (top1): Counter({14: 136375, 1605: 134305, 606: 114312, 23: 1908})
+    Metrics for sample 6847 @ B=0.01/S=0.05: Acc=0.1040, mIoU=0.0254, TopK Acc=0.2394, TopK mIoU=0.1213
+    Stored variant prediction for sample 6847
+  Generating full variation visualization for sample 6847...
+  Saved extended visualization to: ./benchmark/clipseg_visualizations/sample_006847_variation.png
+  Processing sample 6181 for Brightness=1.00, Saturation=1.00
+logits.shape = torch.Size([26, 352, 352]), len(prompts) = 26
+GT label counts: Counter({1160: 172233, 271: 97906, 1605: 47804, 88: 38229, 14: 15877, 187: 14851})
+Predicted label counts (top1): Counter({1160: 166742, 187: 70949, 88: 55273, 1605: 36679, 206: 29556, 14: 27701})
+    Metrics for sample 6181 @ B=1.00/S=1.00: Acc=0.6433, mIoU=0.3567, TopK Acc=0.9162, TopK mIoU=0.6499
+  Processing sample 6181 for Brightness=0.50, Saturation=0.70
+logits.shape = torch.Size([26, 352, 352]), len(prompts) = 26
+GT label counts: Counter({1160: 172233, 271: 97906, 1605: 47804, 88: 38229, 14: 15877, 187: 14851})
+Predicted label counts (top1): Counter({1160: 154590, 206: 81878, 88: 49374, 187: 42574, 1605: 36588, 14: 21896})
+    Metrics for sample 6181 @ B=0.50/S=0.70: Acc=0.6124, mIoU=0.3665, TopK Acc=0.8514, TopK mIoU=0.6110
+  Processing sample 6181 for Brightness=0.20, Saturation=0.50
+logits.shape = torch.Size([26, 352, 352]), len(prompts) = 26
+GT label counts: Counter({1160: 172233, 271: 97906, 1605: 47804, 88: 38229, 14: 15877, 187: 14851})
+Predicted label counts (top1): Counter({1160: 129768, 206: 93866, 187: 55812, 88: 52615, 1605: 38099, 14: 16740})
+    Metrics for sample 6181 @ B=0.20/S=0.50: Acc=0.5536, mIoU=0.3391, TopK Acc=0.9212, TopK mIoU=0.6747
+  Processing sample 6181 for Brightness=0.10, Saturation=0.20
+logits.shape = torch.Size([26, 352, 352]), len(prompts) = 26
+GT label counts: Counter({1160: 172233, 271: 97906, 1605: 47804, 88: 38229, 14: 15877, 187: 14851})
+Predicted label counts (top1): Counter({1160: 125536, 14: 56020, 187: 52307, 88: 51885, 206: 51225, 1605: 42823, 271: 7104})
+    Metrics for sample 6181 @ B=0.10/S=0.20: Acc=0.5421, mIoU=0.3163, TopK Acc=0.8904, TopK mIoU=0.6480
+  Processing sample 6181 for Brightness=0.05, Saturation=0.10
+logits.shape = torch.Size([26, 352, 352]), len(prompts) = 26
+GT label counts: Counter({1160: 172233, 271: 97906, 1605: 47804, 88: 38229, 14: 15877, 187: 14851})
+Predicted label counts (top1): Counter({14: 143074, 1160: 90784, 88: 72340, 271: 54908, 206: 13579, 187: 7199, 2605: 2721, 1605: 1478, 1828: 817})
+    Metrics for sample 6181 @ B=0.05/S=0.10: Acc=0.4262, mIoU=0.1634, TopK Acc=0.8701, TopK mIoU=0.5649
+  Processing sample 6181 for Brightness=0.02, Saturation=0.10
+logits.shape = torch.Size([26, 352, 352]), len(prompts) = 26
+GT label counts: Counter({1160: 172233, 271: 97906, 1605: 47804, 88: 38229, 14: 15877, 187: 14851})
+Predicted label counts (top1): Counter({14: 386900})
+    Metrics for sample 6181 @ B=0.02/S=0.10: Acc=0.0410, mIoU=0.0068, TopK Acc=0.5257, TopK mIoU=0.3151
+  Processing sample 6181 for Brightness=0.01, Saturation=0.05
+logits.shape = torch.Size([26, 352, 352]), len(prompts) = 26
+GT label counts: Counter({1160: 172233, 271: 97906, 1605: 47804, 88: 38229, 14: 15877, 187: 14851})
+Predicted label counts (top1): Counter({1605: 144977, 14: 127388, 1677: 114535})
+    Metrics for sample 6181 @ B=0.01/S=0.05: Acc=0.0696, mIoU=0.0234, TopK Acc=0.1646, TopK mIoU=0.0576
+  Processing sample 4222 for Brightness=1.00, Saturation=1.00
+logits.shape = torch.Size([26, 352, 352]), len(prompts) = 26
+GT label counts: Counter({335: 116093, 187: 56349, 14: 34374, 1605: 31251, 1160: 16845, 3212: 5719})
+Predicted label counts (top1): Counter({335: 78024, 392: 73488, 1605: 36507, 14: 25460, 187: 25233, 1160: 18684, 5177: 3123, 673: 112})
+    Metrics for sample 4222 @ B=1.00/S=1.00: Acc=0.5693, mIoU=0.3046, TopK Acc=0.9313, TopK mIoU=0.5025
+  Processing sample 4222 for Brightness=0.50, Saturation=0.70
+logits.shape = torch.Size([26, 352, 352]), len(prompts) = 26
+GT label counts: Counter({335: 116093, 187: 56349, 14: 34374, 1605: 31251, 1160: 16845, 3212: 5719})
+Predicted label counts (top1): Counter({335: 91763, 392: 57958, 1605: 35780, 14: 28653, 187: 24202, 1160: 18683, 5177: 3263, 673: 329})
+    Metrics for sample 4222 @ B=0.50/S=0.70: Acc=0.6129, mIoU=0.3137, TopK Acc=0.8955, TopK mIoU=0.4706
+  Processing sample 4222 for Brightness=0.20, Saturation=0.50
+logits.shape = torch.Size([26, 352, 352]), len(prompts) = 26
+GT label counts: Counter({335: 116093, 187: 56349, 14: 34374, 1605: 31251, 1160: 16845, 3212: 5719})
+Predicted label counts (top1): Counter({335: 98373, 14: 50277, 392: 46230, 1605: 38515, 187: 15577, 1160: 11203, 5177: 456})
+    Metrics for sample 4222 @ B=0.20/S=0.50: Acc=0.5883, mIoU=0.2682, TopK Acc=0.9414, TopK mIoU=0.6541
+  Processing sample 4222 for Brightness=0.10, Saturation=0.20
+logits.shape = torch.Size([26, 352, 352]), len(prompts) = 26
+GT label counts: Counter({335: 116093, 187: 56349, 14: 34374, 1605: 31251, 1160: 16845, 3212: 5719})
+Predicted label counts (top1): Counter({1605: 126347, 14: 54326, 1160: 49086, 335: 11645, 187: 10258, 392: 8969})
+    Metrics for sample 4222 @ B=0.10/S=0.20: Acc=0.2209, mIoU=0.1079, TopK Acc=0.9498, TopK mIoU=0.7468
+  Processing sample 4222 for Brightness=0.05, Saturation=0.10
+logits.shape = torch.Size([26, 352, 352]), len(prompts) = 26
+GT label counts: Counter({335: 116093, 187: 56349, 14: 34374, 1605: 31251, 1160: 16845, 3212: 5719})
+Predicted label counts (top1): Counter({1605: 141614, 1160: 63474, 14: 55118, 392: 424, 1724: 1})
+    Metrics for sample 4222 @ B=0.05/S=0.10: Acc=0.0538, mIoU=0.0209, TopK Acc=0.3827, TopK mIoU=0.2284
+  Processing sample 4222 for Brightness=0.02, Saturation=0.10
+logits.shape = torch.Size([26, 352, 352]), len(prompts) = 26
+GT label counts: Counter({335: 116093, 187: 56349, 14: 34374, 1605: 31251, 1160: 16845, 3212: 5719})
+Predicted label counts (top1): Counter({335: 260587, 14: 44})
+    Metrics for sample 4222 @ B=0.02/S=0.10: Acc=0.4453, mIoU=0.0742, TopK Acc=0.6970, TopK mIoU=0.4322
+  Processing sample 4222 for Brightness=0.01, Saturation=0.05
+logits.shape = torch.Size([26, 352, 352]), len(prompts) = 26
+GT label counts: Counter({335: 116093, 187: 56349, 14: 34374, 1605: 31251, 1160: 16845, 3212: 5719})
+Predicted label counts (top1): Counter({335: 214084, 1605: 41538, 14: 5009})
+    Metrics for sample 4222 @ B=0.01/S=0.05: Acc=0.2901, mIoU=0.0508, TopK Acc=0.6972, TopK mIoU=0.4300
+  Processing sample 4955 for Brightness=1.00, Saturation=1.00
+logits.shape = torch.Size([35, 352, 352]), len(prompts) = 35
+GT label counts: Counter({1605: 72994, 14: 55826, 339: 26155, 131: 22534, 1160: 21575, 599: 12548, 88: 9506, 330: 8977, 187: 8780, 525: 7374, 291: 6191, 447: 2969, 0: 2851, 56: 2351})
+Predicted label counts (top1): Counter({14: 47693, 88: 42142, 1605: 28629, 1160: 25095, 2383: 23864, 339: 20328, 100: 19342, 330: 12936, 131: 12185, 308: 6695, 869: 6432, 502: 3600, 134: 3548, 599: 3429, 187: 2314, 56: 1069, 235: 1024, 744: 301, 447: 5})
+    Metrics for sample 4955 @ B=1.00/S=1.00: Acc=0.3885, mIoU=0.1485, TopK Acc=0.7262, TopK mIoU=0.3029
+  Processing sample 4955 for Brightness=0.50, Saturation=0.70
+logits.shape = torch.Size([35, 352, 352]), len(prompts) = 35
+GT label counts: Counter({1605: 72994, 14: 55826, 339: 26155, 131: 22534, 1160: 21575, 599: 12548, 88: 9506, 330: 8977, 187: 8780, 525: 7374, 291: 6191, 447: 2969, 0: 2851, 56: 2351})
+Predicted label counts (top1): Counter({14: 40418, 88: 40409, 1605: 33290, 2383: 31868, 1160: 25235, 100: 23679, 339: 17840, 330: 11352, 134: 9366, 308: 6134, 131: 5959, 599: 4326, 869: 3296, 502: 3259, 187: 2809, 56: 758, 235: 612, 744: 21})
+    Metrics for sample 4955 @ B=0.50/S=0.70: Acc=0.4125, mIoU=0.1507, TopK Acc=0.7302, TopK mIoU=0.3418
+  Processing sample 4955 for Brightness=0.20, Saturation=0.50
+logits.shape = torch.Size([35, 352, 352]), len(prompts) = 35
+GT label counts: Counter({1605: 72994, 14: 55826, 339: 26155, 131: 22534, 1160: 21575, 599: 12548, 88: 9506, 330: 8977, 187: 8780, 525: 7374, 291: 6191, 447: 2969, 0: 2851, 56: 2351})
+Predicted label counts (top1): Counter({2383: 50114, 1605: 49064, 14: 34207, 339: 27995, 1160: 27978, 88: 22859, 330: 7852, 502: 7442, 131: 7255, 134: 5613, 308: 4777, 100: 4417, 187: 4035, 599: 3586, 350: 2826, 447: 611})
+    Metrics for sample 4955 @ B=0.20/S=0.50: Acc=0.4070, mIoU=0.1458, TopK Acc=0.7164, TopK mIoU=0.3433
+  Processing sample 4955 for Brightness=0.10, Saturation=0.20
+logits.shape = torch.Size([35, 352, 352]), len(prompts) = 35
+GT label counts: Counter({1605: 72994, 14: 55826, 339: 26155, 131: 22534, 1160: 21575, 599: 12548, 88: 9506, 330: 8977, 187: 8780, 525: 7374, 291: 6191, 447: 2969, 0: 2851, 56: 2351})
+Predicted label counts (top1): Counter({1605: 56454, 2383: 42327, 339: 40110, 14: 39405, 1160: 28012, 88: 19972, 100: 18889, 131: 7418, 187: 5427, 330: 1270, 134: 1253, 308: 94})
+    Metrics for sample 4955 @ B=0.10/S=0.20: Acc=0.3940, mIoU=0.1197, TopK Acc=0.7352, TopK mIoU=0.4029
+  Processing sample 4955 for Brightness=0.05, Saturation=0.10
+logits.shape = torch.Size([35, 352, 352]), len(prompts) = 35
+GT label counts: Counter({1605: 72994, 14: 55826, 339: 26155, 131: 22534, 1160: 21575, 599: 12548, 88: 9506, 330: 8977, 187: 8780, 525: 7374, 291: 6191, 447: 2969, 0: 2851, 56: 2351})
+Predicted label counts (top1): Counter({1605: 67350, 100: 36903, 88: 30888, 1160: 26628, 2383: 25658, 14: 20439, 308: 17427, 339: 16049, 131: 8931, 330: 6451, 0: 3621, 187: 239, 134: 47})
+    Metrics for sample 4955 @ B=0.05/S=0.10: Acc=0.3932, mIoU=0.1275, TopK Acc=0.6863, TopK mIoU=0.3143
+  Processing sample 4955 for Brightness=0.02, Saturation=0.10
+logits.shape = torch.Size([35, 352, 352]), len(prompts) = 35
+GT label counts: Counter({1605: 72994, 14: 55826, 339: 26155, 131: 22534, 1160: 21575, 599: 12548, 88: 9506, 330: 8977, 187: 8780, 525: 7374, 291: 6191, 447: 2969, 0: 2851, 56: 2351})
+Predicted label counts (top1): Counter({14: 260631})
+    Metrics for sample 4955 @ B=0.02/S=0.10: Acc=0.2251, mIoU=0.0153, TopK Acc=0.5052, TopK mIoU=0.1644
+  Processing sample 4955 for Brightness=0.01, Saturation=0.05
+logits.shape = torch.Size([35, 352, 352]), len(prompts) = 35
+GT label counts: Counter({1605: 72994, 14: 55826, 339: 26155, 131: 22534, 1160: 21575, 599: 12548, 88: 9506, 330: 8977, 187: 8780, 525: 7374, 291: 6191, 447: 2969, 0: 2851, 56: 2351})
+Predicted label counts (top1): Counter({14: 223589, 1605: 37042})
+    Metrics for sample 4955 @ B=0.01/S=0.05: Acc=0.2613, mIoU=0.0303, TopK Acc=0.5052, TopK mIoU=0.1587
+  Processing sample 4007 for Brightness=1.00, Saturation=1.00
+logits.shape = torch.Size([27, 352, 352]), len(prompts) = 27
+GT label counts: Counter({529: 89355, 391: 85711, 86: 31132, 88: 26832, 14: 16685, 1160: 6074, 1405: 4842})
+Predicted label counts (top1): Counter({391: 85400, 88: 40337, 2037: 36052, 529: 31706, 338: 31523, 505: 15240, 1160: 10851, 1110: 3754, 14: 3487, 86: 2272, 898: 9})
+    Metrics for sample 4007 @ B=1.00/S=1.00: Acc=0.5540, mIoU=0.1982, TopK Acc=0.8180, TopK mIoU=0.4743
+  Processing sample 4007 for Brightness=0.50, Saturation=0.70
+logits.shape = torch.Size([27, 352, 352]), len(prompts) = 27
+GT label counts: Counter({529: 89355, 391: 85711, 86: 31132, 88: 26832, 14: 16685, 1160: 6074, 1405: 4842})
+Predicted label counts (top1): Counter({391: 92943, 88: 40298, 2037: 33992, 529: 31458, 338: 24981, 1160: 11179, 505: 9079, 86: 5984, 146: 4185, 14: 3296, 1110: 3236})
+    Metrics for sample 4007 @ B=0.50/S=0.70: Acc=0.5604, mIoU=0.1942, TopK Acc=0.8012, TopK mIoU=0.4119
+  Processing sample 4007 for Brightness=0.20, Saturation=0.50
+logits.shape = torch.Size([27, 352, 352]), len(prompts) = 27
+GT label counts: Counter({529: 89355, 391: 85711, 86: 31132, 88: 26832, 14: 16685, 1160: 6074, 1405: 4842})
+Predicted label counts (top1): Counter({391: 102389, 88: 42922, 529: 41378, 2037: 38206, 505: 10607, 146: 10153, 1160: 8414, 86: 2130, 14: 2106, 1110: 1103, 338: 1087, 447: 136})
+    Metrics for sample 4007 @ B=0.20/S=0.50: Acc=0.5877, mIoU=0.1825, TopK Acc=0.9610, TopK mIoU=0.4725
+  Processing sample 4007 for Brightness=0.10, Saturation=0.20
+logits.shape = torch.Size([27, 352, 352]), len(prompts) = 27
+GT label counts: Counter({529: 89355, 391: 85711, 86: 31132, 88: 26832, 14: 16685, 1160: 6074, 1405: 4842})
+Predicted label counts (top1): Counter({391: 102404, 529: 37957, 1160: 37030, 14: 21249, 2037: 18384, 505: 18174, 88: 9419, 86: 9247, 146: 5697, 447: 968, 48: 102})
+    Metrics for sample 4007 @ B=0.10/S=0.20: Acc=0.5533, mIoU=0.1706, TopK Acc=0.9448, TopK mIoU=0.4524
+  Processing sample 4007 for Brightness=0.05, Saturation=0.10
+logits.shape = torch.Size([27, 352, 352]), len(prompts) = 27
+GT label counts: Counter({529: 89355, 391: 85711, 86: 31132, 88: 26832, 14: 16685, 1160: 6074, 1405: 4842})
+Predicted label counts (top1): Counter({14: 182482, 1160: 40935, 391: 24796, 447: 4303, 86: 4066, 505: 4047, 88: 2})
+    Metrics for sample 4007 @ B=0.05/S=0.10: Acc=0.0681, mIoU=0.0253, TopK Acc=0.8966, TopK mIoU=0.5337
+  Processing sample 4007 for Brightness=0.02, Saturation=0.10
+logits.shape = torch.Size([27, 352, 352]), len(prompts) = 27
+GT label counts: Counter({529: 89355, 391: 85711, 86: 31132, 88: 26832, 14: 16685, 1160: 6074, 1405: 4842})
+Predicted label counts (top1): Counter({14: 260631})
+    Metrics for sample 4007 @ B=0.02/S=0.10: Acc=0.0640, mIoU=0.0091, TopK Acc=0.3681, TopK mIoU=0.2362
+  Processing sample 4007 for Brightness=0.01, Saturation=0.05
+logits.shape = torch.Size([27, 352, 352]), len(prompts) = 27
+GT label counts: Counter({529: 89355, 391: 85711, 86: 31132, 88: 26832, 14: 16685, 1160: 6074, 1405: 4842})
+Predicted label counts (top1): Counter({14: 260631})
+    Metrics for sample 4007 @ B=0.01/S=0.05: Acc=0.0640, mIoU=0.0091, TopK Acc=0.4577, TopK mIoU=0.2356
+  Processing sample 3706 for Brightness=1.00, Saturation=1.00
+logits.shape = torch.Size([30, 352, 352]), len(prompts) = 30
+GT label counts: Counter({1605: 74564, 1054: 53861, 14: 34722, 73: 29965, 662: 24649, 1160: 21308, 476: 14044, 0: 5996, 984: 851, 50: 671})
+Predicted label counts (top1): Counter({1605: 99045, 3927: 67705, 1160: 41864, 662: 24617, 73: 18382, 14: 3567, 1054: 3308, 476: 1509, 338: 634})
+    Metrics for sample 3706 @ B=1.00/S=1.00: Acc=0.4100, mIoU=0.1683, TopK Acc=0.9332, TopK mIoU=0.6706
+  Processing sample 3706 for Brightness=0.50, Saturation=0.70
+logits.shape = torch.Size([30, 352, 352]), len(prompts) = 30
+GT label counts: Counter({1605: 74564, 1054: 53861, 14: 34722, 73: 29965, 662: 24649, 1160: 21308, 476: 14044, 0: 5996, 984: 851, 50: 671})
+Predicted label counts (top1): Counter({1605: 102527, 3927: 41731, 1160: 40397, 1054: 28680, 662: 26244, 73: 16903, 14: 1539, 840: 1156, 476: 1092, 5501: 362})
+    Metrics for sample 3706 @ B=0.50/S=0.70: Acc=0.4953, mIoU=0.1833, TopK Acc=0.8806, TopK mIoU=0.4818
+  Processing sample 3706 for Brightness=0.20, Saturation=0.50
+logits.shape = torch.Size([30, 352, 352]), len(prompts) = 30
+GT label counts: Counter({1605: 74564, 1054: 53861, 14: 34722, 73: 29965, 662: 24649, 1160: 21308, 476: 14044, 0: 5996, 984: 851, 50: 671})
+Predicted label counts (top1): Counter({1605: 100654, 1054: 45691, 1160: 32110, 662: 27254, 3927: 20820, 840: 16643, 73: 14411, 476: 1489, 50: 1028, 14: 531})
+    Metrics for sample 3706 @ B=0.20/S=0.50: Acc=0.4682, mIoU=0.1706, TopK Acc=0.8755, TopK mIoU=0.4911
+  Processing sample 3706 for Brightness=0.10, Saturation=0.20
+logits.shape = torch.Size([30, 352, 352]), len(prompts) = 30
+GT label counts: Counter({1605: 74564, 1054: 53861, 14: 34722, 73: 29965, 662: 24649, 1160: 21308, 476: 14044, 0: 5996, 984: 851, 50: 671})
+Predicted label counts (top1): Counter({1605: 113878, 1054: 56140, 840: 27358, 1160: 23197, 662: 21763, 5501: 5938, 73: 5633, 14: 4057, 50: 2667})
+    Metrics for sample 3706 @ B=0.10/S=0.20: Acc=0.4933, mIoU=0.1697, TopK Acc=0.9178, TopK mIoU=0.6243
+  Processing sample 3706 for Brightness=0.05, Saturation=0.10
+logits.shape = torch.Size([30, 352, 352]), len(prompts) = 30
+GT label counts: Counter({1605: 74564, 1054: 53861, 14: 34722, 73: 29965, 662: 24649, 1160: 21308, 476: 14044, 0: 5996, 984: 851, 50: 671})
+Predicted label counts (top1): Counter({1605: 106241, 1054: 81182, 14: 33525, 1160: 16151, 662: 9137, 73: 7412, 840: 6983})
+    Metrics for sample 3706 @ B=0.05/S=0.10: Acc=0.4927, mIoU=0.1568, TopK Acc=0.9225, TopK mIoU=0.5885
+  Processing sample 3706 for Brightness=0.02, Saturation=0.10
+logits.shape = torch.Size([30, 352, 352]), len(prompts) = 30
+GT label counts: Counter({1605: 74564, 1054: 53861, 14: 34722, 73: 29965, 662: 24649, 1160: 21308, 476: 14044, 0: 5996, 984: 851, 50: 671})
+Predicted label counts (top1): Counter({14: 260630, 476: 1})
+    Metrics for sample 3706 @ B=0.02/S=0.10: Acc=0.1562, mIoU=0.0133, TopK Acc=0.4962, TopK mIoU=0.2202
+  Processing sample 3706 for Brightness=0.01, Saturation=0.05
+logits.shape = torch.Size([30, 352, 352]), len(prompts) = 30
+GT label counts: Counter({1605: 74564, 1054: 53861, 14: 34722, 73: 29965, 662: 24649, 1160: 21308, 476: 14044, 0: 5996, 984: 851, 50: 671})
+Predicted label counts (top1): Counter({338: 260631})
+    Metrics for sample 3706 @ B=0.01/S=0.05: Acc=0.0000, mIoU=0.0000, TopK Acc=0.4962, TopK mIoU=0.2727
+  Processing sample 8758 for Brightness=1.00, Saturation=1.00
+logits.shape = torch.Size([32, 352, 352]), len(prompts) = 32
+GT label counts: Counter({1605: 102590, 1160: 94684, 251: 54982, 187: 33295, 1393: 32479, 14: 22909, 529: 20229, 2: 12198, 461: 7485, 2533: 4680, 744: 1305, 698: 64})
+Predicted label counts (top1): Counter({1605: 101955, 1160: 98747, 187: 44517, 14: 38376, 251: 34140, 1393: 32182, 529: 14863, 744: 6566, 1799: 4755, 2: 4281, 2693: 2412, 1252: 1913, 1903: 1637, 1192: 556})
+    Metrics for sample 8758 @ B=1.00/S=1.00: Acc=0.7438, mIoU=0.2492, TopK Acc=0.8759, TopK mIoU=0.4454
+  Processing sample 8758 for Brightness=0.50, Saturation=0.70
+logits.shape = torch.Size([32, 352, 352]), len(prompts) = 32
+GT label counts: Counter({1605: 102590, 1160: 94684, 251: 54982, 187: 33295, 1393: 32479, 14: 22909, 529: 20229, 2: 12198, 461: 7485, 2533: 4680, 744: 1305, 698: 64})
+Predicted label counts (top1): Counter({1160: 96734, 1605: 95818, 2693: 47202, 187: 41550, 251: 35388, 1393: 34076, 529: 11188, 744: 7469, 1799: 5068, 2: 3764, 14: 3428, 1192: 2367, 1252: 1348, 1677: 1030, 2533: 460, 1903: 10})
+    Metrics for sample 8758 @ B=0.50/S=0.70: Acc=0.7093, mIoU=0.2280, TopK Acc=0.8644, TopK mIoU=0.3973
+  Processing sample 8758 for Brightness=0.20, Saturation=0.50
+logits.shape = torch.Size([32, 352, 352]), len(prompts) = 32
+GT label counts: Counter({1605: 102590, 1160: 94684, 251: 54982, 187: 33295, 1393: 32479, 14: 22909, 529: 20229, 2: 12198, 461: 7485, 2533: 4680, 744: 1305, 698: 64})
+Predicted label counts (top1): Counter({1160: 98399, 1605: 90976, 529: 44105, 14: 42187, 187: 39524, 251: 36111, 744: 9734, 2533: 5442, 2693: 5325, 1799: 3885, 1252: 2930, 2: 2357, 1903: 1335, 3738: 1333, 1393: 1219, 1192: 960, 712: 582, 1436: 343, 1230: 153})
+    Metrics for sample 8758 @ B=0.20/S=0.50: Acc=0.6432, mIoU=0.1600, TopK Acc=0.8510, TopK mIoU=0.3130
+  Processing sample 8758 for Brightness=0.10, Saturation=0.20
+logits.shape = torch.Size([32, 352, 352]), len(prompts) = 32
+GT label counts: Counter({1605: 102590, 1160: 94684, 251: 54982, 187: 33295, 1393: 32479, 14: 22909, 529: 20229, 2: 12198, 461: 7485, 2533: 4680, 744: 1305, 698: 64})
+Predicted label counts (top1): Counter({1605: 107419, 1160: 95934, 744: 49821, 187: 45253, 529: 31818, 251: 27099, 14: 11566, 712: 10937, 1799: 4138, 2: 2079, 1192: 603, 2533: 222, 1230: 11})
+    Metrics for sample 8758 @ B=0.10/S=0.20: Acc=0.5959, mIoU=0.1809, TopK Acc=0.8495, TopK mIoU=0.5023
+  Processing sample 8758 for Brightness=0.05, Saturation=0.10
+logits.shape = torch.Size([32, 352, 352]), len(prompts) = 32
+GT label counts: Counter({1605: 102590, 1160: 94684, 251: 54982, 187: 33295, 1393: 32479, 14: 22909, 529: 20229, 2: 12198, 461: 7485, 2533: 4680, 744: 1305, 698: 64})
+Predicted label counts (top1): Counter({744: 100210, 1160: 93358, 14: 88331, 1605: 46934, 187: 42819, 1393: 6805, 251: 6786, 2: 1165, 1252: 241, 698: 112, 1677: 78, 1436: 60, 712: 1})
+    Metrics for sample 8758 @ B=0.05/S=0.10: Acc=0.3361, mIoU=0.0924, TopK Acc=0.7682, TopK mIoU=0.5022
+  Processing sample 8758 for Brightness=0.02, Saturation=0.10
+logits.shape = torch.Size([32, 352, 352]), len(prompts) = 32
+GT label counts: Counter({1605: 102590, 1160: 94684, 251: 54982, 187: 33295, 1393: 32479, 14: 22909, 529: 20229, 2: 12198, 461: 7485, 2533: 4680, 744: 1305, 698: 64})
+Predicted label counts (top1): Counter({14: 318954, 712: 61625, 2: 6321})
+    Metrics for sample 8758 @ B=0.02/S=0.10: Acc=0.0413, mIoU=0.0038, TopK Acc=0.3555, TopK mIoU=0.2109
+  Processing sample 8758 for Brightness=0.01, Saturation=0.05
+logits.shape = torch.Size([32, 352, 352]), len(prompts) = 32
+GT label counts: Counter({1605: 102590, 1160: 94684, 251: 54982, 187: 33295, 1393: 32479, 14: 22909, 529: 20229, 2: 12198, 461: 7485, 2533: 4680, 744: 1305, 698: 64})
+Predicted label counts (top1): Counter({712: 373341, 2: 12146, 744: 1053, 1677: 360})
+    Metrics for sample 8758 @ B=0.01/S=0.05: Acc=0.0000, mIoU=0.0000, TopK Acc=0.2281, TopK mIoU=0.1970
+
+--- Aggregating Results ---
+Level B=1.00: Processed 50 samples. Avg Acc=0.6022, Avg mIoU=0.2367
+Level B=0.50: Processed 50 samples. Avg Acc=0.5837, Avg mIoU=0.2380
+Level B=0.20: Processed 50 samples. Avg Acc=0.5205, Avg mIoU=0.2011
+Level B=0.10: Processed 50 samples. Avg Acc=0.4180, Avg mIoU=0.1403
+Level B=0.05: Processed 50 samples. Avg Acc=0.2707, Avg mIoU=0.0767
+Level B=0.02: Processed 50 samples. Avg Acc=0.0980, Avg mIoU=0.0137
+Level B=0.01: Processed 50 samples. Avg Acc=0.0789, Avg mIoU=0.0142
+
+--- Generating Performance Plots ---
+Saved performance plot to ./benchmark/clipseg_brightness_plot_accuracy.png
+Saved performance plot to ./benchmark/clipseg_brightness_plot_miou.png
+Saved performance plot to ./benchmark/clipseg_brightness_plot_topk_accuracy.png
+Saved performance plot to ./benchmark/clipseg_brightness_plot_topk_miou.png
+
+--- Evaluation Script Finished ---
