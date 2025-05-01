@@ -7,13 +7,13 @@ equivalence_dict_path="data/sunrgbd/SUNRGBD/label_similarity_sets.csv"
 
 # Training & model config
 batch_size=2
-n_height=256
-n_width=256
+n_height=224
+n_width=224
 
 unet_architecture="resnet"
 clip_model_name="openai/clip-vit-base-patch32"
 learning_rates=(2e-4 1e-4 5e-5 1e-5)
-learning_schedule=(15 25 35 40)
+learning_schedule=(10 20 30 35)
 scheduler_type="multi_step"
 w_weight_decay=1e-4
 
@@ -23,14 +23,14 @@ n_step_per_checkpoint=1000
 n_step_per_summary=500
 n_sample_per_summary=32
 validation_start_step=5000
-restore_path_model="checkpoints/checkpoints/depth_segmentation_model-25000.pth"       # Set to path if resuming from checkpoint
+restore_path_model="/media/home/ryjin/depthclip/RangeCLIP/checkpoints/checkpoints/depth_segmentation_model-6000.pth"       # Set to path if resuming from checkpoint
 restore_path_encoder=""     # Set to path if restoring encoder separately
 
 # System
 device="gpu"
 n_thread=8
-
 export PYTORCH_CUDA_ALLOC_CONF=max_split_size_mb:128,garbage_collection_threshold:0.6
+export TORCH_DISTRIBUTED_DEBUG=DETAIL
 torchrun --nproc_per_node=2 RangeCLIP/src/depth_segmentation_model/train.py \
     --labeled_metadata_path "$labeled_metadata_path" \
     --labels_path "$labels_path" \

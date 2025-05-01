@@ -5,6 +5,7 @@ import torch.distributed as dist
 import torch.multiprocessing as mp
 import torch
 
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..'))
 sys.path.insert(0, project_root)

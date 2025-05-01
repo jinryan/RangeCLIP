@@ -1,12 +1,12 @@
 Training input paths:
 Training input paths:
-data/sunrgbd/SUNRGBD/metadata.csv
-data/sunrgbd/SUNRGBD/metadata.csvInput settings:
+data/sunrgbd/SUNRGBD/metadata.csvdata/sunrgbd/SUNRGBD/metadata.csv
 
-n_batch=2  n_height=256  n_width=256
 Input settings:
+Input settings:
+n_batch=2  n_height=256  n_width=256n_batch=2  n_height=256  n_width=256
 
-n_batch=2  n_height=256  n_width=256
+
 
 Network settings:
 Network settings:
@@ -14,33 +14,33 @@ model_architecture=resnet
 model_architecture=resnet
 Weight settings:
 Weight settings:
-n_parameter=20137825
-n_parameter=20137825
-
+n_parameter=29908929
+n_parameter=29908929
 
 Training settings:
-Training settings:
-n_sample=6201  n_epoch=35  n_step=108535
-n_sample=6201  n_epoch=35  n_step=108535
-scheduler type: multi_step
-scheduler type: multi_step
-scheduler: multi_step, learning_schedule=[0-31000 : 0.0002, 31000-62000 : 0.0001, 62000-93000 : 5e-05, 93000-108500 : 1e-05]scheduler: multi_step, learning_schedule=[0-31000 : 0.0002, 31000-62000 : 0.0001, 62000-93000 : 5e-05, 93000-108500 : 1e-05]
 
+n_sample=6201  n_epoch=40  n_step=124040
+Training settings:
+scheduler type: multi_step
+n_sample=6201  n_epoch=40  n_step=124040
+scheduler type: multi_step
+scheduler: multi_step, learning_schedule=[0-46500 : 0.0002, 46500-77500 : 0.0001, 77500-108500 : 5e-05, 108500-124000 : 2e-05]
+scheduler: multi_step, learning_schedule=[0-46500 : 0.0002, 46500-77500 : 0.0001, 77500-108500 : 5e-05, 108500-124000 : 2e-05]
 
 
 Loss function settings:
 Loss function settings:
-w_weight_decay=1.0e-04w_weight_decay=1.0e-04
+w_weight_decay=1.0e-04
+w_weight_decay=1.0e-04
 
 
+Checkpoint settings:
+Checkpoint settings:
+checkpoint_path=checkpoints
+checkpoint_path=checkpoints
+checkpoint_save_frequency=1000
+checkpoint_save_frequency=1000validation_start_step=5000
 
-Checkpoint settings:Checkpoint settings:
-
-checkpoint_path=checkpointscheckpoint_path=checkpoints
-
-checkpoint_save_frequency=2000
-checkpoint_save_frequency=2000
-validation_start_step=5000
 validation_start_step=5000
 
 
@@ -48,8 +48,10 @@ Tensorboard settings:
 Tensorboard settings:
 event_path=checkpoints/tensorboard
 event_path=checkpoints/tensorboard
-log_summary_frequency=1000  n_sample_per_summary=16  
-log_summary_frequency=1000  n_sample_per_summary=16  
+log_summary_frequency=500  n_sample_per_summary=32  
+log_summary_frequency=500  n_sample_per_summary=32  restore_path=checkpoints/checkpoints/depth_segmentation_model-13000.pth
+
+restore_path=checkpoints/checkpoints/depth_segmentation_model-13000.pth
 
 
 Hardware settings:
@@ -61,51 +63,97 @@ n_thread=8
 
 
 Begin training...
-[Step 0] Validation pixel accuracy: 0.0004
-[Val] Step 0 | Loss: 4.3485
-Best validation loss: 4.3485 at step 0
+[Val] [Step 13000] Top-1 pixel accuracy (equiv): 0.5549
+[Val] [Step 13000] Top-k pixel accuracy (equiv): 0.8552
+[Val] [Step 13000] Top-1 mIoU (equiv): 0.2217
+[Val] [Step 13000] Top-k mIoU (equiv): 0.7030
+[Val] Step 13000 | # of labels in Top-1 mIoU: 897
+[Val] Step 13000 | # of labels in Top-k mIoU: 897
+[Val] Step 13000 | Loss: 1.8993, Contrastive: 1.7939
+Best validation loss: 1.8993 at step 13000
 Begin training...
-Rank 1 | Epoch 1 | Average loss: 0.03689119824088827
-Rank 0 | Epoch 1 | Average loss: 0.038078986776021125
-Rank 1 | Epoch 2 | Average loss: 0.03334421792735906
-Rank 0 | Epoch 2 | Average loss: 0.03250363875519146
-Rank 0 | Epoch 3 | Average loss: 0.03129947747552418
-Rank 1 | Epoch 3 | Average loss: 0.030870875606684434
-Rank 0 | Epoch 4 | Average loss: 0.02999202851842558
-Rank 1 | Epoch 4 | Average loss: 0.02996208919374348
-Rank 0 | Epoch 5 | Average loss: 0.028885368875039924
-Rank 1 | Epoch 5 | Average loss: 0.028465732687100682
-[Step 1000] Validation pixel accuracy: 0.5363
-[Val] Step 1000 | Loss: 1.7978
-Best validation loss: 1.7978 at step 1000
-Rank 1 | Epoch 6 | Average loss: 0.028389669551263694
-Rank 0 | Epoch 6 | Average loss: 0.027975076839548783
-Rank 1 | Epoch 7 | Average loss: 0.026765971520806342
-Rank 0 | Epoch 7 | Average loss: 0.027292856803676685
-Rank 0 | Epoch 8 | Average loss: 0.02569334914152427
-Rank 1 | Epoch 8 | Average loss: 0.027339572895157344
-Rank 0 | Epoch 9 | Average loss: 0.02602645444493383
-Rank 1 | Epoch 9 | Average loss: 0.024901375943118722
-Rank 0 | Epoch 10 | Average loss: 0.025671741727626686
-Rank 1 | Epoch 10 | Average loss: 0.024912470799158037
-[Step 2000] Validation pixel accuracy: 0.5708
-[Val] Step 2000 | Loss: 1.6050
-Best validation loss: 1.6050 at step 2000
-Step=  2000/108535  Loss=0.3215944  Time Elapsed=0.58h  Time Remaining=31.06h
-Rank 1 | Epoch 11 | Average loss: 0.02412006348313861
-Rank 0 | Epoch 11 | Average loss: 0.0241988547276021
-Rank 0 | Epoch 12 | Average loss: 0.02359364759645333
-Rank 1 | Epoch 12 | Average loss: 0.023598191912600028
-Rank 0 | Epoch 13 | Average loss: 0.02344562305914518
-Rank 1 | Epoch 13 | Average loss: 0.02294984483895649
-Rank 1 | Epoch 14 | Average loss: 0.02292336736337974
-Rank 0 | Epoch 14 | Average loss: 0.023259703226046435
-Rank 1 | Epoch 15 | Average loss: 0.022791636751053182
-Rank 0 | Epoch 15 | Average loss: 0.022814532024948
-[Step 3000] Validation pixel accuracy: 0.5734
-[Val] Step 3000 | Loss: 1.6028
-Best validation loss: 1.6028 at step 3000
-Rank 0 | Epoch 16 | Average loss: 0.022024871215829536
-Rank 1 | Epoch 16 | Average loss: 0.022525754712190572
-Rank 0 | Epoch 17 | Average loss: 0.02140251772392957
-Rank 1 | Epoch 17 | Average loss: 0.021741499306500767
+Rank 1 | Epoch 1 | Step 13193 | Loss : 0.1996563882639371 | LR: 0.0002
+Rank 0 | Epoch 1 | Step 13193 | Loss : 0.20909816296915934 | LR: 0.0002
+Rank 1 | Epoch 2 | Step 13386 | Loss : 0.2087694307297005 | LR: 0.0002
+Rank 0 | Epoch 2 | Step 13386 | Loss : 0.20346508040020503 | LR: 0.0002
+[Val] [Step 13500] Top-1 pixel accuracy (equiv): 0.5524
+[Val] [Step 13500] Top-k pixel accuracy (equiv): 0.8569
+[Val] [Step 13500] Top-1 mIoU (equiv): 0.2043
+[Val] [Step 13500] Top-k mIoU (equiv): 0.6880
+[Val] Step 13500 | # of labels in Top-1 mIoU: 883
+[Val] Step 13500 | # of labels in Top-k mIoU: 883
+[Val] Step 13500 | Loss: 1.9021, Contrastive: 1.8127
+Best validation loss: 1.8993 at step 13000
+Rank 0 | Epoch 3 | Step 13579 | Loss : 0.20555205318903058 | LR: 0.0002
+Rank 1 | Epoch 3 | Step 13579 | Loss : 0.2009169468221887 | LR: 0.0002
+Rank 1 | Epoch 4 | Step 13772 | Loss : 0.19612113363230166 | LR: 0.0002
+Rank 0 | Epoch 4 | Step 13772 | Loss : 0.19741018143496983 | LR: 0.0002
+Rank 1 | Epoch 5 | Step 13965 | Loss : 0.19256510106856342 | LR: 0.0002Rank 0 | Epoch 5 | Step 13965 | Loss : 0.1961193585797295 | LR: 0.0002
+
+[Val] [Step 14000] Top-1 pixel accuracy (equiv): 0.5448
+[Val] [Step 14000] Top-k pixel accuracy (equiv): 0.8533
+[Val] [Step 14000] Top-1 mIoU (equiv): 0.2216
+[Val] [Step 14000] Top-k mIoU (equiv): 0.7164
+[Val] Step 14000 | # of labels in Top-1 mIoU: 894
+[Val] Step 14000 | # of labels in Top-k mIoU: 894
+[Val] Step 14000 | Loss: 1.9194, Contrastive: 1.8242
+Best validation loss: 1.9194 at step 14000
+Step= 14000/137040  Loss=0.1890171  Time Elapsed=0.50h  Time Remaining=61.35h
+Rank 1 | Epoch 6 | Step 14158 | Loss : 0.19449070729122261 | LR: 0.0002
+Rank 0 | Epoch 6 | Step 14158 | Loss : 0.19139870792781752 | LR: 0.0002
+Rank 1 | Epoch 7 | Step 14351 | Loss : 0.186807013584851 | LR: 0.0002
+Rank 0 | Epoch 7 | Step 14351 | Loss : 0.18900483394997108 | LR: 0.0002
+[Val] [Step 14500] Top-1 pixel accuracy (equiv): 0.5550
+[Val] [Step 14500] Top-k pixel accuracy (equiv): 0.8577
+[Val] [Step 14500] Top-1 mIoU (equiv): 0.2272
+[Val] [Step 14500] Top-k mIoU (equiv): 0.6988
+[Val] Step 14500 | # of labels in Top-1 mIoU: 892
+[Val] Step 14500 | # of labels in Top-k mIoU: 892
+[Val] Step 14500 | Loss: 1.8871, Contrastive: 1.7998
+Best validation loss: 1.9194 at step 14000
+Rank 1 | Epoch 8 | Step 14544 | Loss : 0.19294837051568253 | LR: 0.0002
+Rank 0 | Epoch 8 | Step 14544 | Loss : 0.18222103379859825 | LR: 0.0002
+Rank 0 | Epoch 9 | Step 14737 | Loss : 0.18659410316863825 | LR: 0.0002
+Rank 1 | Epoch 9 | Step 14737 | Loss : 0.17846362644063377 | LR: 0.0002
+Rank 0 | Epoch 10 | Step 14930 | Loss : 0.18790828023549808 | LR: 0.0002
+Rank 1 | Epoch 10 | Step 14930 | Loss : 0.18242039407936403 | LR: 0.0002
+[Val] [Step 15000] Top-1 pixel accuracy (equiv): 0.5490
+[Val] [Step 15000] Top-k pixel accuracy (equiv): 0.8534
+[Val] [Step 15000] Top-1 mIoU (equiv): 0.2301
+[Val] [Step 15000] Top-k mIoU (equiv): 0.6937
+[Val] Step 15000 | # of labels in Top-1 mIoU: 893
+[Val] Step 15000 | # of labels in Top-k mIoU: 893
+[Val] Step 15000 | Loss: 1.9295, Contrastive: 1.8374
+Best validation loss: 1.9194 at step 14000
+Step= 15000/137040  Loss=0.1689495  Time Elapsed=0.99h  Time Remaining=60.15h
+Rank 1 | Epoch 11 | Step 15123 | Loss : 0.18407497039653475 | LR: 0.0002
+Rank 0 | Epoch 11 | Step 15123 | Loss : 0.18554729505060868 | LR: 0.0002
+Rank 1 | Epoch 12 | Step 15316 | Loss : 0.18190881775914078 | LR: 0.0002
+Rank 0 | Epoch 12 | Step 15316 | Loss : 0.1827898042498475 | LR: 0.0002
+[Val] [Step 15500] Top-1 pixel accuracy (equiv): 0.5436
+[Val] [Step 15500] Top-k pixel accuracy (equiv): 0.8546
+[Val] [Step 15500] Top-1 mIoU (equiv): 0.2320
+[Val] [Step 15500] Top-k mIoU (equiv): 0.6901
+[Val] Step 15500 | # of labels in Top-1 mIoU: 891
+[Val] Step 15500 | # of labels in Top-k mIoU: 891
+[Val] Step 15500 | Loss: 1.9200, Contrastive: 1.8353
+Best validation loss: 1.9194 at step 14000
+Rank 1 | Epoch 13 | Step 15509 | Loss : 0.17725202889022432 | LR: 0.0002
+Rank 0 | Epoch 13 | Step 15509 | Loss : 0.18067242396232996 | LR: 0.0002
+Rank 0 | Epoch 14 | Step 15702 | Loss : 0.176994008489841 | LR: 0.0002
+Rank 1 | Epoch 14 | Step 15702 | Loss : 0.17745069804278063 | LR: 0.0002
+Rank 1 | Epoch 15 | Step 15895 | Loss : 0.17494775142539967 | LR: 0.0002Rank 0 | Epoch 15 | Step 15895 | Loss : 0.17145693419896876 | LR: 0.0002
+
+[Val] [Step 16000] Top-1 pixel accuracy (equiv): 0.5517
+[Val] [Step 16000] Top-k pixel accuracy (equiv): 0.8563
+[Val] [Step 16000] Top-1 mIoU (equiv): 0.2568
+[Val] [Step 16000] Top-k mIoU (equiv): 0.7076
+[Val] Step 16000 | # of labels in Top-1 mIoU: 898
+[Val] Step 16000 | # of labels in Top-k mIoU: 898
+[Val] Step 16000 | Loss: 1.9317, Contrastive: 1.8446
+Best validation loss: 1.9194 at step 14000
+Step= 16000/137040  Loss=0.1598574  Time Elapsed=1.44h  Time Remaining=58.24h
+Rank 1 | Epoch 16 | Step 16088 | Loss : 0.16431860859298336 | LR: 2e-05
+Rank 0 | Epoch 16 | Step 16088 | Loss : 0.15975796577998394 | LR: 2e-05
+Rank 1 | Epoch 17 | Step 16281 | Loss : 0.15336305709854928 | LR: 2e-05
+Rank 0 | Epoch 17 | Step 16281 | Loss : 0.14868532055554612 | LR: 2e-05

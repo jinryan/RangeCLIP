@@ -1,3 +1,4 @@
+# model.py (Changes indicated by ###)
 import random
 import torch
 import torch.nn as nn
@@ -11,37 +12,51 @@ from utils.src.decoder import DepthDecoder
 from torch.cuda.amp import autocast
 import numpy as np
 
+def masked_average_pooling(pixel_embeddings, segmentation_map, object_indices):
+    """
+    Pools pixel embeddings based on segmentation masks for specified object indices.
+
+    Args:
+        pixel_embeddings (torch.Tensor): Pixel embeddings (B, D, H, W).
+        segmentation_map (torch.Tensor): Segmentation map (B, H, W).
+        object_indices (torch.Tensor): Long tensor of unique object indices [N_obj].
+                                       Assumes these indices correspond to values in segmentation_map.
+
+    Returns:
+        torch.Tensor: Area embeddings for each object index (N_obj, D).
+                      Returns zeros if an object index is not found in the map.
+    """
+    B, D, H, W = pixel_embeddings.shape
+    device = pixel_embeddings.device
+    area_embeddings = torch.zeros((len(object_indices), D), device=device, dtype=pixel_embeddings.dtype)
+
+    # Ensure segmentation_map is on the same device and suitable for broadcasting
+    segmentation_map = segmentation_map.to(device).unsqueeze(1) # -> (B, 1, H, W)
+
+    for i, obj_idx in enumerate(object_indices):
+        # Create a mask for the current object index across the batch
+        mask = (segmentation_map == obj_idx) # -> (B, 1, H, W) boolean mask
+
+        # Check if the object exists in the batch
+        if mask.any():
+            # Expand mask to match embedding dimensions: (B, D, H, W)
+            mask_expanded = mask.expand_as(pixel_embeddings)
+
+            # Select relevant embeddings and sum them
+            masked_pixels = torch.where(mask_expanded, pixel_embeddings, torch.zeros_like(pixel_embeddings))
+            summed_embeddings = masked_pixels.sum(dim=(0, 2, 3)) # Sum over Batch, H, W -> (D,)
+
+            # Count the number of pixels for normalization (across the batch)
+            pixel_count = mask.sum()
+
+            # Calculate average if pixels exist
+            if pixel_count > 0:
+                area_embeddings[i] = summed_embeddings / pixel_count
+
+    return area_embeddings
+
+
 class DepthUNet(nn.Module):
-    """
-    UNet architecture for depth map segmentation
-    
-    Arg(s):
-        unet_type (str):
-            Type of encoder/decoder ('resnet', etc.)
-        clip_model_name (str):
-            Name of CLIP model to use
-        device: Device to run model on
-        n_layer : int
-            ResNet encoder architecture: 18, 34, 50
-        input_channels : int
-            number of input channels in the depth map
-        encoder_filters : list
-            number of filters for each encoder block
-        decoder_filters : list
-            number of filters for each decoder block
-        embedding_dim : int
-            dimension of the encoder's output embedding
-        weight_initializer : str
-            weight initialization method
-        activation_func : str
-            activation function to use
-        use_batch_norm : bool
-            if set, use batch normalization
-        use_instance_norm : bool
-            if set, use instance normalization
-        temperature (float):
-            Temperature scaling for contrastive learning
-    """
     def __init__(self,
                  unet_type,
                  device,
@@ -53,13 +68,15 @@ class DepthUNet(nn.Module):
                  activation_func='relu',
                  use_batch_norm=False,
                  use_instance_norm=False,
-                 temperature=0.07):
+                 temperature_text=0.07,
+                 temperature_image=0.1):
         super(DepthUNet, self).__init__()
-        
+
         self.device = device
-        
-        self.log_temperature = nn.Parameter(torch.log(torch.tensor(temperature)))
-        
+
+        self.log_temperature_text = nn.Parameter(torch.log(torch.tensor(temperature_text)))
+        self.log_temperature_image = nn.Parameter(torch.log(torch.tensor(temperature_image)))
+
         if unet_type == 'resnet':
             decoder_filters = encoder_filters[::-1]
             
@@ -85,28 +102,21 @@ class DepthUNet(nn.Module):
                 use_instance_norm=use_instance_norm
             )
         else:
-            raise ValueError(f'Unsupported depth encoder type: {unet_type}')
-        
-    
+             raise ValueError(f'Unsupported depth encoder type: {unet_type}')
+
+
     def forward(self, depth_map):
-        """
-        Forward pass of the UNet model
-        
-        Arg(s):
-            depth_map : torch.Tensor
-                input depth map tensor
-        
-        Returns:
-            torch.Tensor : segmentation output
-        """
+        """ Forward pass of the UNet model """
         with autocast():
             target_shape = depth_map.shape[2:]
-            _, encoder_features, final_feature_map = self.depth_encoder(depth_map)        
-            output = self.depth_decoder(final_feature_map, encoder_features, target_shape)
+            _, encoder_features, final_feature_map = self.depth_encoder(depth_map)
+            pixel_embeddings = self.depth_decoder(final_feature_map, encoder_features, target_shape)
+            current_temp_text = torch.exp(self.log_temperature_text)
+            current_temp_image = torch.exp(self.log_temperature_image)
         
-        return output, self.temperature
-    
-    def predict(self, depth_maps, candidate_text_embeddings, segmentation, num_negatives=300):
+        return pixel_embeddings, current_temp_text, current_temp_image
+
+    def predict(self, depth_maps, candidate_text_embeddings, segmentation, num_negatives=300, top_k=5):
         """
         Predict segmentation labels for the input depth maps using a reduced candidate set.
 
@@ -115,14 +125,15 @@ class DepthUNet(nn.Module):
             candidate_text_embeddings (torch.Tensor): all text embeddings [C, D]
             segmentation (torch.Tensor): ground truth segmentation [B, H, W], used to extract true label indices
             num_negatives (int): number of additional negative labels to sample
+            top_k (int): number of top labels to return per pixel
 
         Returns:
-            pred_indices (torch.LongTensor): predicted label indices in the ORIGINAL index space [B, H, W]
+            topk_pred_indices (torch.LongTensor): top-k predicted label indices in the ORIGINAL index space [B, k, H, W]
             pixel_embeddings (torch.Tensor): output embeddings from the model [B, D, H, W]
             temperature (float): learned temperature parameter
         """
         self.eval()
-            
+
         B, _, H, W = depth_maps.shape
         total_candidates, D = candidate_text_embeddings.shape
 
@@ -151,138 +162,240 @@ class DepthUNet(nn.Module):
 
             # --- Step 2: Predict using reduced candidates ---
             pixel_flat = pixel_embeddings.view(B, D, H * W)
-            logits = torch.einsum('bdn,cd->bcn', pixel_flat, reduced_candidate_embeddings)
-            pred_indices_reduced = logits.argmax(dim=1).view(B, H, W)  # [B, H, W]
+            logits = torch.einsum('bdn,cd->bcn', pixel_flat, reduced_candidate_embeddings)  # [B, C_reduced, H*W]
 
-            # --- Step 3: Map reduced indices back to original index space ---
-            pred_indices = index_tensor[pred_indices_reduced]  # [B, H, W], now in original index space
+            # Top-k prediction
+            topk = min(top_k, logits.shape[1])
+            topk_indices_reduced = logits.topk(topk, dim=1).indices  # [B, k, H*W]
+            topk_indices_reduced = topk_indices_reduced.view(B, topk, H, W)  # [B, k, H, W]
 
-            return pred_indices, pixel_embeddings, self.temperature
+            # Map reduced indices back to original candidate label indices
+            topk_pred_indices = index_tensor[topk_indices_reduced]  # [B, k, H, W]
 
-        
+            return topk_pred_indices, pixel_embeddings, self.temperature_text
+
 
     def compute_loss(
         self,
-        pred,
+        pixel_embeddings,
         target_indices,
         candidate_text_embeddings,
-        temperature,
         label_similarity_sets,
-        percent_image=0.7,
-        k_distractors=100,
+        area_embeddings,
+        image_embeddings,
+        W_text = 1.0,
+        W_image = 0.5,
+        W_smooth = 2e2,
+        # --- Parameters for text contrastive loss ---
+        percent_image_sampling=0.7,
+        k_distractors=50,
         pct_medium=0.0,
         pct_hard=0.75,
         pct_rand=0.25,
-        lambda_smooth=1e2,
     ):
         """
-        Hybrid contrastive loss with difficulty-aware distractors.
+        Hybrid contrastive loss including pixel-text and area-image alignment.
         """
-        assert abs(pct_medium + pct_hard + pct_rand - 1.0) < 1e-4, "Sum of percentages must be 1."
+        # --- 1. Pixel-Text Contrastive Loss (Existing Logic, adapted) ---
+        text_contrastive_loss = torch.tensor(0.0, device=pixel_embeddings.device)
+        if W_text > 0:
+            assert abs(pct_medium + pct_hard + pct_rand - 1.0) < 1e-4, "Sum of text percentages must be 1."
 
-        B, D, H, W = [int(s) for s in pred.shape]
-        C = candidate_text_embeddings.shape[0]
-        device = pred.device
-        num_samples = int(percent_image * H * W)
+            B, D, H, W = pixel_embeddings.shape
+            C = candidate_text_embeddings.shape[0]
+            device = pixel_embeddings.device
+            num_samples = int(percent_image_sampling * H * W)
 
-        # Flatten and sample
-        pred_flat = pred.reshape(B, D, -1)
-        target_flat = target_indices.reshape(B, -1)
-        rand_indices = torch.randint(0, H * W, (B, num_samples), device=device)
-        pred_samples = torch.gather(pred_flat, 2, rand_indices.unsqueeze(1).expand(-1, D, -1))
-        label_samples = torch.gather(target_flat, 1, rand_indices)
-        pred_samples = pred_samples.transpose(1, 2).reshape(-1, D)
-        label_samples = label_samples.reshape(-1)
+            # Flatten and sample pixels
+            pred_flat = pixel_embeddings.reshape(B, D, -1)
+            target_flat = target_indices.reshape(B, -1)
+            # Ensure sampling within valid range if H*W is small
+            num_pixels_total = H * W
+            if num_pixels_total == 0:
+                 raise RuntimeError("Input dimensions H or W are zero.")
+            actual_num_samples = min(num_samples, num_pixels_total)
+            if actual_num_samples == 0 and num_pixels_total > 0:
+                 actual_num_samples = num_pixels_total # Sample all if percent is too low
 
-        if pred_samples.numel() == 0:
-            raise RuntimeError("No valid pixels found for loss computation.")
+            rand_indices = torch.randint(0, num_pixels_total, (B, actual_num_samples), device=device)
 
-        unique_labels = torch.unique(label_samples)
+            pred_samples = torch.gather(pred_flat, 2, rand_indices.unsqueeze(1).expand(-1, D, -1))
+            label_samples = torch.gather(target_flat, 1, rand_indices)
 
-        distractor_indices = set()
-
-        n_medium = int(k_distractors * pct_medium)
-        n_hard = int(k_distractors * pct_hard)
-        n_rand = k_distractors - n_medium - n_hard
-
-        # Get medium/hard sets
-        if n_medium > 0:
-            for label in unique_labels.tolist():
-                distractor_indices.update(label_similarity_sets['medium'][label])
-        if n_hard > 0:
-            for label in unique_labels.tolist():
-                distractor_indices.update(label_similarity_sets['hard'][label])
-
-        distractor_indices = list(distractor_indices)
-        distractor_indices = [d for d in distractor_indices if d not in unique_labels]
-
-        medium_and_hard = (
-            np.random.choice(distractor_indices, size=n_medium + n_hard, replace=False)
-            if len(distractor_indices) >= n_medium + n_hard
-            else distractor_indices
-        )
-        medium_and_hard = torch.tensor(medium_and_hard, device=device, dtype=torch.long)
-
-        # Random distractors
-        all_indices = torch.arange(C, device=device)
-        mask = ~torch.isin(all_indices, torch.cat([unique_labels, medium_and_hard], dim=0))
-        remaining = all_indices[mask]
-
-        rand_distractors = remaining[torch.randperm(len(remaining))[:n_rand]] if n_rand > 0 else torch.tensor([], device=device, dtype=torch.long)
-
-        all_distractors = torch.cat([medium_and_hard, rand_distractors], dim=0)
-
-        # Final contrast set
-        contrast_indices = torch.cat([unique_labels, all_distractors], dim=0)
-        contrast_text_embeddings = candidate_text_embeddings[contrast_indices]
-
-        # Map labels
-        mapping_array = torch.full((C,), -1, dtype=torch.long, device=device)
-        mapping_array[contrast_indices] = torch.arange(contrast_indices.shape[0], device=device)
-        label_samples_mapped = mapping_array[label_samples]
-
-        if (label_samples_mapped == -1).any():
-            raise ValueError("Some labels in the batch were not found in the contrastive index set.")
-
-        logits = pred_samples @ contrast_text_embeddings.T
-        logits /= temperature
-        contrastive_loss = F.cross_entropy(logits, label_samples_mapped)
-        
-        # pred: [B, D, H, W] — normalized embeddings
-        tv_h = F.l1_loss(pred[:, :, :, :-1], pred[:, :, :, 1:])
-        tv_v = F.l1_loss(pred[:, :, :-1, :], pred[:, :, 1:, :])
-        smoothness_loss = (tv_h + tv_v) * lambda_smooth
-        
-        total_loss = contrastive_loss + smoothness_loss
+            # Filter out background pixels (assuming index 0 is background) before reshaping
+            valid_mask = label_samples > 0
+            pred_samples = pred_samples.permute(0, 2, 1)[valid_mask].reshape(-1, D) # (N_valid_samples, D)
+            label_samples = label_samples[valid_mask].reshape(-1) # (N_valid_samples,)
 
 
+            if pred_samples.numel() > 0 and label_samples.numel() > 0:
+                unique_labels_in_samples = torch.unique(label_samples)
+
+                # --- Build contrast set for text loss (same logic as before) ---
+                distractor_indices = set()
+                n_medium = int(k_distractors * pct_medium)
+                n_hard = int(k_distractors * pct_hard)
+                n_rand = k_distractors - n_medium - n_hard
+
+                if n_medium > 0:
+                    for label in unique_labels_in_samples.tolist():
+                         if label in label_similarity_sets['medium']: # Check label exists
+                            distractor_indices.update(label_similarity_sets['medium'][label])
+                if n_hard > 0:
+                     for label in unique_labels_in_samples.tolist():
+                          if label in label_similarity_sets['hard']: # Check label exists
+                             distractor_indices.update(label_similarity_sets['hard'][label])
+
+                distractor_indices = list(distractor_indices)
+                # Ensure distractors are not ground truth labels present in *this sample*
+                distractor_indices = [d for d in distractor_indices if d not in unique_labels_in_samples.tolist()]
+
+                medium_and_hard_count = n_medium + n_hard
+                medium_and_hard = (
+                    np.random.choice(distractor_indices, size=medium_and_hard_count, replace=False)
+                    if len(distractor_indices) >= medium_and_hard_count
+                    else distractor_indices
+                )
+                medium_and_hard = torch.tensor(medium_and_hard, device=device, dtype=torch.long)
+
+                all_indices = torch.arange(C, device=device)
+                # Exclude GT labels and already chosen medium/hard distractors
+                mask = ~torch.isin(all_indices, torch.cat([unique_labels_in_samples, medium_and_hard], dim=0))
+                remaining = all_indices[mask]
+
+                rand_distractors = remaining[torch.randperm(len(remaining))[:n_rand]] if n_rand > 0 and len(remaining) > 0 else torch.tensor([], device=device, dtype=torch.long)
+                all_distractors = torch.cat([medium_and_hard, rand_distractors], dim=0)
+                contrast_indices = torch.unique(torch.cat([unique_labels_in_samples, all_distractors], dim=0)) # Use unique to handle overlaps
+                # --- End build contrast set ---
+
+                if len(contrast_indices) > 1: # Need at least one positive and one negative
+                     contrast_text_embeddings = F.normalize(candidate_text_embeddings[contrast_indices], dim=1) # Normalize embeddings
+                     pred_samples_norm = F.normalize(pred_samples, dim=1) # Normalize pixel embeddings
+
+                     # Map labels to the reduced contrast set index
+                     mapping_array = torch.full((C,), -1, dtype=torch.long, device=device)
+                     mapping_array[contrast_indices] = torch.arange(contrast_indices.shape[0], device=device)
+                     label_samples_mapped = mapping_array[label_samples]
+
+                     if (label_samples_mapped == -1).any():
+                          print("Warning: Some sampled labels not found in text contrast set. Skipping text loss calculation for them.")
+                          valid_map_mask = label_samples_mapped != -1
+                          label_samples_mapped = label_samples_mapped[valid_map_mask]
+                          pred_samples_norm = pred_samples_norm[valid_map_mask]
+
+
+                     if len(label_samples_mapped) > 0:
+                            # Calculate logits using normalized embeddings
+                            logits_text = pred_samples_norm @ contrast_text_embeddings.T
+                            logits_text /= self.temperature_text # Use text temperature
+                            text_contrastive_loss = F.cross_entropy(logits_text, label_samples_mapped)
+                     else:
+                            print("Warning: No valid mapped labels remained for text contrastive loss.")
+                            text_contrastive_loss = torch.tensor(0.0, device=device)
+                else:
+                     print("Warning: Not enough indices for text contrastive loss (need > 1).")
+                     text_contrastive_loss = torch.tensor(0.0, device=device)
+
+            else: # No valid non-background pixels sampled
+                 print("Warning: No valid foreground pixels sampled for text contrastive loss.")
+                 text_contrastive_loss = torch.tensor(0.0, device=device)
+
+
+        # --- 2. Area-Image Contrastive Loss (New Logic) ---
+        image_contrastive_loss = torch.tensor(0.0, device=pixel_embeddings.device)
+        # Check if we have enough instances for contrast (at least 2)
+        if area_embeddings is not None and image_embeddings is not None and area_embeddings.shape[0] > 1:
+            n_instances = area_embeddings.shape[0]
+            # Normalize embeddings
+            area_embeddings_norm = F.normalize(area_embeddings, dim=1)
+            image_embeddings_norm = F.normalize(image_embeddings, dim=1)
+
+            # Calculate pairwise similarities (logits)
+            logits_image = area_embeddings_norm @ image_embeddings_norm.T # Shape: (N_instances, N_instances)
+            logits_image /= self.temperature_image # Use image temperature
+
+            # Labels: Each area embedding should match the image embedding at the same index
+            image_contrast_labels = torch.arange(n_instances, device=device)
+
+            # Calculate cross-entropy loss (InfoNCE)
+            image_contrastive_loss = F.cross_entropy(logits_image, image_contrast_labels)
+        elif W_image > 0:
+            # Not enough instances in the batch/data provided for contrast
+            print("Warning: Not enough instances (<=1) or missing embeddings for image contrastive loss.")
+            dummy = torch.tensor(1.0, device=pixel_embeddings.device, requires_grad=True)
+            image_contrastive_loss = dummy * self.temperature_image * 0.0
+
+
+        # --- 3. Smoothness Loss (Existing Logic, applied to UNet output) ---
+        smoothness_loss = torch.tensor(0.0, device=pixel_embeddings.device)
+        if W_smooth > 0:
+             tv_h = F.l1_loss(pixel_embeddings[:, :, :, :-1], pixel_embeddings[:, :, :, 1:])
+             tv_v = F.l1_loss(pixel_embeddings[:, :, :-1, :], pixel_embeddings[:, :, 1:, :])
+             smoothness_loss = tv_h + tv_v
+
+
+        # --- 4. Total Loss ---
+        total_loss = (W_text * text_contrastive_loss +
+                      W_image * image_contrastive_loss +
+                      W_smooth * smoothness_loss)
+
+        # --- 5. Loss Info Dict ---
         loss_info = {
             'total_loss': total_loss.detach().item(),
-            'contrastive_loss': contrastive_loss.detach().item(),
-            'smoothness_loss': smoothness_loss.detach().item(),
-            'temperature': temperature.item(),
+            'text_contrastive_loss': text_contrastive_loss.detach().item() if W_text > 0 else 0,
+            'image_contrastive_loss': image_contrastive_loss.detach().item() if W_image > 0 else 0,
+            'smoothness_loss': smoothness_loss.detach().item() if W_smooth > 0 else 0,
+            'temperature_text': self.temperature_text.item(),
+            'temperature_image': self.temperature_image.item(),
+            'W_text': W_text,
+            'W_image': W_image,
+            'W_smooth': W_smooth
         }
 
         return total_loss, loss_info
 
 
-
-
-    
     @property
-    def temperature(self):
-        """
-        Get the temperature value (exp of the log_temperature parameter).
-        This ensures temperature is always positive.
-        """
-        return torch.exp(self.log_temperature)
-    
+    def temperature_text(self):
+        """ Get the temperature for text contrastive loss. """
+        return torch.exp(self.log_temperature_text)
+
+    @property
+    def temperature_image(self):
+        """ Get the temperature for image contrastive loss. """
+        return torch.exp(self.log_temperature_image)
+
+    def save_model(self, checkpoint_path, step, optimizer=None):
+         checkpoint = { 'train_step': step }
+         encoder = self.depth_encoder.module if hasattr(self.depth_encoder, "module") else self.depth_encoder
+         decoder = self.depth_decoder.module if hasattr(self.depth_decoder, "module") else self.depth_decoder
+         checkpoint["encoder"] = encoder.state_dict()
+         checkpoint["decoder"] = decoder.state_dict()
+         checkpoint["log_temperature_text"] = self.log_temperature_text.data
+         checkpoint["log_temperature_image"] = self.log_temperature_image.data
+         if optimizer is not None:
+             checkpoint["optimizer"] = optimizer.state_dict()
+         torch.save(checkpoint, checkpoint_path)
+
+    def restore_model(self, restore_path, optimizer=None):
+        checkpoint = torch.load(restore_path, map_location=self.device)
+        encoder = self.depth_encoder.module if hasattr(self.depth_encoder, "module") else self.depth_encoder
+        decoder = self.depth_decoder.module if hasattr(self.depth_decoder, "module") else self.depth_decoder
+        encoder.load_state_dict(checkpoint['encoder'])
+        decoder.load_state_dict(checkpoint['decoder'])
+        if optimizer is not None and 'optimizer' in checkpoint:
+            optimizer.load_state_dict(checkpoint['optimizer'])
+        train_step = checkpoint.get('train_step', 0)
+        default_log_temp_text = torch.log(torch.tensor(0.07))
+        default_log_temp_image = torch.log(torch.tensor(0.1))
+        self.log_temperature_text = nn.Parameter(checkpoint.get("log_temperature_text", default_log_temp_text))
+        self.log_temperature_image = nn.Parameter(checkpoint.get("log_temperature_image", default_log_temp_image))
+        return train_step, optimizer if optimizer else None
+
     def train(self, mode=True):
-        """
-        Sets model to training mode.
-        """
-        self.depth_encoder.train(mode)
-        self.depth_decoder.train(mode and not self.freeze_encoder)
+        """ Sets model to training mode. """
+        self.depth_encoder.train(mode and not getattr(self, 'freeze_encoder', False))
+        self.depth_decoder.train(mode)
         return self
 
     def eval(self):
@@ -290,115 +403,3 @@ class DepthUNet(nn.Module):
         self.depth_encoder.eval()
         self.depth_decoder.eval()
         return self
-    
-    def save_model(self, checkpoint_path, step, optimizer=None):
-        """
-        Save the full model checkpoint
-
-        Arg(s):
-            checkpoint_path : str
-                path to save checkpoint
-            step : int
-                current training step
-            optimizer : torch.optim
-                optimizer state to save
-        """
-        checkpoint = {
-            'train_step': step
-        }
-
-        # Save encoder state dicts
-        encoder = self.depth_encoder
-        if hasattr(encoder, "module"):
-            encoder = encoder.module
-        checkpoint["encoder"] = encoder.state_dict()
-        
-        # Save decoder state dict
-        decoder = self.depth_decoder
-        if hasattr(decoder, "module"):
-            decoder = decoder.module
-        checkpoint["decoder"] = decoder.state_dict()
-
-        # Save temperature parameter
-        checkpoint["temperature"] = self.temperature.data
-
-        # Optionally save optimizer state
-        if optimizer is not None:
-            checkpoint["optimizer"] = optimizer.state_dict()
-
-        torch.save(checkpoint, checkpoint_path)
-
-    
-    def restore_model(self, restore_path, optimizer=None):
-        """
-        Restore model from checkpoint
-        
-        Arg(s):
-            restore_path : str
-                path to checkpoint
-            optimizer : torch.optim
-                optimizer to restore
-                
-        Returns:
-            int : training step
-            torch.optim : restored optimizer (if provided)
-        """
-        checkpoint = torch.load(restore_path, map_location=self.device)
-
-        encoder = self.depth_encoder
-        if hasattr(encoder, "module"):
-            encoder = encoder.module
-        
-        encoder.load_state_dict(checkpoint['encoder'])
-        decoder = self.depth_decoder
-        if hasattr(decoder, "module"):
-            decoder = decoder.module
-            
-        decoder.load_state_dict(checkpoint['decoder'])
-        
-        if optimizer is not None and 'optimizer' in checkpoint.keys():
-            optimizer.load_state_dict(checkpoint['optimizer'])
-
-        try:
-            train_step = checkpoint['train_step']
-        except Exception:
-            train_step = 0
-            
-        if "temperature" in checkpoint:
-            self.temperature = nn.Parameter(checkpoint["temperature"])
-            
-        return train_step, optimizer if optimizer else None
-    
-    def restore_depth_encoder(self, encoder_path, freeze_encoder=False):
-        """
-        Restore model from checkpoint
-        
-        Arg(s):
-            restore_path : str
-                path to checkpoint
-            optimizer : torch.optim
-                optimizer to restore
-                
-        Returns:
-            int : training step
-            torch.optim : restored optimizer (if provided)
-        """
-        checkpoint = torch.load(encoder_path, map_location=self.device)
-
-        if isinstance(self.depth_encoder, torch.nn.DataParallel):
-            self.depth_encoder.module.load_state_dict(checkpoint['encoder'])
-        else:
-            self.depth_encoder.load_state_dict(checkpoint['encoder'])
-            
-        self.freeze_encoder = freeze_encoder
-        if self.freeze_encoder:
-            # Freeze encoder parameters
-            
-            self.depth_encoder.eval()
-            for param in self.depth_encoder.parameters():
-                param.requires_grad = False
-        else:
-            for param in self.depth_encoder.parameters():
-                param.requires_grad = True
-    
-    

@@ -1,1356 +1,282 @@
-DataParallel using 2 GPUs: [0, 1]
 Training input paths:
-training/labeled_metadata.csv
-training/unlabeled_metadata.csv
+Training input paths:
+data/sunrgbd/SUNRGBD/metadata.csv
 Input settings:
-n_batch=32  n_height=256  n_width=256
+n_batch=2  n_height=256  n_width=256
+data/sunrgbd/SUNRGBD/metadata.csv
+
+Input settings:
+n_batch=2  n_height=256  n_width=256
 
 Network settings:
 model_architecture=resnet
 Weight settings:
-n_parameter=163301218
+n_parameter=29908929
 
+Network settings:
 Training settings:
-n_sample=33897  n_epoch=35  n_step=37100
+model_architecture=resnet
+n_sample=6201  n_epoch=40  n_step=124040
+Weight settings:
 scheduler type: multi_step
-scheduler: multi_step, learning_schedule=[0-10590 : 0.0002, 10590-21180 : 0.0001, 21180-31770 : 5e-05, 31770-37065 : 1e-05]
+n_parameter=29908929
 
+scheduler: multi_step, learning_schedule=[0-46500 : 0.0002, 46500-77500 : 0.0001, 77500-108500 : 5e-05, 108500-124000 : 2e-05]
+Training settings:
+
+n_sample=6201  n_epoch=40  n_step=124040
 Loss function settings:
+scheduler type: multi_step
 w_weight_decay=1.0e-04
+scheduler: multi_step, learning_schedule=[0-46500 : 0.0002, 46500-77500 : 0.0001, 77500-108500 : 5e-05, 108500-124000 : 2e-05]
+
 
 Checkpoint settings:
-checkpoint_path=checkpoints
-checkpoint_save_frequency=1000
-validation_start_step=5000
+Loss function settings:checkpoint_path=checkpoints
 
+w_weight_decay=1.0e-04checkpoint_save_frequency=1000
+
+
+validation_start_step=5000
+Checkpoint settings:
+
+checkpoint_path=checkpoints
 Tensorboard settings:
+checkpoint_save_frequency=1000
 event_path=checkpoints/tensorboard
-log_summary_frequency=1000  n_sample_per_summary=4  
+validation_start_step=5000
+log_summary_frequency=500  n_sample_per_summary=32  
+
+restore_path=checkpoints/checkpoints/depth_segmentation_model-6000.pth
+Tensorboard settings:
+
+event_path=checkpoints/tensorboard
+Hardware settings:
+log_summary_frequency=500  n_sample_per_summary=32  
+device=cuda
+restore_path=checkpoints/checkpoints/depth_segmentation_model-6000.pth
+n_thread=8
 
 Hardware settings:
+
 device=cuda
-n_thread=4
+n_thread=8
 
-Getting CLIP Baseline Performance (image/text)
-
-Top Failed GT Classes (CLIP Baseline):
-  a depth map of wall: 972 incorrect predictions
-  a depth map of floor: 492 incorrect predictions
-  a depth map of picture: 450 incorrect predictions
-  a depth map of chair: 290 incorrect predictions
-  a depth map of cabinet: 274 incorrect predictions
-  a depth map of table: 197 incorrect predictions
-  a depth map of bottle: 173 incorrect predictions
-  a depth map of paper: 146 incorrect predictions
-  a depth map of counter: 137 incorrect predictions
-  a depth map of box: 127 incorrect predictions
-a depth map of unknown: 76 total
-a depth map of picture: 482 total
-a depth map of chair: 440 total
-a depth map of cabinet: 362 total
-a depth map of wall: 972 total
-a depth map of sofa: 136 total
-a depth map of mouse: 10 total
-a depth map of books: 175 total
-a depth map of spice bottle: 6 total
-a depth map of desk: 115 total
-a depth map of person: 45 total
-a depth map of ceiling: 126 total
-a depth map of jar: 38 total
-a depth map of stove: 26 total
-a depth map of step stool: 1 total
-a depth map of lamp: 111 total
-a depth map of candlestick: 26 total
-a depth map of window: 125 total
-a depth map of floor: 507 total
-a depth map of bathtub: 15 total
-a depth map of pillow: 154 total
-a depth map of blinds: 70 total
-a depth map of alarm clock: 11 total
-a depth map of door knob: 11 total
-a depth map of box: 140 total
-a depth map of bookshelf: 83 total
-a depth map of toaster oven: 9 total
-a depth map of bag: 100 total
-a depth map of printer: 18 total
-a depth map of floor mat: 64 total
-a depth map of refridgerator: 25 total
-a depth map of toy car: 1 total
-a depth map of bed: 102 total
-a depth map of counter: 138 total
-a depth map of toy bin: 1 total
-a depth map of table: 217 total
-a depth map of clothes: 81 total
-a depth map of light: 102 total
-a depth map of paper rack: 1 total
-a depth map of hanger: 3 total
-a depth map of flower: 17 total
-a depth map of bowl: 47 total
-a depth map of shoe: 18 total
-a depth map of shelves: 86 total
-a depth map of door: 120 total
-a depth map of wine rack: 1 total
-a depth map of paper: 146 total
-a depth map of magazine: 15 total
-a depth map of sink: 47 total
-a depth map of speaker: 19 total
-a depth map of throw: 4 total
-a depth map of vase: 25 total
-a depth map of toilet: 14 total
-a depth map of faucet handle: 14 total
-a depth map of bottle: 182 total
-a depth map of cup: 67 total
-a depth map of fan: 11 total
-a depth map of pen: 9 total
-a depth map of sign: 1 total
-a depth map of air conditioner: 6 total
-a depth map of faucet: 39 total
-a depth map of bin: 17 total
-a depth map of towel rod: 13 total
-a depth map of plate: 14 total
-a depth map of monitor: 37 total
-a depth map of plant: 38 total
-a depth map of electrical outlet: 33 total
-a depth map of flower pot: 9 total
-a depth map of headboard: 25 total
-a depth map of ladel: 3 total
-a depth map of oven: 16 total
-a depth map of television: 31 total
-a depth map of dishwasher: 18 total
-a depth map of railing: 3 total
-a depth map of towel: 45 total
-a depth map of stove burner: 4 total
-a depth map of toothbrush holder: 5 total
-a depth map of deoderant: 5 total
-a depth map of basket: 20 total
-a depth map of security camera: 1 total
-a depth map of coffee table: 22 total
-a depth map of telephone: 20 total
-a depth map of stapler: 7 total
-a depth map of book: 121 total
-a depth map of serving dish: 1 total
-a depth map of mirror: 37 total
-a depth map of console controller: 1 total
-a depth map of placemat: 18 total
-a depth map of container: 19 total
-a depth map of clock: 14 total
-a depth map of medal: 5 total
-a depth map of fireplace: 7 total
-a depth map of calculator: 1 total
-a depth map of dresser: 39 total
-a depth map of pipe: 18 total
-a depth map of carton: 1 total
-a depth map of dvds: 6 total
-a depth map of stool: 15 total
-a depth map of air duct: 5 total
-a depth map of tennis racket: 2 total
-a depth map of night stand: 33 total
-a depth map of notebook: 6 total
-a depth map of ruler: 2 total
-a depth map of book holder: 1 total
-a depth map of tape dispenser: 5 total
-a depth map of drawer handle: 4 total
-a depth map of candelabra: 2 total
-a depth map of excercise machine: 2 total
-a depth map of stuffed animal: 16 total
-a depth map of map: 2 total
-a depth map of dog: 3 total
-a depth map of shower curtain: 6 total
-a depth map of tv stand: 6 total
-a depth map of clothing dryer: 1 total
-a depth map of comforter: 3 total
-a depth map of waffle maker: 1 total
-a depth map of apple: 5 total
-a depth map of necklace holder: 2 total
-a depth map of wire: 16 total
-a depth map of light switch: 6 total
-a depth map of backpack: 14 total
-a depth map of kitchen island: 13 total
-a depth map of column: 21 total
-a depth map of quilt: 1 total
-a depth map of remote control: 17 total
-a depth map of plant pot: 11 total
-a depth map of coffee machine: 8 total
-a depth map of cutting board: 10 total
-a depth map of blanket: 20 total
-a depth map of keyboard: 19 total
-a depth map of wall decoration: 14 total
-a depth map of scale: 1 total
-a depth map of candle: 11 total
-a depth map of button: 1 total
-a depth map of tissue box: 21 total
-a depth map of range hood: 9 total
-a depth map of curtain: 43 total
-a depth map of sheet: 1 total
-a depth map of hat: 9 total
-a depth map of blackboard: 6 total
-a depth map of laptop: 10 total
-a depth map of iron box: 1 total
-a depth map of drawer: 15 total
-a depth map of whiteboard: 9 total
-a depth map of flatbed scanner: 1 total
-a depth map of garbage bin: 29 total
-a depth map of sculpture: 20 total
-a depth map of drying rack: 9 total
-a depth map of stereo: 8 total
-a depth map of doll: 15 total
-a depth map of barrel: 3 total
-a depth map of spice rack: 2 total
-a depth map of ottoman: 11 total
-a depth map of cable box: 2 total
-a depth map of board: 3 total
-a depth map of broom: 4 total
-a depth map of figurine: 1 total
-a depth map of rug: 7 total
-a depth map of chandelier: 6 total
-a depth map of toy truck: 1 total
-a depth map of microwave: 18 total
-a depth map of salt shaker: 2 total
-a depth map of garbage bag: 2 total
-a depth map of mail shelf: 1 total
-a depth map of bench: 5 total
-a depth map of toilet plunger: 1 total
-a depth map of knob: 4 total
-a depth map of show piece: 2 total
-a depth map of sponge: 7 total
-a depth map of blender: 1 total
-a depth map of binder: 2 total
-a depth map of tea kettle: 6 total
-a depth map of tree sculpture: 1 total
-a depth map of purse: 3 total
-a depth map of crib: 4 total
-a depth map of bunk bed: 2 total
-a depth map of rolled carpet: 1 total
-a depth map of guitar: 2 total
-a depth map of knife: 5 total
-a depth map of tupperware: 2 total
-a depth map of laundry basket: 5 total
-a depth map of ironing board: 2 total
-a depth map of cell phone: 3 total
-a depth map of mantle: 1 total
-a depth map of toy: 18 total
-a depth map of hair brush: 2 total
-a depth map of electric toothbrush: 2 total
-a depth map of kitchen utensil: 2 total
-a depth map of glass: 5 total
-a depth map of pool table: 2 total
-a depth map of cork board: 12 total
-a depth map of toothbrush: 7 total
-a depth map of decorative dish: 2 total
-a depth map of ball: 4 total
-a depth map of thermostat: 1 total
-a depth map of room divider: 6 total
-a depth map of piano bench: 5 total
-a depth map of squeeze tube: 6 total
-a depth map of piano: 5 total
-a depth map of scenary: 1 total
-a depth map of pot: 2 total
-a depth map of papers: 1 total
-a depth map of suitcase: 5 total
-a depth map of spot light: 3 total
-a depth map of tray: 19 total
-a depth map of knife rack: 7 total
-a depth map of headphones: 3 total
-a depth map of tag: 3 total
-a depth map of water fountain: 1 total
-a depth map of frying pan: 4 total
-a depth map of air vent: 10 total
-a depth map of toilet paper: 6 total
-a depth map of avocado: 3 total
-a depth map of machine: 4 total
-a depth map of ornamental item: 2 total
-a depth map of pencil: 4 total
-a depth map of microphone stand: 1 total
-a depth map of watch: 1 total
-a depth map of lego: 1 total
-a depth map of car: 1 total
-a depth map of grill: 1 total
-a depth map of spoon: 1 total
-a depth map of treadmill: 5 total
-a depth map of wire rack: 1 total
-a depth map of heater: 4 total
-a depth map of bicycle: 2 total
-a depth map of mask: 10 total
-a depth map of garlic: 1 total
-a depth map of camera: 2 total
-a depth map of trophy: 8 total
-a depth map of walkie talkie: 2 total
-a depth map of desk mat: 1 total
-a depth map of glass dish: 1 total
-a depth map of sink protector: 1 total
-a depth map of bulb: 2 total
-a depth map of toiletries bag: 1 total
-a depth map of folder: 7 total
-a depth map of hot water heater: 1 total
-a depth map of cordless telephone: 1 total
-a depth map of dog bowl: 4 total
-a depth map of baby chair: 1 total
-a depth map of luggage rack: 1 total
-a depth map of light bulb: 2 total
-a depth map of canister: 1 total
-a depth map of cat: 1 total
-a depth map of classroom board: 4 total
-a depth map of computer: 12 total
-a depth map of motion camera: 1 total
-a depth map of fruit: 1 total
-a depth map of makeup brush: 2 total
-a depth map of sleeping bag: 1 total
-a depth map of usb drive: 1 total
-a depth map of decorative egg: 1 total
-a depth map of dish scrubber: 3 total
-a depth map of corkscrew: 1 total
-a depth map of napkin: 2 total
-a depth map of mezuza: 2 total
-a depth map of poster case: 3 total
-a depth map of stairs: 1 total
-a depth map of paper towel: 9 total
-a depth map of clothing iron: 2 total
-a depth map of globe: 4 total
-a depth map of toy box: 1 total
-a depth map of bucket: 4 total
-a depth map of urn: 3 total
-a depth map of hand sculpture: 1 total
-a depth map of plastic box: 2 total
-a depth map of shofar: 1 total
-a depth map of hand weight: 1 total
-a depth map of decorative platter: 6 total
-a depth map of pitcher: 6 total
-a depth map of toy sofa: 1 total
-a depth map of spatula: 1 total
-a depth map of bookrack: 1 total
-a depth map of shaver: 1 total
-a depth map of sheet music: 6 total
-a depth map of glass ware: 1 total
-a depth map of ladder: 2 total
-a depth map of decorative plate: 5 total
-a depth map of cologne: 2 total
-a depth map of plastic cup of coffee: 1 total
-a depth map of headband: 1 total
-a depth map of clothing washer: 1 total
-a depth map of dvd player: 6 total
-a depth map of wine glass: 2 total
-a depth map of cd: 1 total
-a depth map of pepper grinder: 2 total
-a depth map of toy house: 1 total
-a depth map of wine bottle: 2 total
-a depth map of wardrobe: 1 total
-a depth map of contact lens case: 1 total
-a depth map of water purifier: 1 total
-a depth map of bedding package: 1 total
-a depth map of foosball table: 1 total
-a depth map of jersey: 3 total
-a depth map of toothpaste holder: 1 total
-a depth map of toothpaste: 4 total
-a depth map of clothing drying rack: 1 total
-a depth map of glove: 1 total
-a depth map of chessboard: 3 total
-a depth map of tricycle: 2 total
-a depth map of cannister: 1 total
-a depth map of napkin holder: 2 total
-a depth map of shower pipe: 1 total
-a depth map of luggage: 1 total
-a depth map of fax machine: 1 total
-a depth map of ipod: 1 total
-a depth map of business cards: 1 total
-a depth map of bar of soap: 1 total
-a depth map of decorative bottle: 1 total
-a depth map of dish rack: 1 total
-a depth map of tissue: 1 total
-a depth map of ping pong table: 1 total
-a depth map of folders: 1 total
-a depth map of shopping baskets: 1 total
-a depth map of clothing hanger: 1 total
-a depth map of lamp shade: 1 total
-a depth map of fruit platter: 2 total
-a depth map of dolly: 2 total
-a depth map of tea cannister: 1 total
-a depth map of shoe rack: 1 total
-a depth map of toy rectangle: 1 total
-a depth map of file: 3 total
-a depth map of duster: 2 total
-a depth map of water dispenser: 1 total
-a depth map of container of skin cream: 1 total
-a depth map of decanter: 1 total
-a depth map of storage bin: 1 total
-a depth map of envelopes: 1 total
-a depth map of lunch bag: 1 total
-a depth map of toilet paper holder: 1 total
-a depth map of shower cap: 1 total
-a depth map of paper weight: 2 total
-a depth map of yarmulka: 2 total
-a depth map of stroller: 3 total
-a depth map of table runner: 1 total
-a depth map of suger jar: 1 total
-a depth map of scissor: 3 total
-a depth map of piece of wood: 1 total
-a depth map of potato: 1 total
-a depth map of muffins: 1 total
-a depth map of file container: 1 total
-a depth map of exit sign: 2 total
-a depth map of salt and pepper: 1 total
-a depth map of hole puncher: 1 total
-a depth map of cane: 1 total
-a depth map of lazy susan: 1 total
-a depth map of banana: 4 total
-a depth map of antenna: 2 total
-a depth map of rags: 1 total
-a depth map of squash: 1 total
-a depth map of dvd: 1 total
-a depth map of briefcase: 1 total
-a depth map of shower head: 1 total
-a depth map of cordless phone: 1 total
-a depth map of projector: 2 total
-a depth map of grapefruit: 1 total
-a depth map of utensil container: 1 total
-a depth map of ipad: 1 total
-a depth map of fire extinguisher: 1 total
-a depth map of knobs: 1 total
-a depth map of basketball: 1 total
-a depth map of pen holder: 1 total
-a depth map of sticker: 1 total
-a depth map of fruit stand: 3 total
-a depth map of tent: 1 total
-a depth map of shorts: 1 total
-a depth map of window shelf: 2 total
-a depth map of can: 2 total
-a depth map of coaster: 1 total
-a depth map of furniture: 1 total
-a depth map of radio: 1 total
-a depth map of flashlight: 1 total
-a depth map of utensil: 1 total
-a depth map of baking dish: 1 total
-a depth map of certificate: 1 total
-a depth map of music stand: 2 total
-a depth map of display platter: 1 total
-a depth map of wooden planks: 1 total
-a depth map of saucer: 1 total
-a depth map of vessels: 1 total
-a depth map of box of paper: 1 total
-a depth map of gate: 2 total
-a depth map of excercise ball: 1 total
-a depth map of chart stand: 1 total
-a depth map of manilla envelope: 1 total
-a depth map of salt container: 1 total
-a depth map of toy bottle: 1 total
-a depth map of electronic drumset: 1 total
-a depth map of bottle of contact lens solution: 1 total
-a depth map of flag: 1 total
-a depth map of chart roll: 1 total
-a depth map of jeans: 1 total
-a depth map of drum: 1 total
-a depth map of microphone: 1 total
-a depth map of id card: 1 total
-a depth map of scarf: 1 total
-a depth map of telephone cord: 1 total
-a depth map of bag of chips: 1 total
-a depth map of toy apple: 1 total
-a depth map of wire tray: 1 total
-a depth map of modem: 1 total
-a depth map of cream: 1 total
-a depth map of projector screen: 1 total
-a depth map of hot dogs: 1 total
-a depth map of doorreflection: 1 total
-a depth map of door frame: 1 total
-a depth map of soft toy: 1 total
-a depth map of mattress: 1 total
-a depth map of magazine holder: 2 total
-a depth map of american flag: 1 total
-a depth map of balloon: 1 total
-a depth map of soap dish: 1 total
-a depth map of cat cage: 1 total
-a depth map of conch shell: 1 total
-a depth map of cap stand: 1 total
-a depth map of magnet: 1 total
-a depth map of electric mixer: 1 total
-a depth map of bookend: 1 total
-a depth map of mantel: 1 total
-a depth map of butterfly sculpture: 1 total
-a depth map of mortar and pestle: 1 total
-a depth map of flask set: 1 total
-a depth map of toy phone: 1 total
-a depth map of shower base: 1 total
-a depth map of cooking pan: 1 total
-a depth map of ashtray: 1 total
-a depth map of watermellon: 1 total
-a depth map of paper cutter: 1 total
-a depth map of yoga mat: 1 total
-a depth map of vessel: 1 total
-a depth map of sock: 1 total
-a depth map of coffee bag: 1 total
-a depth map of stick: 1 total
-a depth map of ping pong racket: 1 total
-CLIP Baseline results:
-      Loss   Top-1 Acc   Top-3 Acc   Top-5 Acc
-    2.9906      0.0470      0.1164      0.1612
-Entering Validation
-
-Top Failed GT Classes:
-  a depth map of wall: 972 incorrect predictions
-  a depth map of floor: 507 incorrect predictions
-  a depth map of picture: 482 incorrect predictions
-  a depth map of chair: 440 incorrect predictions
-  a depth map of cabinet: 362 incorrect predictions
-  a depth map of table: 217 incorrect predictions
-  a depth map of bottle: 182 incorrect predictions
-  a depth map of books: 175 incorrect predictions
-  a depth map of pillow: 154 incorrect predictions
-  a depth map of paper: 146 incorrect predictions
-[Validation] Top-1 Accuracy: 0.0000 | Top-3 Accuracy: 0.0011 | Top-5 Accuracy: 0.0020
-Validation results:
-    Step        Loss   Top-1 Acc   Top-3 Acc   Top-5 Acc
-       0      4.1238      0.0000      0.0011      0.0020
-Best results:
-    Step        Loss     Top-1 Acc     Top-3 Acc     Top-5 Acc
-       0      4.1238        0.0000        0.0011        0.0020
 Begin training...
-Entering Validation
-
-Top Failed GT Classes:
-  a depth map of picture: 353 incorrect predictions
-  a depth map of chair: 350 incorrect predictions
-  a depth map of cabinet: 232 incorrect predictions
-  a depth map of wall: 231 incorrect predictions
-  a depth map of table: 211 incorrect predictions
-  a depth map of bottle: 182 incorrect predictions
-  a depth map of books: 168 incorrect predictions
-  a depth map of paper: 146 incorrect predictions
-  a depth map of pillow: 141 incorrect predictions
-  a depth map of counter: 138 incorrect predictions
-[Validation] Top-1 Accuracy: 0.1531 | Top-3 Accuracy: 0.2073 | Top-5 Accuracy: 0.2461
-Validation results:
-    Step        Loss   Top-1 Acc   Top-3 Acc   Top-5 Acc
-    1000      3.4121      0.1531      0.2073      0.2461
-Best results:
-    Step        Loss     Top-1 Acc     Top-3 Acc     Top-5 Acc
-    1000      3.4121        0.1531        0.2073        0.2461
-Step=  1000/37100  Loss=3.7361131  Time Elapsed=0.17h  Time Remaining=5.98h
-Model saved to checkpoints/checkpoints/depth_clip_model-1000.pth at step 1000
-Total loss: 4269.223356962204
-Entering Validation
-
-Top Failed GT Classes:
-  a depth map of picture: 398 incorrect predictions
-  a depth map of wall: 373 incorrect predictions
-  a depth map of cabinet: 231 incorrect predictions
-  a depth map of table: 203 incorrect predictions
-  a depth map of chair: 182 incorrect predictions
-  a depth map of bottle: 182 incorrect predictions
-  a depth map of books: 172 incorrect predictions
-  a depth map of paper: 143 incorrect predictions
-  a depth map of pillow: 141 incorrect predictions
-  a depth map of box: 140 incorrect predictions
-[Validation] Top-1 Accuracy: 0.1502 | Top-3 Accuracy: 0.2025 | Top-5 Accuracy: 0.2309
-Validation results:
-    Step        Loss   Top-1 Acc   Top-3 Acc   Top-5 Acc
-    2000      3.6265      0.1502      0.2025      0.2309
-Best results:
-    Step        Loss     Top-1 Acc     Top-3 Acc     Top-5 Acc
-    1000      3.4121        0.1531        0.2073        0.2461
-Step=  2000/37100  Loss=3.3825276  Time Elapsed=0.33h  Time Remaining=5.83h
-Model saved to checkpoints/checkpoints/depth_clip_model-2000.pth at step 2000
-Total loss: 3653.6554987430573
-Entering Validation
-
-Top Failed GT Classes:
-  a depth map of chair: 311 incorrect predictions
-  a depth map of picture: 270 incorrect predictions
-  a depth map of table: 217 incorrect predictions
-  a depth map of wall: 201 incorrect predictions
-  a depth map of bottle: 179 incorrect predictions
-  a depth map of cabinet: 151 incorrect predictions
-  a depth map of box: 140 incorrect predictions
-  a depth map of counter: 138 incorrect predictions
-  a depth map of paper: 127 incorrect predictions
-  a depth map of window: 117 incorrect predictions
-[Validation] Top-1 Accuracy: 0.2123 | Top-3 Accuracy: 0.2775 | Top-5 Accuracy: 0.3060
-Validation results:
-    Step        Loss   Top-1 Acc   Top-3 Acc   Top-5 Acc
-    3000      2.8820      0.2123      0.2775      0.3060
-Best results:
-    Step        Loss     Top-1 Acc     Top-3 Acc     Top-5 Acc
-    3000      2.8820        0.2123        0.2775        0.3060
-Step=  3000/37100  Loss=3.7683775  Time Elapsed=0.58h  Time Remaining=6.60h
-Model saved to checkpoints/checkpoints/depth_clip_model-3000.pth at step 3000
-Total loss: 3220.8586463928223
-Entering Validation
-
-Top Failed GT Classes:
-  a depth map of picture: 395 incorrect predictions
-  a depth map of chair: 213 incorrect predictions
-  a depth map of table: 186 incorrect predictions
-  a depth map of bottle: 178 incorrect predictions
-  a depth map of cabinet: 146 incorrect predictions
-  a depth map of wall: 137 incorrect predictions
-  a depth map of box: 137 incorrect predictions
-  a depth map of books: 131 incorrect predictions
-  a depth map of paper: 129 incorrect predictions
-  a depth map of counter: 124 incorrect predictions
-[Validation] Top-1 Accuracy: 0.2100 | Top-3 Accuracy: 0.2876 | Top-5 Accuracy: 0.3242
-Validation results:
-    Step        Loss   Top-1 Acc   Top-3 Acc   Top-5 Acc
-    4000      2.9906      0.2100      0.2876      0.3242
-Best results:
-    Step        Loss     Top-1 Acc     Top-3 Acc     Top-5 Acc
-    4000      2.9906        0.2100        0.2876        0.3242
-Step=  4000/37100  Loss=2.5220625  Time Elapsed=0.96h  Time Remaining=7.91h
-Model saved to checkpoints/checkpoints/depth_clip_model-4000.pth at step 4000
-Total loss: 2870.964806318283
-Entering Validation
-
-Top Failed GT Classes:
-  a depth map of picture: 253 incorrect predictions
-  a depth map of cabinet: 210 incorrect predictions
-  a depth map of table: 185 incorrect predictions
-  a depth map of wall: 149 incorrect predictions
-  a depth map of chair: 139 incorrect predictions
-  a depth map of box: 134 incorrect predictions
-  a depth map of counter: 129 incorrect predictions
-  a depth map of books: 123 incorrect predictions
-  a depth map of window: 123 incorrect predictions
-  a depth map of paper: 120 incorrect predictions
-[Validation] Top-1 Accuracy: 0.2028 | Top-3 Accuracy: 0.2935 | Top-5 Accuracy: 0.3397
-Validation results:
-    Step        Loss   Top-1 Acc   Top-3 Acc   Top-5 Acc
-    5000      3.0212      0.2028      0.2935      0.3397
-Best results:
-    Step        Loss     Top-1 Acc     Top-3 Acc     Top-5 Acc
-    5000      3.0212        0.2028        0.2935        0.3397
-Step=  5000/37100  Loss=2.5347531  Time Elapsed=1.30h  Time Remaining=8.37h
-Model saved to checkpoints/checkpoints/depth_clip_model-5000.pth at step 5000
-Total loss: 2590.8546142578125
-Entering Validation
-
-Top Failed GT Classes:
-  a depth map of picture: 421 incorrect predictions
-  a depth map of cabinet: 258 incorrect predictions
-  a depth map of bottle: 147 incorrect predictions
-  a depth map of books: 140 incorrect predictions
-  a depth map of box: 137 incorrect predictions
-  a depth map of table: 135 incorrect predictions
-  a depth map of paper: 131 incorrect predictions
-  a depth map of window: 118 incorrect predictions
-  a depth map of counter: 109 incorrect predictions
-  a depth map of book: 105 incorrect predictions
-[Validation] Top-1 Accuracy: 0.2097 | Top-3 Accuracy: 0.3085 | Top-5 Accuracy: 0.3480
-Validation results:
-    Step        Loss   Top-1 Acc   Top-3 Acc   Top-5 Acc
-    6000      3.4041      0.2097      0.3085      0.3480
-Best results:
-    Step        Loss     Top-1 Acc     Top-3 Acc     Top-5 Acc
-    6000      3.4041        0.2097        0.3085        0.3480
-Step=  6000/37100  Loss=3.1750484  Time Elapsed=1.52h  Time Remaining=7.90h
-Model saved to checkpoints/checkpoints/depth_clip_model-6000.pth at step 6000
-Total loss: 2394.4676681756973
-Entering Validation
-
-Top Failed GT Classes:
-  a depth map of picture: 472 incorrect predictions
-  a depth map of bottle: 176 incorrect predictions
-  a depth map of books: 158 incorrect predictions
-  a depth map of paper: 141 incorrect predictions
-  a depth map of pillow: 133 incorrect predictions
-  a depth map of box: 133 incorrect predictions
-  a depth map of window: 125 incorrect predictions
-  a depth map of counter: 116 incorrect predictions
-  a depth map of book: 112 incorrect predictions
-  a depth map of lamp: 111 incorrect predictions
-[Validation] Top-1 Accuracy: 0.1799 | Top-3 Accuracy: 0.2844 | Top-5 Accuracy: 0.3352
-Validation results:
-    Step        Loss   Top-1 Acc   Top-3 Acc   Top-5 Acc
-    7000      4.6980      0.1799      0.2844      0.3352
-Best results:
-    Step        Loss     Top-1 Acc     Top-3 Acc     Top-5 Acc
-    6000      3.4041        0.2097        0.3085        0.3480
-Step=  7000/37100  Loss=1.8318269  Time Elapsed=1.69h  Time Remaining=7.26h
-Model saved to checkpoints/checkpoints/depth_clip_model-7000.pth at step 7000
-Total loss: 2228.719956636429
-Entering Validation
-
-Top Failed GT Classes:
-  a depth map of picture: 248 incorrect predictions
-  a depth map of wall: 148 incorrect predictions
-  a depth map of chair: 126 incorrect predictions
-  a depth map of cabinet: 122 incorrect predictions
-  a depth map of table: 114 incorrect predictions
-  a depth map of books: 113 incorrect predictions
-  a depth map of box: 112 incorrect predictions
-  a depth map of window: 108 incorrect predictions
-  a depth map of counter: 84 incorrect predictions
-  a depth map of shelves: 82 incorrect predictions
-[Validation] Top-1 Accuracy: 0.2603 | Top-3 Accuracy: 0.3902 | Top-5 Accuracy: 0.4483
-Validation results:
-    Step        Loss   Top-1 Acc   Top-3 Acc   Top-5 Acc
-    8000      2.2447      0.2603      0.3902      0.4483
-Best results:
-    Step        Loss     Top-1 Acc     Top-3 Acc     Top-5 Acc
-    8000      2.2447        0.2603        0.3902        0.4483
-Step=  8000/37100  Loss=1.5819998  Time Elapsed=1.85h  Time Remaining=6.74h
-Model saved to checkpoints/checkpoints/depth_clip_model-8000.pth at step 8000
-Total loss: 2059.2410383820534
-Entering Validation
-
-Top Failed GT Classes:
-  a depth map of picture: 151 incorrect predictions
-  a depth map of chair: 146 incorrect predictions
-  a depth map of wall: 128 incorrect predictions
-  a depth map of bottle: 119 incorrect predictions
-  a depth map of cabinet: 114 incorrect predictions
-  a depth map of box: 109 incorrect predictions
-  a depth map of sofa: 87 incorrect predictions
-  a depth map of unknown: 75 incorrect predictions
-  a depth map of lamp: 75 incorrect predictions
-  a depth map of shelves: 74 incorrect predictions
-[Validation] Top-1 Accuracy: 0.2859 | Top-3 Accuracy: 0.4175 | Top-5 Accuracy: 0.4815
-Validation results:
-    Step        Loss   Top-1 Acc   Top-3 Acc   Top-5 Acc
-    9000      2.0874      0.2859      0.4175      0.4815
-Best results:
-    Step        Loss     Top-1 Acc     Top-3 Acc     Top-5 Acc
-    9000      2.0874        0.2859        0.4175        0.4815
-Step=  9000/37100  Loss=1.7619418  Time Elapsed=2.02h  Time Remaining=6.29h
-Model saved to checkpoints/checkpoints/depth_clip_model-9000.pth at step 9000
-Total loss: 1944.3875527977943
-Entering Validation
-
-Top Failed GT Classes:
-  a depth map of picture: 255 incorrect predictions
-  a depth map of chair: 122 incorrect predictions
-  a depth map of books: 113 incorrect predictions
-  a depth map of paper: 111 incorrect predictions
-  a depth map of box: 103 incorrect predictions
-  a depth map of sofa: 96 incorrect predictions
-  a depth map of cabinet: 87 incorrect predictions
-  a depth map of pillow: 85 incorrect predictions
-  a depth map of book: 85 incorrect predictions
-  a depth map of lamp: 82 incorrect predictions
-[Validation] Top-1 Accuracy: 0.2447 | Top-3 Accuracy: 0.3795 | Top-5 Accuracy: 0.4496
-Validation results:
-    Step        Loss   Top-1 Acc   Top-3 Acc   Top-5 Acc
-   10000      2.6512      0.2447      0.3795      0.4496
-Best results:
-    Step        Loss     Top-1 Acc     Top-3 Acc     Top-5 Acc
-    9000      2.0874        0.2859        0.4175        0.4815
-Step= 10000/37100  Loss=2.3015618  Time Elapsed=2.18h  Time Remaining=5.91h
-Model saved to checkpoints/checkpoints/depth_clip_model-10000.pth at step 10000
-Total loss: 1885.7760719060898
-Entering Validation
-
-Top Failed GT Classes:
-  a depth map of picture: 108 incorrect predictions
-  a depth map of cabinet: 91 incorrect predictions
-  a depth map of paper: 80 incorrect predictions
-  a depth map of wall: 79 incorrect predictions
-  a depth map of clothes: 75 incorrect predictions
-  a depth map of box: 73 incorrect predictions
-  a depth map of shelves: 70 incorrect predictions
-  a depth map of unknown: 67 incorrect predictions
-  a depth map of books: 60 incorrect predictions
-  a depth map of bag: 59 incorrect predictions
-[Validation] Top-1 Accuracy: 0.3422 | Top-3 Accuracy: 0.5026 | Top-5 Accuracy: 0.5706
-Validation results:
-    Step        Loss   Top-1 Acc   Top-3 Acc   Top-5 Acc
-   11000      1.6081      0.3422      0.5026      0.5706
-Best results:
-    Step        Loss     Top-1 Acc     Top-3 Acc     Top-5 Acc
-   11000      1.6081        0.3422        0.5026        0.5706
-Step= 11000/37100  Loss=1.6511971  Time Elapsed=2.34h  Time Remaining=5.56h
-Model saved to checkpoints/checkpoints/depth_clip_model-11000.pth at step 11000
-Total loss: 1526.2349429130554
-Entering Validation
-
-Top Failed GT Classes:
-  a depth map of picture: 167 incorrect predictions
-  a depth map of cabinet: 98 incorrect predictions
-  a depth map of paper: 95 incorrect predictions
-  a depth map of box: 90 incorrect predictions
-  a depth map of table: 86 incorrect predictions
-  a depth map of clothes: 75 incorrect predictions
-  a depth map of books: 75 incorrect predictions
-  a depth map of shelves: 73 incorrect predictions
-  a depth map of counter: 71 incorrect predictions
-  a depth map of book: 69 incorrect predictions
-[Validation] Top-1 Accuracy: 0.3180 | Top-3 Accuracy: 0.4708 | Top-5 Accuracy: 0.5433
-Validation results:
-    Step        Loss   Top-1 Acc   Top-3 Acc   Top-5 Acc
-   12000      1.7691      0.3180      0.4708      0.5433
-Best results:
-    Step        Loss     Top-1 Acc     Top-3 Acc     Top-5 Acc
-   11000      1.6081        0.3422        0.5026        0.5706
-Step= 12000/37100  Loss=0.8961180  Time Elapsed=2.51h  Time Remaining=5.24h
-Model saved to checkpoints/checkpoints/depth_clip_model-12000.pth at step 12000
-Total loss: 1420.3822962641716
-Entering Validation
-
-Top Failed GT Classes:
-  a depth map of picture: 162 incorrect predictions
-  a depth map of cabinet: 90 incorrect predictions
-  a depth map of shelves: 80 incorrect predictions
-  a depth map of box: 76 incorrect predictions
-  a depth map of paper: 76 incorrect predictions
-  a depth map of table: 70 incorrect predictions
-  a depth map of clothes: 67 incorrect predictions
-  a depth map of counter: 65 incorrect predictions
-  a depth map of wall: 63 incorrect predictions
-  a depth map of books: 63 incorrect predictions
-[Validation] Top-1 Accuracy: 0.3343 | Top-3 Accuracy: 0.4940 | Top-5 Accuracy: 0.5637
-Validation results:
-    Step        Loss   Top-1 Acc   Top-3 Acc   Top-5 Acc
-   13000      1.7273      0.3343      0.4940      0.5637
-Best results:
-    Step        Loss     Top-1 Acc     Top-3 Acc     Top-5 Acc
-   11000      1.6081        0.3422        0.5026        0.5706
-Step= 13000/37100  Loss=0.9317746  Time Elapsed=2.67h  Time Remaining=4.94h
-Model saved to checkpoints/checkpoints/depth_clip_model-13000.pth at step 13000
-Total loss: 1373.7137193083763
-Entering Validation
-
-Top Failed GT Classes:
-  a depth map of picture: 153 incorrect predictions
-  a depth map of table: 83 incorrect predictions
-  a depth map of chair: 83 incorrect predictions
-  a depth map of cabinet: 81 incorrect predictions
-  a depth map of paper: 78 incorrect predictions
-  a depth map of desk: 66 incorrect predictions
-  a depth map of shelves: 65 incorrect predictions
-  a depth map of clothes: 64 incorrect predictions
-  a depth map of lamp: 61 incorrect predictions
-  a depth map of unknown: 60 incorrect predictions
-[Validation] Top-1 Accuracy: 0.3374 | Top-3 Accuracy: 0.4951 | Top-5 Accuracy: 0.5683
-Validation results:
-    Step        Loss   Top-1 Acc   Top-3 Acc   Top-5 Acc
-   14000      1.6567      0.3374      0.4951      0.5683
-Best results:
-    Step        Loss     Top-1 Acc     Top-3 Acc     Top-5 Acc
-   11000      1.6081        0.3422        0.5026        0.5706
-Step= 14000/37100  Loss=1.6741331  Time Elapsed=2.83h  Time Remaining=4.67h
-Model saved to checkpoints/checkpoints/depth_clip_model-14000.pth at step 14000
-Total loss: 1356.6203076839447
-Entering Validation
-
-Top Failed GT Classes:
-  a depth map of picture: 190 incorrect predictions
-  a depth map of cabinet: 98 incorrect predictions
-  a depth map of box: 88 incorrect predictions
-  a depth map of shelves: 73 incorrect predictions
-  a depth map of paper: 73 incorrect predictions
-  a depth map of books: 73 incorrect predictions
-  a depth map of table: 72 incorrect predictions
-  a depth map of wall: 71 incorrect predictions
-  a depth map of clothes: 70 incorrect predictions
-  a depth map of window: 62 incorrect predictions
-[Validation] Top-1 Accuracy: 0.3283 | Top-3 Accuracy: 0.4844 | Top-5 Accuracy: 0.5528
-Validation results:
-    Step        Loss   Top-1 Acc   Top-3 Acc   Top-5 Acc
-   15000      1.7125      0.3283      0.4844      0.5528
-Best results:
-    Step        Loss     Top-1 Acc     Top-3 Acc     Top-5 Acc
-   11000      1.6081        0.3422        0.5026        0.5706
-Step= 15000/37100  Loss=1.1599387  Time Elapsed=2.99h  Time Remaining=4.41h
-Model saved to checkpoints/checkpoints/depth_clip_model-15000.pth at step 15000
-Total loss: 1314.8150749206543
-Entering Validation
-
-Top Failed GT Classes:
-  a depth map of picture: 111 incorrect predictions
-  a depth map of paper: 84 incorrect predictions
-  a depth map of cabinet: 81 incorrect predictions
-  a depth map of wall: 71 incorrect predictions
-  a depth map of shelves: 71 incorrect predictions
-  a depth map of clothes: 63 incorrect predictions
-  a depth map of unknown: 61 incorrect predictions
-  a depth map of counter: 59 incorrect predictions
-  a depth map of desk: 53 incorrect predictions
-  a depth map of window: 53 incorrect predictions
-[Validation] Top-1 Accuracy: 0.3463 | Top-3 Accuracy: 0.5158 | Top-5 Accuracy: 0.5881
-Validation results:
-    Step        Loss   Top-1 Acc   Top-3 Acc   Top-5 Acc
-   16000      1.5180      0.3463      0.5158      0.5881
-Best results:
-    Step        Loss     Top-1 Acc     Top-3 Acc     Top-5 Acc
-   16000      1.5180        0.3463        0.5158        0.5881
-Step= 16000/37100  Loss=1.4117618  Time Elapsed=3.16h  Time Remaining=4.16h
-Model saved to checkpoints/checkpoints/depth_clip_model-16000.pth at step 16000
-Total loss: 1296.726589858532
-Entering Validation
-
-Top Failed GT Classes:
-  a depth map of picture: 142 incorrect predictions
-  a depth map of cabinet: 82 incorrect predictions
-  a depth map of paper: 77 incorrect predictions
-  a depth map of shelves: 61 incorrect predictions
-  a depth map of box: 60 incorrect predictions
-  a depth map of clothes: 60 incorrect predictions
-  a depth map of wall: 59 incorrect predictions
-  a depth map of books: 55 incorrect predictions
-  a depth map of bottle: 52 incorrect predictions
-  a depth map of counter: 50 incorrect predictions
-[Validation] Top-1 Accuracy: 0.3584 | Top-3 Accuracy: 0.5226 | Top-5 Accuracy: 0.5965
-Validation results:
-    Step        Loss   Top-1 Acc   Top-3 Acc   Top-5 Acc
-   17000      1.4524      0.3584      0.5226      0.5965
-Best results:
-    Step        Loss     Top-1 Acc     Top-3 Acc     Top-5 Acc
-   17000      1.4524        0.3584        0.5226        0.5965
-Step= 17000/37100  Loss=0.9816563  Time Elapsed=3.32h  Time Remaining=3.92h
-Model saved to checkpoints/checkpoints/depth_clip_model-17000.pth at step 17000
-Entering Validation
-
-Top Failed GT Classes:
-  a depth map of picture: 175 incorrect predictions
-  a depth map of paper: 96 incorrect predictions
-  a depth map of cabinet: 93 incorrect predictions
-  a depth map of books: 74 incorrect predictions
-  a depth map of shelves: 72 incorrect predictions
-  a depth map of clothes: 68 incorrect predictions
-  a depth map of counter: 66 incorrect predictions
-  a depth map of book: 65 incorrect predictions
-  a depth map of box: 60 incorrect predictions
-  a depth map of window: 60 incorrect predictions
-[Validation] Top-1 Accuracy: 0.3390 | Top-3 Accuracy: 0.4994 | Top-5 Accuracy: 0.5730
-Validation results:
-    Step        Loss   Top-1 Acc   Top-3 Acc   Top-5 Acc
-   18000      1.6789      0.3390      0.4994      0.5730
-Best results:
-    Step        Loss     Top-1 Acc     Top-3 Acc     Top-5 Acc
-   17000      1.4524        0.3584        0.5226        0.5965
-Step= 18000/37100  Loss=1.1147535  Time Elapsed=3.85h  Time Remaining=4.09h
-Model saved to checkpoints/checkpoints/depth_clip_model-18000.pth at step 18000
-Total loss: 1257.8728739619255
-Entering Validation
-
-Top Failed GT Classes:
-  a depth map of picture: 105 incorrect predictions
-  a depth map of cabinet: 85 incorrect predictions
-  a depth map of paper: 81 incorrect predictions
-  a depth map of shelves: 71 incorrect predictions
-  a depth map of wall: 64 incorrect predictions
-  a depth map of clothes: 61 incorrect predictions
-  a depth map of books: 60 incorrect predictions
-  a depth map of counter: 55 incorrect predictions
-  a depth map of chair: 55 incorrect predictions
-  a depth map of unknown: 54 incorrect predictions
-[Validation] Top-1 Accuracy: 0.3575 | Top-3 Accuracy: 0.5263 | Top-5 Accuracy: 0.5985
-Validation results:
-    Step        Loss   Top-1 Acc   Top-3 Acc   Top-5 Acc
-   19000      1.5197      0.3575      0.5263      0.5985
-Best results:
-    Step        Loss     Top-1 Acc     Top-3 Acc     Top-5 Acc
-   19000      1.5197        0.3575        0.5263        0.5985
-Step= 19000/37100  Loss=1.3380117  Time Elapsed=4.48h  Time Remaining=4.27h
-Model saved to checkpoints/checkpoints/depth_clip_model-19000.pth at step 19000
-Total loss: 1228.6728895902634
-Entering Validation
-
-Top Failed GT Classes:
-  a depth map of picture: 131 incorrect predictions
-  a depth map of cabinet: 103 incorrect predictions
-  a depth map of paper: 96 incorrect predictions
-  a depth map of table: 77 incorrect predictions
-  a depth map of shelves: 69 incorrect predictions
-  a depth map of window: 69 incorrect predictions
-  a depth map of counter: 66 incorrect predictions
-  a depth map of desk: 63 incorrect predictions
-  a depth map of clothes: 60 incorrect predictions
-  a depth map of unknown: 59 incorrect predictions
-[Validation] Top-1 Accuracy: 0.3329 | Top-3 Accuracy: 0.4950 | Top-5 Accuracy: 0.5675
-Validation results:
-    Step        Loss   Top-1 Acc   Top-3 Acc   Top-5 Acc
-   20000      1.6638      0.3329      0.4950      0.5675
-Best results:
-    Step        Loss     Top-1 Acc     Top-3 Acc     Top-5 Acc
-   19000      1.5197        0.3575        0.5263        0.5985
-Step= 20000/37100  Loss=1.0845512  Time Elapsed=4.69h  Time Remaining=4.01h
-Model saved to checkpoints/checkpoints/depth_clip_model-20000.pth at step 20000
-Total loss: 1206.3835079073906
-Entering Validation
-
-Top Failed GT Classes:
-  a depth map of picture: 128 incorrect predictions
-  a depth map of cabinet: 96 incorrect predictions
-  a depth map of paper: 84 incorrect predictions
-  a depth map of counter: 71 incorrect predictions
-  a depth map of shelves: 71 incorrect predictions
-  a depth map of box: 68 incorrect predictions
-  a depth map of books: 65 incorrect predictions
-  a depth map of desk: 59 incorrect predictions
-  a depth map of wall: 59 incorrect predictions
-  a depth map of clothes: 55 incorrect predictions
-[Validation] Top-1 Accuracy: 0.3542 | Top-3 Accuracy: 0.5170 | Top-5 Accuracy: 0.5908
-Validation results:
-    Step        Loss   Top-1 Acc   Top-3 Acc   Top-5 Acc
-   21000      1.5286      0.3542      0.5170      0.5908
-Best results:
-    Step        Loss     Top-1 Acc     Top-3 Acc     Top-5 Acc
-   19000      1.5197        0.3575        0.5263        0.5985
-Step= 21000/37100  Loss=0.8933169  Time Elapsed=4.86h  Time Remaining=3.72h
-Model saved to checkpoints/checkpoints/depth_clip_model-21000.pth at step 21000
-Total loss: 1181.4686110019684
-Entering Validation
-
-Top Failed GT Classes:
-  a depth map of picture: 141 incorrect predictions
-  a depth map of cabinet: 95 incorrect predictions
-  a depth map of paper: 91 incorrect predictions
-  a depth map of counter: 75 incorrect predictions
-  a depth map of shelves: 69 incorrect predictions
-  a depth map of books: 66 incorrect predictions
-  a depth map of box: 65 incorrect predictions
-  a depth map of desk: 57 incorrect predictions
-  a depth map of unknown: 55 incorrect predictions
-  a depth map of blinds: 53 incorrect predictions
-[Validation] Top-1 Accuracy: 0.3537 | Top-3 Accuracy: 0.5165 | Top-5 Accuracy: 0.5876
-Validation results:
-    Step        Loss   Top-1 Acc   Top-3 Acc   Top-5 Acc
-   22000      1.5473      0.3537      0.5165      0.5876
-Best results:
-    Step        Loss     Top-1 Acc     Top-3 Acc     Top-5 Acc
-   19000      1.5197        0.3575        0.5263        0.5985
-Step= 22000/37100  Loss=1.3926872  Time Elapsed=5.02h  Time Remaining=3.44h
-Model saved to checkpoints/checkpoints/depth_clip_model-22000.pth at step 22000
-Total loss: 1139.228896856308
-Entering Validation
-
-Top Failed GT Classes:
-  a depth map of picture: 110 incorrect predictions
-  a depth map of paper: 78 incorrect predictions
-  a depth map of cabinet: 73 incorrect predictions
-  a depth map of chair: 72 incorrect predictions
-  a depth map of shelves: 66 incorrect predictions
-  a depth map of clothes: 59 incorrect predictions
-  a depth map of unknown: 58 incorrect predictions
-  a depth map of books: 55 incorrect predictions
-  a depth map of window: 52 incorrect predictions
-  a depth map of table: 52 incorrect predictions
-[Validation] Top-1 Accuracy: 0.3602 | Top-3 Accuracy: 0.5317 | Top-5 Accuracy: 0.6039
-Validation results:
-    Step        Loss   Top-1 Acc   Top-3 Acc   Top-5 Acc
-   23000      1.4955      0.3602      0.5317      0.6039
-Best results:
-    Step        Loss     Top-1 Acc     Top-3 Acc     Top-5 Acc
-   23000      1.4955        0.3602        0.5317        0.6039
-Step= 23000/37100  Loss=0.7328267  Time Elapsed=5.19h  Time Remaining=3.18h
-Model saved to checkpoints/checkpoints/depth_clip_model-23000.pth at step 23000
-Total loss: 1097.9956650137901
-Entering Validation
-
-Top Failed GT Classes:
-  a depth map of picture: 110 incorrect predictions
-  a depth map of cabinet: 102 incorrect predictions
-  a depth map of paper: 84 incorrect predictions
-  a depth map of counter: 72 incorrect predictions
-  a depth map of table: 70 incorrect predictions
-  a depth map of shelves: 68 incorrect predictions
-  a depth map of desk: 61 incorrect predictions
-  a depth map of wall: 55 incorrect predictions
-  a depth map of unknown: 53 incorrect predictions
-  a depth map of chair: 53 incorrect predictions
-[Validation] Top-1 Accuracy: 0.3537 | Top-3 Accuracy: 0.5181 | Top-5 Accuracy: 0.5887
-Validation results:
-    Step        Loss   Top-1 Acc   Top-3 Acc   Top-5 Acc
-   24000      1.5103      0.3537      0.5181      0.5887
-Best results:
-    Step        Loss     Top-1 Acc     Top-3 Acc     Top-5 Acc
-   23000      1.4955        0.3602        0.5317        0.6039
-Step= 24000/37100  Loss=0.9425645  Time Elapsed=5.36h  Time Remaining=2.93h
-Model saved to checkpoints/checkpoints/depth_clip_model-24000.pth at step 24000
-Total loss: 1095.8685728311539
-Entering Validation
-
-Top Failed GT Classes:
-  a depth map of picture: 121 incorrect predictions
-  a depth map of cabinet: 95 incorrect predictions
-  a depth map of paper: 95 incorrect predictions
-  a depth map of table: 68 incorrect predictions
-  a depth map of counter: 68 incorrect predictions
-  a depth map of shelves: 63 incorrect predictions
-  a depth map of desk: 62 incorrect predictions
-  a depth map of clothes: 60 incorrect predictions
-  a depth map of unknown: 57 incorrect predictions
-  a depth map of books: 55 incorrect predictions
-[Validation] Top-1 Accuracy: 0.3614 | Top-3 Accuracy: 0.5278 | Top-5 Accuracy: 0.5970
-Validation results:
-    Step        Loss   Top-1 Acc   Top-3 Acc   Top-5 Acc
-   25000      1.4608      0.3614      0.5278      0.5970
-Best results:
-    Step        Loss     Top-1 Acc     Top-3 Acc     Top-5 Acc
-   23000      1.4955        0.3602        0.5317        0.6039
-Step= 25000/37100  Loss=1.2795715  Time Elapsed=5.57h  Time Remaining=2.70h
-Model saved to checkpoints/checkpoints/depth_clip_model-25000.pth at step 25000
-Total loss: 1118.3804610967636
-Entering Validation
-
-Top Failed GT Classes:
-  a depth map of picture: 115 incorrect predictions
-  a depth map of cabinet: 98 incorrect predictions
-  a depth map of paper: 80 incorrect predictions
-  a depth map of wall: 70 incorrect predictions
-  a depth map of table: 62 incorrect predictions
-  a depth map of desk: 60 incorrect predictions
-  a depth map of counter: 60 incorrect predictions
-  a depth map of shelves: 59 incorrect predictions
-  a depth map of unknown: 54 incorrect predictions
-  a depth map of chair: 48 incorrect predictions
-[Validation] Top-1 Accuracy: 0.3704 | Top-3 Accuracy: 0.5392 | Top-5 Accuracy: 0.6114
-Validation results:
-    Step        Loss   Top-1 Acc   Top-3 Acc   Top-5 Acc
-   26000      1.3872      0.3704      0.5392      0.6114
-Best results:
-    Step        Loss     Top-1 Acc     Top-3 Acc     Top-5 Acc
-   26000      1.3872        0.3704        0.5392        0.6114
-Step= 26000/37100  Loss=1.1955229  Time Elapsed=5.78h  Time Remaining=2.47h
-Model saved to checkpoints/checkpoints/depth_clip_model-26000.pth at step 26000
-Total loss: 1080.43412899971
-Entering Validation
-
-Top Failed GT Classes:
-  a depth map of picture: 112 incorrect predictions
-  a depth map of paper: 90 incorrect predictions
-  a depth map of cabinet: 77 incorrect predictions
-  a depth map of unknown: 64 incorrect predictions
-  a depth map of table: 64 incorrect predictions
-  a depth map of shelves: 63 incorrect predictions
-  a depth map of clothes: 61 incorrect predictions
-  a depth map of desk: 58 incorrect predictions
-  a depth map of counter: 56 incorrect predictions
-  a depth map of book: 48 incorrect predictions
-[Validation] Top-1 Accuracy: 0.3609 | Top-3 Accuracy: 0.5308 | Top-5 Accuracy: 0.6003
-Validation results:
-    Step        Loss   Top-1 Acc   Top-3 Acc   Top-5 Acc
-   27000      1.4705      0.3609      0.5308      0.6003
-Best results:
-    Step        Loss     Top-1 Acc     Top-3 Acc     Top-5 Acc
-   26000      1.3872        0.3704        0.5392        0.6114
-Step= 27000/37100  Loss=0.7125993  Time Elapsed=6.03h  Time Remaining=2.26h
-Model saved to checkpoints/checkpoints/depth_clip_model-27000.pth at step 27000
-Total loss: 1085.2300817966461
-Entering Validation
-
-Top Failed GT Classes:
-  a depth map of picture: 129 incorrect predictions
-  a depth map of cabinet: 92 incorrect predictions
-  a depth map of paper: 85 incorrect predictions
-  a depth map of counter: 68 incorrect predictions
-  a depth map of shelves: 64 incorrect predictions
-  a depth map of chair: 63 incorrect predictions
-  a depth map of wall: 59 incorrect predictions
-  a depth map of books: 59 incorrect predictions
-  a depth map of unknown: 58 incorrect predictions
-  a depth map of desk: 57 incorrect predictions
-[Validation] Top-1 Accuracy: 0.3649 | Top-3 Accuracy: 0.5263 | Top-5 Accuracy: 0.6020
-Validation results:
-    Step        Loss   Top-1 Acc   Top-3 Acc   Top-5 Acc
-   28000      1.5071      0.3649      0.5263      0.6020
-Best results:
-    Step        Loss     Top-1 Acc     Top-3 Acc     Top-5 Acc
-   26000      1.3872        0.3704        0.5392        0.6114
-Step= 28000/37100  Loss=1.0372679  Time Elapsed=6.28h  Time Remaining=2.04h
-Model saved to checkpoints/checkpoints/depth_clip_model-28000.pth at step 28000
-Total loss: 1076.8324555158615
-Entering Validation
-
-Top Failed GT Classes:
-  a depth map of picture: 94 incorrect predictions
-  a depth map of paper: 90 incorrect predictions
-  a depth map of cabinet: 68 incorrect predictions
-  a depth map of clothes: 60 incorrect predictions
-  a depth map of shelves: 60 incorrect predictions
-  a depth map of books: 60 incorrect predictions
-  a depth map of unknown: 59 incorrect predictions
-  a depth map of book: 51 incorrect predictions
-  a depth map of desk: 49 incorrect predictions
-  a depth map of counter: 49 incorrect predictions
-[Validation] Top-1 Accuracy: 0.3824 | Top-3 Accuracy: 0.5550 | Top-5 Accuracy: 0.6265
-Validation results:
-    Step        Loss   Top-1 Acc   Top-3 Acc   Top-5 Acc
-   29000      1.3680      0.3824      0.5550      0.6265
-Best results:
-    Step        Loss     Top-1 Acc     Top-3 Acc     Top-5 Acc
-   29000      1.3680        0.3824        0.5550        0.6265
-Step= 29000/37100  Loss=0.5449712  Time Elapsed=6.53h  Time Remaining=1.82h
-Model saved to checkpoints/checkpoints/depth_clip_model-29000.pth at step 29000
-Total loss: 1067.2861173152924
-Entering Validation
-
-Top Failed GT Classes:
-  a depth map of picture: 181 incorrect predictions
-  a depth map of cabinet: 114 incorrect predictions
-  a depth map of paper: 107 incorrect predictions
-  a depth map of counter: 89 incorrect predictions
-  a depth map of table: 75 incorrect predictions
-  a depth map of window: 74 incorrect predictions
-  a depth map of chair: 73 incorrect predictions
-  a depth map of desk: 71 incorrect predictions
-  a depth map of shelves: 69 incorrect predictions
-  a depth map of books: 62 incorrect predictions
-[Validation] Top-1 Accuracy: 0.3314 | Top-3 Accuracy: 0.4846 | Top-5 Accuracy: 0.5565
-Validation results:
-    Step        Loss   Top-1 Acc   Top-3 Acc   Top-5 Acc
-   30000      1.6492      0.3314      0.4846      0.5565
-Best results:
-    Step        Loss     Top-1 Acc     Top-3 Acc     Top-5 Acc
-   29000      1.3680        0.3824        0.5550        0.6265
-Step= 30000/37100  Loss=1.5142810  Time Elapsed=6.83h  Time Remaining=1.62h
-Model saved to checkpoints/checkpoints/depth_clip_model-30000.pth at step 30000
-Total loss: 1078.2573319077492
-Entering Validation
-
-Top Failed GT Classes:
-  a depth map of picture: 118 incorrect predictions
-  a depth map of paper: 84 incorrect predictions
-  a depth map of cabinet: 69 incorrect predictions
-  a depth map of clothes: 61 incorrect predictions
-  a depth map of shelves: 61 incorrect predictions
-  a depth map of unknown: 58 incorrect predictions
-  a depth map of books: 55 incorrect predictions
-  a depth map of desk: 49 incorrect predictions
-  a depth map of book: 49 incorrect predictions
-  a depth map of window: 47 incorrect predictions
-[Validation] Top-1 Accuracy: 0.3731 | Top-3 Accuracy: 0.5461 | Top-5 Accuracy: 0.6160
-Validation results:
-    Step        Loss   Top-1 Acc   Top-3 Acc   Top-5 Acc
-   31000      1.4238      0.3731      0.5461      0.6160
-Best results:
-    Step        Loss     Top-1 Acc     Top-3 Acc     Top-5 Acc
-   29000      1.3680        0.3824        0.5550        0.6265
-Step= 31000/37100  Loss=0.8470050  Time Elapsed=7.09h  Time Remaining=1.39h
-Model saved to checkpoints/checkpoints/depth_clip_model-31000.pth at step 31000
-Total loss: 1069.8441475331783
-Entering Validation
-
-Top Failed GT Classes:
-  a depth map of picture: 142 incorrect predictions
-  a depth map of paper: 105 incorrect predictions
-  a depth map of cabinet: 69 incorrect predictions
-  a depth map of clothes: 68 incorrect predictions
-  a depth map of unknown: 67 incorrect predictions
-  a depth map of books: 67 incorrect predictions
-  a depth map of book: 63 incorrect predictions
-  a depth map of shelves: 61 incorrect predictions
-  a depth map of counter: 51 incorrect predictions
-  a depth map of chair: 49 incorrect predictions
-[Validation] Top-1 Accuracy: 0.3572 | Top-3 Accuracy: 0.5278 | Top-5 Accuracy: 0.6010
-Validation results:
-    Step        Loss   Top-1 Acc   Top-3 Acc   Top-5 Acc
-   32000      1.4903      0.3572      0.5278      0.6010
-Best results:
-    Step        Loss     Top-1 Acc     Top-3 Acc     Top-5 Acc
-   29000      1.3680        0.3824        0.5550        0.6265
-Step= 32000/37100  Loss=0.7414240  Time Elapsed=7.36h  Time Remaining=1.17h
-Model saved to checkpoints/checkpoints/depth_clip_model-32000.pth at step 32000
-Total loss: 1052.0245315134525
-Entering Validation
-
-Top Failed GT Classes:
-  a depth map of picture: 137 incorrect predictions
-  a depth map of paper: 117 incorrect predictions
-  a depth map of cabinet: 85 incorrect predictions
-  a depth map of chair: 74 incorrect predictions
-  a depth map of table: 69 incorrect predictions
-  a depth map of shelves: 68 incorrect predictions
-  a depth map of counter: 67 incorrect predictions
-  a depth map of books: 66 incorrect predictions
-  a depth map of book: 66 incorrect predictions
-  a depth map of unknown: 61 incorrect predictions
-[Validation] Top-1 Accuracy: 0.3452 | Top-3 Accuracy: 0.5078 | Top-5 Accuracy: 0.5731
-Validation results:
-    Step        Loss   Top-1 Acc   Top-3 Acc   Top-5 Acc
-   33000      1.5563      0.3452      0.5078      0.5731
-Best results:
-    Step        Loss     Top-1 Acc     Top-3 Acc     Top-5 Acc
-   29000      1.3680        0.3824        0.5550        0.6265
-Step= 33000/37100  Loss=0.7457962  Time Elapsed=7.62h  Time Remaining=0.95h
-Model saved to checkpoints/checkpoints/depth_clip_model-33000.pth at step 33000
-Total loss: 1055.0555458664894
-Entering Validation
-
-Top Failed GT Classes:
-  a depth map of picture: 101 incorrect predictions
-  a depth map of cabinet: 87 incorrect predictions
-  a depth map of paper: 79 incorrect predictions
-  a depth map of shelves: 63 incorrect predictions
-  a depth map of counter: 62 incorrect predictions
-  a depth map of clothes: 55 incorrect predictions
-  a depth map of books: 55 incorrect predictions
-  a depth map of unknown: 54 incorrect predictions
-  a depth map of desk: 53 incorrect predictions
-  a depth map of wall: 51 incorrect predictions
-[Validation] Top-1 Accuracy: 0.3767 | Top-3 Accuracy: 0.5442 | Top-5 Accuracy: 0.6176
-Validation results:
-    Step        Loss   Top-1 Acc   Top-3 Acc   Top-5 Acc
-   34000      1.4015      0.3767      0.5442      0.6176
-Best results:
-    Step        Loss     Top-1 Acc     Top-3 Acc     Top-5 Acc
-   29000      1.3680        0.3824        0.5550        0.6265
-Step= 34000/37100  Loss=0.8874958  Time Elapsed=7.90h  Time Remaining=0.72h
-Model saved to checkpoints/checkpoints/depth_clip_model-34000.pth at step 34000
-Total loss: 1046.1214307248592
-Entering Validation
-
-Top Failed GT Classes:
-  a depth map of picture: 127 incorrect predictions
-  a depth map of paper: 96 incorrect predictions
-  a depth map of cabinet: 74 incorrect predictions
-  a depth map of table: 66 incorrect predictions
-  a depth map of unknown: 63 incorrect predictions
-  a depth map of shelves: 61 incorrect predictions
-  a depth map of counter: 59 incorrect predictions
-  a depth map of desk: 57 incorrect predictions
-  a depth map of window: 57 incorrect predictions
-  a depth map of clothes: 56 incorrect predictions
-[Validation] Top-1 Accuracy: 0.3569 | Top-3 Accuracy: 0.5223 | Top-5 Accuracy: 0.5955
-Validation results:
-    Step        Loss   Top-1 Acc   Top-3 Acc   Top-5 Acc
-   35000      1.4916      0.3569      0.5223      0.5955
-Best results:
-    Step        Loss     Top-1 Acc     Top-3 Acc     Top-5 Acc
-   29000      1.3680        0.3824        0.5550        0.6265
-Step= 35000/37100  Loss=0.9211414  Time Elapsed=8.17h  Time Remaining=0.49h
-Model saved to checkpoints/checkpoints/depth_clip_model-35000.pth at step 35000
-Entering Validation
-
-Top Failed GT Classes:
-  a depth map of picture: 99 incorrect predictions
-  a depth map of cabinet: 87 incorrect predictions
-  a depth map of paper: 82 incorrect predictions
-  a depth map of counter: 65 incorrect predictions
-  a depth map of shelves: 65 incorrect predictions
-  a depth map of desk: 57 incorrect predictions
-  a depth map of unknown: 55 incorrect predictions
-  a depth map of wall: 54 incorrect predictions
-  a depth map of table: 54 incorrect predictions
-  a depth map of bottle: 52 incorrect predictions
-[Validation] Top-1 Accuracy: 0.3676 | Top-3 Accuracy: 0.5352 | Top-5 Accuracy: 0.6079
-Validation results:
-    Step        Loss   Top-1 Acc   Top-3 Acc   Top-5 Acc
-   36000      1.4097      0.3676      0.5352      0.6079
-Best results:
-    Step        Loss     Top-1 Acc     Top-3 Acc     Top-5 Acc
-   29000      1.3680        0.3824        0.5550        0.6265
-Step= 36000/37100  Loss=1.2930032  Time Elapsed=8.46h  Time Remaining=0.26h
-Model saved to checkpoints/checkpoints/depth_clip_model-36000.pth at step 36000
-Total loss: 1065.4656065702438
-Entering Validation
-
-Top Failed GT Classes:
-  a depth map of picture: 100 incorrect predictions
-  a depth map of paper: 84 incorrect predictions
-  a depth map of cabinet: 78 incorrect predictions
-  a depth map of books: 62 incorrect predictions
-  a depth map of unknown: 60 incorrect predictions
-  a depth map of clothes: 60 incorrect predictions
-  a depth map of shelves: 59 incorrect predictions
-  a depth map of wall: 54 incorrect predictions
-  a depth map of counter: 53 incorrect predictions
-  a depth map of box: 49 incorrect predictions
-[Validation] Top-1 Accuracy: 0.3826 | Top-3 Accuracy: 0.5553 | Top-5 Accuracy: 0.6256
-Validation results:
-    Step        Loss   Top-1 Acc   Top-3 Acc   Top-5 Acc
-   37000      1.3748      0.3826      0.5553      0.6256
-Best results:
-    Step        Loss     Top-1 Acc     Top-3 Acc     Top-5 Acc
-   29000      1.3680        0.3824        0.5550        0.6265
-Step= 37000/37100  Loss=1.4953461  Time Elapsed=8.74h  Time Remaining=0.02h
-Model saved to checkpoints/checkpoints/depth_clip_model-37000.pth at step 37000
-Total loss: 1061.9583194255829
-Step= 37100/37100  Loss=0.3787634  Time Elapsed=8.76h  Time Remaining=0.00h
-Model saved to checkpoints/checkpoints/depth_clip_model-37100.pth at step 37100
+[Val] [Step 6000] Top-1 pixel accuracy (equiv): 0.5250
+[Val] [Step 6000] Top-k pixel accuracy (equiv): 0.8303
+[Val] [Step 6000] Top-1 mIoU (equiv): 0.1643
+[Val] [Step 6000] Top-k mIoU (equiv): 0.6045
+[Val] Step 6000 | # of labels in Top-1 mIoU: 878
+[Val] Step 6000 | # of labels in Top-k mIoU: 878
+[Val] Step 6000 | Loss: 2.1065, Contrastive: 2.0016
+Best validation loss: 2.1065 at step 6000
+Begin training...
+Rank 1 | Epoch 1 | Step 6193 | Loss : 0.25864571537532954 | LR: 0.0002
+Rank 0 | Epoch 1 | Step 6193 | Loss : 0.27247097370229234 | LR: 0.0002
+Rank 1 | Epoch 2 | Step 6386 | Loss : 0.2669255604552481 | LR: 0.0002
+Rank 0 | Epoch 2 | Step 6386 | Loss : 0.2600260556439044 | LR: 0.0002
+[Val] [Step 6500] Top-1 pixel accuracy (equiv): 0.5208
+[Val] [Step 6500] Top-k pixel accuracy (equiv): 0.8291
+[Val] [Step 6500] Top-1 mIoU (equiv): 0.1650
+[Val] [Step 6500] Top-k mIoU (equiv): 0.6184
+[Val] Step 6500 | # of labels in Top-1 mIoU: 877
+[Val] Step 6500 | # of labels in Top-k mIoU: 877
+[Val] Step 6500 | Loss: 2.0963, Contrastive: 2.0002
+Best validation loss: 2.0963 at step 6500
+Rank 0 | Epoch 3 | Step 6579 | Loss : 0.25960675190767474 | LR: 0.0002
+Rank 1 | Epoch 3 | Step 6579 | Loss : 0.2554276242002922 | LR: 0.0002
+Rank 0 | Epoch 4 | Step 6772 | Loss : 0.25454057058213286 | LR: 0.0002
+Rank 1 | Epoch 4 | Step 6772 | Loss : 0.2540709201844863 | LR: 0.0002
+Rank 1 | Epoch 5 | Step 6965 | Loss : 0.24444139559651903 | LR: 0.0002
+Rank 0 | Epoch 5 | Step 6965 | Loss : 0.251754744682905 | LR: 0.0002
+[Val] [Step 7000] Top-1 pixel accuracy (equiv): 0.5321
+[Val] [Step 7000] Top-k pixel accuracy (equiv): 0.8385
+[Val] [Step 7000] Top-1 mIoU (equiv): 0.1686
+[Val] [Step 7000] Top-k mIoU (equiv): 0.6232
+[Val] Step 7000 | # of labels in Top-1 mIoU: 875
+[Val] Step 7000 | # of labels in Top-k mIoU: 875
+[Val] Step 7000 | Loss: 2.0238, Contrastive: 1.9281
+Best validation loss: 2.0238 at step 7000
+Step=  7000/130040  Loss=0.2454958  Time Elapsed=0.49h  Time Remaining=60.87h
+Rank 1 | Epoch 6 | Step 7158 | Loss : 0.24647192371323937 | LR: 0.0002
+Rank 0 | Epoch 6 | Step 7158 | Loss : 0.24391297362937828 | LR: 0.0002
+Rank 1 | Epoch 7 | Step 7351 | Loss : 0.23510154560594362 | LR: 0.0002
+Rank 0 | Epoch 7 | Step 7351 | Loss : 0.23930975084477757 | LR: 0.0002
+[Val] [Step 7500] Top-1 pixel accuracy (equiv): 0.5410
+[Val] [Step 7500] Top-k pixel accuracy (equiv): 0.8463
+[Val] [Step 7500] Top-1 mIoU (equiv): 0.1810
+[Val] [Step 7500] Top-k mIoU (equiv): 0.6553
+[Val] Step 7500 | # of labels in Top-1 mIoU: 876
+[Val] Step 7500 | # of labels in Top-k mIoU: 876
+[Val] Step 7500 | Loss: 1.9675, Contrastive: 1.8733
+Best validation loss: 1.9675 at step 7500
+Rank 1 | Epoch 8 | Step 7544 | Loss : 0.24601422786867064 | LR: 0.0002
+Rank 0 | Epoch 8 | Step 7544 | Loss : 0.23011029681547937 | LR: 0.0002
+Rank 1 | Epoch 9 | Step 7737 | Loss : 0.2263780930730963 | LR: 0.0002
+Rank 0 | Epoch 9 | Step 7737 | Loss : 0.23641601888163719 | LR: 0.0002
+Rank 1 | Epoch 10 | Step 7930 | Loss : 0.22898922084681111 | LR: 0.0002
+Rank 0 | Epoch 10 | Step 7930 | Loss : 0.235885959408135 | LR: 0.0002
+[Val] [Step 8000] Top-1 pixel accuracy (equiv): 0.5410
+[Val] [Step 8000] Top-k pixel accuracy (equiv): 0.8490
+[Val] [Step 8000] Top-1 mIoU (equiv): 0.1879
+[Val] [Step 8000] Top-k mIoU (equiv): 0.6597
+[Val] Step 8000 | # of labels in Top-1 mIoU: 876
+[Val] Step 8000 | # of labels in Top-k mIoU: 876
+[Val] Step 8000 | Loss: 1.9612, Contrastive: 1.8638
+Best validation loss: 1.9612 at step 8000
+Step=  8000/130040  Loss=0.2163058  Time Elapsed=0.98h  Time Remaining=59.70h
+Rank 1 | Epoch 11 | Step 8123 | Loss : 0.23079811982385853 | LR: 0.0002
+Rank 0 | Epoch 11 | Step 8123 | Loss : 0.23395322846161887 | LR: 0.0002
+Rank 0 | Epoch 12 | Step 8316 | Loss : 0.22794965168200626 | LR: 0.0002
+Rank 1 | Epoch 12 | Step 8316 | Loss : 0.22937477966818784 | LR: 0.0002
+[Val] [Step 8500] Top-1 pixel accuracy (equiv): 0.5484
+[Val] [Step 8500] Top-k pixel accuracy (equiv): 0.8522
+[Val] [Step 8500] Top-1 mIoU (equiv): 0.1918
+[Val] [Step 8500] Top-k mIoU (equiv): 0.6580
+[Val] Step 8500 | # of labels in Top-1 mIoU: 880
+[Val] Step 8500 | # of labels in Top-k mIoU: 880
+[Val] Step 8500 | Loss: 1.9257, Contrastive: 1.8357
+Best validation loss: 1.9612 at step 8000
+Rank 1 | Epoch 13 | Step 8509 | Loss : 0.22265902231085485 | LR: 0.0002
+Rank 0 | Epoch 13 | Step 8509 | Loss : 0.2269124118852492 | LR: 0.0002
+Rank 1 | Epoch 14 | Step 8702 | Loss : 0.2241066650251033 | LR: 0.0002
+Rank 0 | Epoch 14 | Step 8702 | Loss : 0.22493999621256647 | LR: 0.0002
+Rank 0 | Epoch 15 | Step 8895 | Loss : 0.21934297580484283 | LR: 0.0002
+Rank 1 | Epoch 15 | Step 8895 | Loss : 0.2194194156734437 | LR: 0.0002
+[Val] [Step 9000] Top-1 pixel accuracy (equiv): 0.5577
+[Val] [Step 9000] Top-k pixel accuracy (equiv): 0.8572
+[Val] [Step 9000] Top-1 mIoU (equiv): 0.2032
+[Val] [Step 9000] Top-k mIoU (equiv): 0.7019
+[Val] Step 9000 | # of labels in Top-1 mIoU: 882
+[Val] Step 9000 | # of labels in Top-k mIoU: 882
+[Val] Step 9000 | Loss: 1.9009, Contrastive: 1.8075
+Best validation loss: 1.9009 at step 9000
+Step=  9000/130040  Loss=0.2016905  Time Elapsed=1.43h  Time Remaining=57.71h
+Rank 1 | Epoch 16 | Step 9088 | Loss : 0.20952801927538114 | LR: 2e-05
+Rank 0 | Epoch 16 | Step 9088 | Loss : 0.20438117225089839 | LR: 2e-05
+Rank 1 | Epoch 17 | Step 9281 | Loss : 0.20092808331695863 | LR: 2e-05
+Rank 0 | Epoch 17 | Step 9281 | Loss : 0.19382988252324762 | LR: 2e-05
+Rank 0 | Epoch 18 | Step 9474 | Loss : 0.20494754882674143 | LR: 2e-05
+Rank 1 | Epoch 18 | Step 9474 | Loss : 0.19821986031038155 | LR: 2e-05
+[Val] [Step 9500] Top-1 pixel accuracy (equiv): 0.5604
+[Val] [Step 9500] Top-k pixel accuracy (equiv): 0.8590
+[Val] [Step 9500] Top-1 mIoU (equiv): 0.2163
+[Val] [Step 9500] Top-k mIoU (equiv): 0.7047
+[Val] Step 9500 | # of labels in Top-1 mIoU: 886
+[Val] Step 9500 | # of labels in Top-k mIoU: 886
+[Val] Step 9500 | Loss: 1.8966, Contrastive: 1.8000
+Best validation loss: 1.8966 at step 9500
+Rank 1 | Epoch 19 | Step 9667 | Loss : 0.20395741986178365 | LR: 2e-05
+Rank 0 | Epoch 19 | Step 9667 | Loss : 0.20705966693904115 | LR: 2e-05
+Rank 1 | Epoch 20 | Step 9860 | Loss : 0.19689837005471936 | LR: 2e-05
+Rank 0 | Epoch 20 | Step 9860 | Loss : 0.20469383818189096 | LR: 2e-05
+[Val] [Step 10000] Top-1 pixel accuracy (equiv): 0.5551
+[Val] [Step 10000] Top-k pixel accuracy (equiv): 0.8565
+[Val] [Step 10000] Top-1 mIoU (equiv): 0.2179
+[Val] [Step 10000] Top-k mIoU (equiv): 0.6974
+[Val] Step 10000 | # of labels in Top-1 mIoU: 889
+[Val] Step 10000 | # of labels in Top-k mIoU: 889
+[Val] Step 10000 | Loss: 1.9137, Contrastive: 1.8147
+Best validation loss: 1.8966 at step 9500
+Step= 10000/130040  Loss=0.2101408  Time Elapsed=1.88h  Time Remaining=56.50h
+Rank 0 | Epoch 21 | Step 10053 | Loss : 0.20685167838409158 | LR: 2e-05
+Rank 1 | Epoch 21 | Step 10053 | Loss : 0.19750139974250694 | LR: 2e-05
+Rank 1 | Epoch 22 | Step 10246 | Loss : 0.1989582956918163 | LR: 2e-05
+Rank 0 | Epoch 22 | Step 10246 | Loss : 0.19865208011062652 | LR: 2e-05
+Rank 1 | Epoch 23 | Step 10439 | Loss : 0.1904641156871393 | LR: 2e-05
+Rank 0 | Epoch 23 | Step 10439 | Loss : 0.20727647867999546 | LR: 2e-05
+[Val] [Step 10500] Top-1 pixel accuracy (equiv): 0.5551
+[Val] [Step 10500] Top-k pixel accuracy (equiv): 0.8578
+[Val] [Step 10500] Top-1 mIoU (equiv): 0.2184
+[Val] [Step 10500] Top-k mIoU (equiv): 0.7085
+[Val] Step 10500 | # of labels in Top-1 mIoU: 890
+[Val] Step 10500 | # of labels in Top-k mIoU: 890
+[Val] Step 10500 | Loss: 1.9225, Contrastive: 1.8220
+Best validation loss: 1.9225 at step 10500
+Rank 0 | Epoch 24 | Step 10632 | Loss : 0.2037693344712875 | LR: 2e-05
+Rank 1 | Epoch 24 | Step 10632 | Loss : 0.19132990888054507 | LR: 2e-05
+Rank 1 | Epoch 25 | Step 10825 | Loss : 0.19652073108470502 | LR: 2e-05
+Rank 0 | Epoch 25 | Step 10825 | Loss : 0.19653390818926955 | LR: 2e-05
+[Val] [Step 11000] Top-1 pixel accuracy (equiv): 0.5533
+[Val] [Step 11000] Top-k pixel accuracy (equiv): 0.8546
+[Val] [Step 11000] Top-1 mIoU (equiv): 0.2219
+[Val] [Step 11000] Top-k mIoU (equiv): 0.7047
+[Val] Step 11000 | # of labels in Top-1 mIoU: 886
+[Val] Step 11000 | # of labels in Top-k mIoU: 886
+[Val] Step 11000 | Loss: 1.9305, Contrastive: 1.8287
+Best validation loss: 1.9225 at step 10500
+Step= 11000/130040  Loss=0.1984695  Time Elapsed=2.33h  Time Remaining=55.59h
+Rank 1 | Epoch 26 | Step 11018 | Loss : 0.19474888874767976 | LR: 2.0000000000000003e-06
+Rank 0 | Epoch 26 | Step 11018 | Loss : 0.19822085135341308 | LR: 2.0000000000000003e-06
+Rank 0 | Epoch 27 | Step 11211 | Loss : 0.18189644827049012 | LR: 2.0000000000000003e-06
+Rank 1 | Epoch 27 | Step 11211 | Loss : 0.20362229687716676 | LR: 2.0000000000000003e-06
+Rank 1 | Epoch 28 | Step 11404 | Loss : 0.1935172838211986 | LR: 2.0000000000000003e-06
+Rank 0 | Epoch 28 | Step 11404 | Loss : 0.18945412862795005 | LR: 2.0000000000000003e-06
+[Val] [Step 11500] Top-1 pixel accuracy (equiv): 0.5521
+[Val] [Step 11500] Top-k pixel accuracy (equiv): 0.8553
+[Val] [Step 11500] Top-1 mIoU (equiv): 0.2163
+[Val] [Step 11500] Top-k mIoU (equiv): 0.6977
+[Val] Step 11500 | # of labels in Top-1 mIoU: 892
+[Val] Step 11500 | # of labels in Top-k mIoU: 892
+[Val] Step 11500 | Loss: 1.9415, Contrastive: 1.8372
+Best validation loss: 1.9225 at step 10500
+Rank 1 | Epoch 29 | Step 11597 | Loss : 0.19231962211854717 | LR: 2.0000000000000003e-06
+Rank 0 | Epoch 29 | Step 11597 | Loss : 0.18493030119899642 | LR: 2.0000000000000003e-06
+Rank 1 | Epoch 30 | Step 11790 | Loss : 0.18976804629508695 | LR: 2.0000000000000003e-06
+Rank 0 | Epoch 30 | Step 11790 | Loss : 0.195542390173581 | LR: 2.0000000000000003e-06
+Rank 0 | Epoch 31 | Step 11983 | Loss : 0.18820385441878917 | LR: 2.0000000000000003e-06
+Rank 1 | Epoch 31 | Step 11983 | Loss : 0.18448971084516902 | LR: 2.0000000000000003e-06
+[Val] [Step 12000] Top-1 pixel accuracy (equiv): 0.5574
+[Val] [Step 12000] Top-k pixel accuracy (equiv): 0.8570
+[Val] [Step 12000] Top-1 mIoU (equiv): 0.2152
+[Val] [Step 12000] Top-k mIoU (equiv): 0.6999
+[Val] Step 12000 | # of labels in Top-1 mIoU: 891
+[Val] Step 12000 | # of labels in Top-k mIoU: 891
+[Val] Step 12000 | Loss: 1.9208, Contrastive: 1.8168
+Best validation loss: 1.9225 at step 10500
+Step= 12000/130040  Loss=0.1886907  Time Elapsed=2.79h  Time Remaining=54.84h
+Rank 1 | Epoch 32 | Step 12176 | Loss : 0.193855540238205 | LR: 2.0000000000000003e-06
+Rank 0 | Epoch 32 | Step 12176 | Loss : 0.1843236497183538 | LR: 2.0000000000000003e-06
+Rank 0 | Epoch 33 | Step 12369 | Loss : 0.18770731854315248 | LR: 2.0000000000000003e-06
+Rank 1 | Epoch 33 | Step 12369 | Loss : 0.19538370573922142 | LR: 2.0000000000000003e-06
+[Val] [Step 12500] Top-1 pixel accuracy (equiv): 0.5546
+[Val] [Step 12500] Top-k pixel accuracy (equiv): 0.8556
+[Val] [Step 12500] Top-1 mIoU (equiv): 0.2165
+[Val] [Step 12500] Top-k mIoU (equiv): 0.6994
+[Val] Step 12500 | # of labels in Top-1 mIoU: 901
+[Val] Step 12500 | # of labels in Top-k mIoU: 901
+[Val] Step 12500 | Loss: 1.9410, Contrastive: 1.8367
+Best validation loss: 1.9225 at step 10500
+Rank 0 | Epoch 34 | Step 12562 | Loss : 0.19297520414844077 | LR: 2.0000000000000003e-06
+Rank 1 | Epoch 34 | Step 12562 | Loss : 0.19062409032657357 | LR: 2.0000000000000003e-06
+Rank 1 | Epoch 35 | Step 12755 | Loss : 0.19761173604683555 | LR: 2.0000000000000003e-06
+Rank 0 | Epoch 35 | Step 12755 | Loss : 0.19343224735303247 | LR: 2.0000000000000003e-06
+Rank 1 | Epoch 36 | Step 12948 | Loss : 0.18995761496878658 | LR: 2.0000000000000004e-07
+Rank 0 | Epoch 36 | Step 12948 | Loss : 0.19904945983787892 | LR: 2.0000000000000004e-07
+[Val] [Step 13000] Top-1 pixel accuracy (equiv): 0.5551
+[Val] [Step 13000] Top-k pixel accuracy (equiv): 0.8560
+[Val] [Step 13000] Top-1 mIoU (equiv): 0.2230
+[Val] [Step 13000] Top-k mIoU (equiv): 0.7074
+[Val] Step 13000 | # of labels in Top-1 mIoU: 896
+[Val] Step 13000 | # of labels in Top-k mIoU: 896
+[Val] Step 13000 | Loss: 1.9349, Contrastive: 1.8295
+Best validation loss: 1.9225 at step 10500
+Step= 13000/130040  Loss=0.1937394  Time Elapsed=3.24h  Time Remaining=54.16h
+Rank 1 | Epoch 37 | Step 13141 | Loss : 0.18943880795660414 | LR: 2.0000000000000004e-07
+Rank 0 | Epoch 37 | Step 13141 | Loss : 0.19093810203316297 | LR: 2.0000000000000004e-07
+Rank 1 | Epoch 38 | Step 13334 | Loss : 0.19180387088671866 | LR: 2.0000000000000004e-07
+Rank 0 | Epoch 38 | Step 13334 | Loss : 0.19222169936938607 | LR: 2.0000000000000004e-07
+[Val] [Step 13500] Top-1 pixel accuracy (equiv): 0.5520
+[Val] [Step 13500] Top-k pixel accuracy (equiv): 0.8543
+[Val] [Step 13500] Top-1 mIoU (equiv): 0.2169
+[Val] [Step 13500] Top-k mIoU (equiv): 0.7021
+[Val] Step 13500 | # of labels in Top-1 mIoU: 895
+[Val] Step 13500 | # of labels in Top-k mIoU: 895
+[Val] Step 13500 | Loss: 1.9403, Contrastive: 1.8365
+Best validation loss: 1.9225 at step 10500
+Rank 1 | Epoch 39 | Step 13527 | Loss : 0.19050541666814083 | LR: 2.0000000000000004e-07
+Rank 0 | Epoch 39 | Step 13527 | Loss : 0.18471163901177096 | LR: 2.0000000000000004e-07
+Rank 0 | Epoch 40 | Step 13720 | Loss : 0.1881646791501984 | LR: 2.0000000000000004e-07
+Step= 13720/13720  Loss=36.3157831  Time Elapsed=3.56h  Time Remaining=0.00h
+Rank 1 | Epoch 40 | Step 13720 | Loss : 0.18814096310286943 | LR: 2.0000000000000004e-07
