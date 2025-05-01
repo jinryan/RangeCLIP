@@ -16,7 +16,7 @@ def setup_dataloaders(metadata_file,
                       n_epoch):
     
     image_transform = transforms.Compose([
-        transforms.Resize(resize_shape),
+        transforms.Resize(resize_shape)
     ])
     
 
@@ -157,6 +157,7 @@ def load_equivalence_dict(csv_path):
 import torch
 
 def build_equivalence_tensor(equivalence_dict, num_classes):
+    # print(f"Num classes is {num_classes}")
     lookup = torch.zeros((num_classes, num_classes), dtype=torch.bool)
     for gt, equivalents in equivalence_dict.items():
         for pred in equivalents:
@@ -199,3 +200,132 @@ def build_equivalence_class_map(equivalence_tensor, device):
         if len(equiv) > 0:
             equiv_class_map[i] = torch.min(equiv)
     return equiv_class_map
+
+
+# Import masked_average_pooling if needed (though pooling is done directly here)
+# from RangeCLIP.src.depth_segmentation_model.model import masked_average_pooling
+@torch.no_grad()
+def prepare_image_contrast_data(
+    # REMOVED: image_orig_batch
+    image_processed_batch,  # The processed/normalized image batch [B, C, H', W']
+    object_bbox_batch,      # BBox tensor from DataLoader [B, 4] (left, upper, right, lower)
+    object_label_batch,     # Label tensor from DataLoader [B]
+    segmentation_batch,     # Processed segmentation tensor [B, H', W'] or [B, 1, H', W']
+    pixel_embeddings_batch, # Output from UNet [B, D, H', W']
+    clip_image_encoder,     # CLIP model (or vision part)
+    clip_processor,         # CLIP processor
+    device
+):
+    """
+    Prepares area embeddings and CLIP image embeddings for image contrastive loss,
+    cropping the PROCESSED image based on bbox derived from PROCESSED segmentation.
+
+    Args:
+        image_processed_batch (torch.Tensor): Batch of processed image Tensors (B, C, H', W').
+        object_bbox_batch (torch.Tensor): Bbox tensor (B, 4) relative to processed dims.
+        object_label_batch (torch.Tensor): Label tensor (B).
+        segmentation_batch (torch.Tensor): Processed segmentation maps (B, H', W').
+        pixel_embeddings_batch (torch.Tensor): Pixel embeddings from UNet (B, D, H', W').
+        clip_image_encoder: CLIP model or vision encoder.
+        clip_processor: CLIP processor.
+        device: Target device.
+
+    Returns:
+        Tuple: (area_embeddings, image_embeddings) or (None, None).
+    """
+    # Basic validation on inputs
+    if not isinstance(image_processed_batch, torch.Tensor) or image_processed_batch.dim() != 4:
+         print(f"Warning: 'image_processed_batch' is not a 4D tensor.")
+         return None, None
+    if not isinstance(object_bbox_batch, torch.Tensor) or object_bbox_batch.dim() != 2 or object_bbox_batch.shape[1] != 4:
+         print(f"Warning: 'object_bbox_batch' is not a [B, 4] tensor.")
+         return None, None
+    if not isinstance(object_label_batch, torch.Tensor):
+         print(f"Warning: 'object_label_batch' is not a tensor.")
+         return None, None
+
+    B, C, H_proc, W_proc = image_processed_batch.shape
+    if B == 0: return None, None
+    D = pixel_embeddings_batch.shape[1]
+
+    crops_for_clip = [] # List to store cropped PROCESSED tensors
+    valid_indices = [] # Store original batch indices of valid items
+    labels_for_pooling = [] # Store labels corresponding to valid items
+
+    for b_idx in range(B):
+        # Get data for this item (already tensors)
+        img_tensor = image_processed_batch[b_idx] # (C, H', W')
+        bbox_tensor = object_bbox_batch[b_idx]    # (4,) tensor [xmin, ymin, xmax, ymax]
+        label_idx = object_label_batch[b_idx].item() # Get scalar label
+
+        # --- Basic Validation ---
+        # Check if label is valid (bbox tensor should always exist if label > 0)
+        if label_idx <= 0: # Skip background/invalid label instances
+            # print(f"Debug: Skipping item {b_idx}, label is {label_idx} (background/invalid).")
+            continue
+
+        # Get integer coordinates from bbox tensor
+        try:
+            xmin, ymin, xmax, ymax = bbox_tensor[0].item(), bbox_tensor[1].item(), bbox_tensor[2].item(), bbox_tensor[3].item()
+        except IndexError:
+            print(f"Warning: Skipping item {b_idx}, failed to unpack bbox tensor: {bbox_tensor}")
+            continue
+
+        # --- Crop PROCESSED Image Tensor ---
+        # Coordinates are already relative to processed dimensions (H_proc, W_proc)
+        if xmax > xmin and ymax > ymin and xmin >= 0 and ymin >= 0 and xmax <= W_proc and ymax <= H_proc:
+            # Slice the processed tensor
+            cropped_processed_tensor = img_tensor[:, ymin:ymax, xmin:xmax]
+
+            if cropped_processed_tensor.numel() > 0:
+                # Detach? Maybe not needed as we are in torch.no_grad() context
+                crops_for_clip.append(cropped_processed_tensor)
+                valid_indices.append(b_idx)
+                labels_for_pooling.append(label_idx)
+            else:
+                print(f"Warning: Skipping item {b_idx}, cropped processed tensor is empty for bbox [{xmin},{ymin},{xmax},{ymax}].")
+        else:
+            print(f"Debug: Skipping item {b_idx}, invalid bbox [{xmin},{ymin},{xmax},{ymax}] relative to processed dims ({H_proc}, {W_proc}) for label {label_idx}.")
+
+    # --- Process Valid Crops ---
+    if not crops_for_clip:
+        return None, None
+
+    # Process the list of cropped PROCESSED tensors with CLIP processor
+    # Processor handles normalization/resizing IF NEEDED, but input is already processed.
+    # Check if CLIP processor expects normalized or unnormalized input if passing processed tensor.
+    try:
+        # NOTE: Input to CLIP is now the *processed* (resized, normalized) crop
+        image_inputs = clip_processor(images=crops_for_clip, return_tensors="pt", padding=True, do_rescale=False).to(device)
+    except Exception as e:
+        print(f"Error during clip_processor processing cropped tensors: {e}")
+        return None, None
+
+    # Get image embeddings from CLIP
+    try:
+        image_embeddings = clip_image_encoder.get_image_features(pixel_values=image_inputs['pixel_values'])
+    except Exception as e:
+        raise TypeError(f"CLIP image encoder failed: {e}. Ensure it's a compatible model.") from e
+
+    # --- Calculate Area Embeddings (using processed segmentation and pixel embeddings) ---
+    # This part remains the same as it already operates on processed dimensions
+    final_area_embeddings = torch.zeros_like(image_embeddings)
+    for i, original_b_idx in enumerate(valid_indices):
+        label_idx = labels_for_pooling[i]
+        # Use the corresponding item from the original batch index
+        single_pixel_embeddings = pixel_embeddings_batch[original_b_idx] # (D, H', W')
+        single_segmentation_map = segmentation_batch[original_b_idx]   # (H', W') or (1, H', W')
+
+        # Handle potential channel dim in segmentation_batch
+        if single_segmentation_map.dim() == 3:
+            single_segmentation_map = single_segmentation_map.squeeze(0) # -> (H', W')
+
+        mask = (single_segmentation_map == label_idx).unsqueeze(0) # (1, H', W')
+        pixel_count = mask.sum()
+        if pixel_count > 0:
+            mask_expanded = mask.expand_as(single_pixel_embeddings) # Expand to (D, H', W')
+            masked_pixels = torch.where(mask_expanded, single_pixel_embeddings, torch.zeros_like(single_pixel_embeddings))
+            summed_embeddings = masked_pixels.sum(dim=(1, 2)) # Sum over H', W' -> (D,)
+            final_area_embeddings[i] = summed_embeddings / pixel_count
+
+    return final_area_embeddings, image_embeddings

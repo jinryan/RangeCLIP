@@ -1,3 +1,4 @@
+import traceback
 import torch
 import torch.nn.functional as F
 from torchvision import transforms
@@ -6,6 +7,7 @@ import os
 import tqdm
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..'))
 sys.path.insert(0, project_root)
+from RangeCLIP.src.depth_segmentation_model.dataloader import prepare_image_contrast_data
 from utils.src.log_utils import log
 from RangeCLIP.src.depth_segmentation_model.log import log_validation_summary, visualize_tensorboard_image
 from torchvision.transforms.functional import to_pil_image
@@ -31,6 +33,8 @@ def unwrap_model(model):
 
 def validate_model(
     model,
+    clip_model,
+    clip_processor,
     candidate_text_embeddings,
     candidate_labels,
     equivalence_tensor,
@@ -41,6 +45,9 @@ def validate_model(
     step,
     best_results,
     device,
+    w_text=1.0,
+    w_image=0.5,
+    w_smooth=2e2,
     summary_writer=None,
     n_sample_per_summary=16,
     log_path=None
@@ -49,7 +56,7 @@ def validate_model(
     torch.cuda.empty_cache()
 
     # === Setup ===
-    total_loss = total_contrastive_loss = total_smoothness_loss = n_batches = 0
+    total_loss = total_text_contrastive_loss = total_image_contrastive_loss = total_smoothness_loss = n_batches = 0
     num_predicted = 0
     total_pixels = 0
     
@@ -63,12 +70,14 @@ def validate_model(
 
     with torch.no_grad(), autocast():
         for batch in tqdm.tqdm(dataloader, desc=f'Validation Step {step}'):
-            # === Load and move batch to device ===
-            depth = batch['depth'].to(device)               # [B, 1, H, W]
-            segmentation = batch['segmentation'].to(device) # [B, H, W]
+            depth = batch['depth'].to(device, non_blocking=True)
+            image_processed = batch['image'].to(device, non_blocking=True)
+            segmentation = batch['segmentation'].to(device, non_blocking=True)
+            object_bbox = batch['object_bbox'].to(device, non_blocking=True)
+            object_label = batch['object_label']
             
             # === Forward pass ===
-            pred_topk, output, temperature = unwrap_model(model).predict(
+            pred_topk, pixel_embeddings, temperature_text = unwrap_model(model).predict(
                 depth_maps=depth,
                 candidate_text_embeddings=candidate_text_embeddings,
                 segmentation=segmentation,
@@ -136,25 +145,54 @@ def validate_model(
                     depth, image, segmentation, pred_segmentation, candidate_labels
                 )
                 summary_writer.add_image(f"val/qualitative_preds/{num_predicted}", grid_image, global_step=step)
-
+            
+            
+            # --- Prepare Data for Image Contrastive Loss ---
+            area_embeddings = None
+            image_embeddings = None
+            
+            with autocast():
+                area_embeddings, image_embeddings = prepare_image_contrast_data(
+                    # Pass the PROCESSED image batch
+                    image_processed_batch=image_processed,
+                    # Pass the bbox tensor from the dataloader
+                    object_bbox_batch=object_bbox,
+                    # Pass the label tensor from the dataloader
+                    object_label_batch=object_label,
+                    segmentation_batch=segmentation, # Pass processed segmentation
+                    pixel_embeddings_batch=pixel_embeddings, # Pass model output
+                    clip_image_encoder=clip_model,
+                    clip_processor=clip_processor,
+                    device=device
+                )
             # === Compute loss ===
-            loss, loss_info = unwrap_model(model).compute_loss(
-                output,
-                segmentation,
-                candidate_text_embeddings,
-                temperature,
-                label_similarity_sets=similarity_sets,
-                pct_medium=curriculum['pct_medium'],
-                pct_hard=curriculum['pct_hard'],
-                pct_rand=curriculum['pct_rand'],
-            )
+            with autocast(): # Apply autocast to loss computation
+                 loss, loss_info = unwrap_model(model).compute_loss(
+                      pixel_embeddings=pixel_embeddings,
+                      target_indices=segmentation,
+                      candidate_text_embeddings=candidate_text_embeddings,
+                      label_similarity_sets=similarity_sets,
+                      # Image contrastive args (can be None if prepare failed)
+                      area_embeddings=area_embeddings,
+                      image_embeddings=image_embeddings,
+                      # Loss weights
+                      W_text=w_text,
+                      W_image=w_image,
+                      W_smooth=w_smooth,
+                      # Text contrastive args
+                      k_distractors=50, # Example value
+                      pct_medium=curriculum['pct_medium'],
+                      pct_hard=curriculum['pct_hard'],
+                      pct_rand=curriculum['pct_rand']
+                 )
             total_loss += loss_info['total_loss']
-            total_contrastive_loss += loss_info['contrastive_loss']
-            total_smoothness_loss += loss_info['smoothness_loss']
+            total_text_contrastive_loss += loss_info.get('text_contrastive_loss', 0) # Use .get for safety
+            total_image_contrastive_loss += loss_info.get('image_contrastive_loss', 0)
+            total_smoothness_loss += loss_info.get('smoothness_loss', 0)
             n_batches += 1
 
             # === Cleanup ===
-            del output, loss, pred_segmentation, loss_info
+            del pixel_embeddings, loss, pred_segmentation, loss_info
             torch.cuda.empty_cache()
             num_predicted += len(batch['depth'])
 
@@ -184,7 +222,8 @@ def validate_model(
 
     # Loss values
     avg_loss = total_loss / max(n_batches, 1)
-    avg_contrastive_loss = total_contrastive_loss / max(n_batches, 1)
+    avg_text_contrastive_loss = total_text_contrastive_loss / max(n_batches, 1)
+    avg_image_contrastive_loss = total_image_contrastive_loss / max(n_batches, 1)
     avg_smoothness_loss = total_smoothness_loss / max(n_batches, 1)
 
 
@@ -196,7 +235,7 @@ def validate_model(
     log(f"[Val] Step {step} | # of labels in Top-1 mIoU: {len(intersection_top1)}", log_path)
     log(f"[Val] Step {step} | # of labels in Top-k mIoU: {len(intersection_topk)}", log_path)
 
-    log(f"[Val] Step {step} | Loss: {avg_loss:.4f}, Contrastive: {avg_contrastive_loss:.4f}", log_path)
+    log(f"[Val] Step {step} | Loss: {avg_loss:.4f}, Text Contrastive: {avg_text_contrastive_loss:.4f}, Image Contrastive: {avg_image_contrastive_loss:.4f}, Smoothness: {avg_smoothness_loss:.4f}", log_path)
 
     # === Best Results Tracking ===
     if best_results.get("mIoU_tk", 0) < miou_topk:
@@ -206,9 +245,10 @@ def validate_model(
         best_results["mIoU_tk"] = miou_topk
         best_results["pixel_accuracy_t1"] = pixel_acc_top1
         best_results["pixel_accuracy_tk"] = pixel_acc_topk
-        best_results["temperature"] = temperature
-        best_results["contrastive_loss"] = avg_contrastive_loss
-        best_results["smoothness_loss"] = avg_smoothness_loss
+        best_results["temperature"] = temperature_text
+        best_results["avg_text_contrastive_loss"] = avg_text_contrastive_loss
+        best_results["avg_image_contrastive_loss"] = avg_image_contrastive_loss
+        best_results["avg_smoothness_loss"] = avg_smoothness_loss
     log(f"Best validation loss: {best_results['loss']:.4f} at step {best_results['step']}", log_path)
     
     # === TensorBoard Summary ===
@@ -220,9 +260,10 @@ def validate_model(
         scalar_info["pixel_accuracy_tk"] = pixel_acc_topk
         scalar_info['mIoU'] = miou_top1
         scalar_info["mIoU_tk"] = miou_topk
-        scalar_info['contrastive_loss'] = avg_contrastive_loss
-        scalar_info['smoothness_loss'] = avg_smoothness_loss
-        scalar_info['temperature'] = temperature
+        scalar_info["avg_text_contrastive_loss"] = avg_text_contrastive_loss
+        scalar_info["avg_image_contrastive_loss"] = avg_image_contrastive_loss
+        scalar_info['avg_smoothness_loss'] = avg_smoothness_loss
+        scalar_info['temperature_text'] = temperature_text
         log_validation_summary(
             summary_writer,
             step,

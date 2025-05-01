@@ -13,12 +13,14 @@ import torch.distributed as dist
 from torch.cuda.amp import autocast, GradScaler
 from RangeCLIP.src.depth_segmentation_model.evaluation import MajorityBaseline, evaluate_majority_model, evaluate_mask_clip, evaluate_random_model, evaluate_seg_former
 from utils.src.networks import TextEncoder
-from transformers import CLIPModel
+from transformers import CLIPModel, CLIPProcessor
 import matplotlib.pyplot as plt
 from matplotlib import cm
+from RangeCLIP.src.depth_segmentation_model.dataloader import prepare_image_contrast_data
+from PIL import Image
 
 
-from RangeCLIP.src.depth_segmentation_model.model import DepthUNet
+from RangeCLIP.src.depth_segmentation_model.model import DepthUNet, masked_average_pooling
 from RangeCLIP.src.depth_segmentation_model.dataloader import setup_dataloaders, load_equivalence_dict, build_equivalence_tensor, load_label_similarity_sets, build_equivalence_class_map
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..'))
 sys.path.insert(0, project_root)
@@ -53,22 +55,15 @@ def get_curriculum_schedule(epoch: int, total_epochs: int) -> dict:
     pct_hard = min(0.8, pct * 1.2)           # from 0.0 → 0.8 linearly
     pct_rand = 1.0 - pct_medium - pct_hard
 
-    # return {
-    #     "pct_medium": round(pct_medium, 4),
-    #     "pct_hard": round(pct_hard, 4),
-    #     "pct_rand": round(pct_rand, 4),
-    # }
-    
     return {
-        "pct_medium": 0.2,
-        "pct_hard": 0.7,
-        "pct_rand": 0.1,
+        "pct_medium": round(pct_medium, 4),
+        "pct_hard": round(pct_hard, 4),
+        "pct_rand": round(pct_rand, 4),
     }
 
 
-
-
 def train_depth_clip_model(
+        # --- Existing args ---
         labeled_metadata_path,
         labels_path,
         equivalence_dict_path,
@@ -91,50 +86,51 @@ def train_depth_clip_model(
         device='cuda',
         n_thread=8,
         accumulation_steps = 8,
+        # ### New args for loss weights ###
+        w_text=1.0,
+        w_image=0.5, # Example weight
+        w_smooth=2e2, # Example weight
         local_rank=0):
-    
+
     scaler = GradScaler()
 
     # Set up directories for checkpoints and logs
     model_checkpoint_path, log_path, event_path = setup_checkpoint_and_event_paths(
         checkpoint_path, 'depth_segmentation_model')
-    
+
     # Initialize tracking for best validation results
-    best_results = {
-        'step': -1,
-        'loss': np.infty,
-    }
-    
+    best_results = {'step': -1, 'loss': np.infty}
+
     # Calculate total number of epochs
     n_epoch = learning_schedule[-1]
-    
-    # Prepare data loaders
+
+    # Prepare data loaders (ensure dataset returns 'image_orig', 'object_bboxes')
     resize_shape = (n_height, n_width)
     train_dataloader, val_dataloader, test_dataloader, train_sampler, n_train_step, candidate_labels = setup_dataloaders(
         metadata_file=labeled_metadata_path,
         labels_file=labels_path,
-        resize_shape=resize_shape, 
+        resize_shape=resize_shape,
         batch_size=batch_size,
         n_thread=n_thread,
         n_epoch=n_epoch
     )
-    
+
+    # Load equivalence dict, tensor, similarity sets
     equivalence_dict = load_equivalence_dict(equivalence_dict_path)
     equivalence_tensor = build_equivalence_tensor(equivalence_dict, num_classes=len(candidate_labels)).to(device)
-    equivalence_tensor = equivalence_tensor.to(device)
-    
     similarity_sets = load_label_similarity_sets(equivalence_dict_path, len(candidate_labels))
     equivalence_class_map = build_equivalence_class_map(equivalence_tensor, device)
-    
+
+
     try:
-        
-        clip_model = CLIPModel.from_pretrained(clip_model_name)
+        clip_model = CLIPModel.from_pretrained(clip_model_name).to(device)
+        clip_processor = CLIPProcessor.from_pretrained(clip_model_name)
         embedding_dim = clip_model.config.projection_dim
-        text_encoder = TextEncoder(
-            clip_model=clip_model,
-            device=device
-        )
-        
+
+        clip_model.eval()
+        for param in clip_model.parameters():
+            param.requires_grad = False
+
         model = DepthUNet(
             unet_type=unet_architecture,
             device=device,
@@ -147,44 +143,41 @@ def train_depth_clip_model(
             use_batch_norm=True,
             use_instance_norm=False
         )
-        
-        
-        
+
     except Exception as e:
-        print(f"Error loading DepthUnet: {e}")
+        print(f"Error loading models: {e}")
         traceback.print_exc()
-    
+        return # Exit if models fail to load
+
+    # --- (Setup optimizer, scheduler - same as before) ---
     optimizer, scheduler = setup_optimizer_and_scheduler(
-        model.parameters(), learning_rates, w_weight_decay, 
+        model.parameters(), learning_rates, w_weight_decay,
         scheduler_type, learning_schedule
     )
-    
-    # Restore model if specified
+
     if restore_path_encoder is not None and restore_path_encoder != '':
         model.restore_depth_encoder(restore_path_encoder, freeze_encoder=True)
         train_step = 0
     else:
         train_step, optimizer = restore_model_if_needed(model, restore_path_model, optimizer)
-    
+
     optimizer, scheduler = setup_optimizer_and_scheduler(
-        model.parameters(), learning_rates, w_weight_decay, 
+        model.parameters(), learning_rates, w_weight_decay,
         scheduler_type, learning_schedule
     )
-    
+
     start_step = train_step
-    
-    if start_step == 0:
+    if start_step == 0: # Ensure LR is set correctly for new training
         for param_group in optimizer.param_groups:
             param_group['lr'] = learning_rates[0]
-    
-    # Configure model for training
-    
+
     model.to(device)
-    model = nn.parallel.DistributedDataParallel(model, device_ids=[local_rank], find_unused_parameters=True)
+    model = nn.parallel.DistributedDataParallel(model, device_ids=[local_rank])
+    model._set_static_graph()
 
-
-    # Log configuration settings
-    log_configuration(
+    # --- (Log configuration - Add new weights) ---
+    if local_rank == 0:
+        log_configuration(
         log_path, labeled_metadata_path, 
         batch_size, n_height, n_width,
         unet_architecture, model.parameters(),
@@ -196,46 +189,76 @@ def train_depth_clip_model(
         validation_start_step, restore_path_model,
         device, n_thread
     )
-    
-    
-    
-    # Set up tensorboard summary writers
+
+    # Set up tensorboard
     if local_rank == 0:
         train_summary_writer = SummaryWriter(event_path + '-train')
         val_summary_writer = SummaryWriter(event_path + '-val')
     else:
         train_summary_writer = val_summary_writer = None
 
-    with torch.no_grad():
-        candidate_text_embeddings = text_encoder(candidate_labels)
-        
-    # if local_rank == 0:
-        # from transformers import SegformerForSemanticSegmentation, SegformerImageProcessor
+    # Precompute candidate text embeddings
+    if local_rank == 0: # Only rank 0 needs to compute/log this typically
+        log(f"Precomputing text embeddings for {len(candidate_labels)} candidate labels...", log_path)
 
-        # smodel = SegformerForSemanticSegmentation.from_pretrained("nvidia/segformer-b0-finetuned-ade-512-512")
-        # image_processor = SegformerImageProcessor.from_pretrained("nvidia/segformer-b0-finetuned-ade-512-512")
-        
-        # evaluate_seg_former(
-        #     dataloader=test_dataloader,
-        #     model=smodel,
-        #     image_processor=image_processor,
-        #     equivalence_tensor=equivalence_tensor,
-        #     candidate_labels=candidate_labels,
-        #     log_path=log_path,
-        # )
+    text_batch_size = 128 # Adjust based on GPU memory
+    candidate_text_embeddings_list = []
+    with torch.no_grad(): # Ensure no gradients are computed
+        for i in tqdm.tqdm(range(0, len(candidate_labels), text_batch_size),
+                        desc="Computing text embeddings",
+                        disable=(local_rank != 0)): # Show progress only on rank 0
 
-        # evaluate_mask_clip(
-        #     dataloader=test_dataloader,
-        #     clip_model=clip_model,
-        #     candidate_text_embeddings=candidate_text_embeddings,
-        #     equivalence_tensor=equivalence_tensor,
-        #     log_path=log_path,
-        #     device="cuda"
-        # )
+            batch_labels = candidate_labels[i : i + text_batch_size]
+
+            # Process the current batch
+            text_inputs = clip_processor(
+                text=batch_labels,
+                return_tensors="pt",
+                padding=True,
+                truncation=True
+            ).to(device)
+
+            # Get embeddings for the batch
+            batch_embeddings = clip_model.get_text_features(**text_inputs) # Shape: (batch_size, D)
+
+            # Store embeddings (keep on the target device)
+            candidate_text_embeddings_list.append(batch_embeddings)
+
+    # Concatenate embeddings from all batches
+    candidate_text_embeddings = torch.cat(candidate_text_embeddings_list, dim=0) # Shape: (C, D)
+
+    # Normalize embeddings (optional but common for contrastive loss)
+    # candidate_text_embeddings = F.normalize(candidate_text_embeddings, dim=1)
 
     if local_rank == 0:
+        log(f"Finished computing text embeddings. Shape: {candidate_text_embeddings.shape}", log_path)
+
+    # --- (Rest of the training script continues) ---
+
+    # Compute on rank 0 and broadcast (if embeddings fit in memory for transfer)
+    if dist.is_initialized():
+        # Get the size and dtype to create placeholder tensors on other ranks
+        tensor_size = candidate_text_embeddings.size()
+        tensor_dtype = candidate_text_embeddings.dtype
+
+        if local_rank == 0:
+            # Rank 0 has the tensor, prepare it for broadcast
+            embeddings_to_broadcast = candidate_text_embeddings
+        else:
+            # Other ranks create an empty tensor with the correct size and dtype
+            embeddings_to_broadcast = torch.empty(tensor_size, dtype=tensor_dtype, device=device)
+
+        # Broadcast the tensor from rank 0 to all other ranks
+        dist.broadcast(embeddings_to_broadcast, src=0)
+        candidate_text_embeddings = embeddings_to_broadcast # All ranks now have the tensor
+
+
+
+    if local_rank == -1:
         model.eval()
         best_results = validate_model(model=model,
+                                      clip_model=clip_model,
+                                      clip_processor=clip_processor,
                                     candidate_text_embeddings=candidate_text_embeddings,
                                     candidate_labels=candidate_labels,
                                     equivalence_tensor=equivalence_tensor,
@@ -248,119 +271,143 @@ def train_depth_clip_model(
                                     device=device,
                                     summary_writer=val_summary_writer,
                                     n_sample_per_summary=n_sample_per_summary,
-                                    log_path=log_path
-        )
-    
-    model.train()
+                                    log_path=log_path)
+
     # Begin training
     time_start = time.time()
-    log('Begin training...', log_path)
-    
-    
-    
-    
+    log(f'{local_rank} Begin training...', log_path)
+
     loss = None
-    output = None
-    
+    pixel_embeddings = None
+    model.train()
+
     # ================ Main training loop ================
     for epoch in range(1, n_epoch + 1):
-        train_sampler.set_epoch(epoch)
-        total_loss = 0
-        n_batches = 0
-        n_optimizer_steps = 0
+        if train_sampler: train_sampler.set_epoch(epoch) # Check sampler exists
+        total_loss_accum = 0 # Accumulate loss over optimizer steps
+        n_batches_processed = 0 # Count batches for averaging loss later
         optimizer.zero_grad()
 
-        for batch in tqdm.tqdm(train_dataloader, desc=f'{local_rank}: {epoch}/{n_epoch}'):
+        batch_iterator = tqdm.tqdm(train_dataloader, desc=f'Rank {local_rank}: {epoch}/{n_epoch}', disable=(local_rank != 0))
+        for i, batch in enumerate(batch_iterator):
+
             if loss is not None:
                 del loss
-            if output is not None:
-                del output
+            if pixel_embeddings is not None:
+                del pixel_embeddings
             
             torch.cuda.empty_cache()
-            
-            progress = epoch / n_epoch
 
-            if progress > 0.3:  # Last 20% of training
-                curriculum = {
-                    "pct_medium": 0.0,
-                    "pct_hard": 0.95,  # Mostly hard negatives
-                    "pct_rand": 0.05
-                }
-            elif progress > 0.5:  # Last 10% of training
-                curriculum = {
-                    "pct_medium": 0.0,
-                    "pct_hard": 1.0,  # Purely hard negatives
-                    "pct_rand": 0.0
-                }
-            else:
-                # Default curriculum
-                curriculum = get_curriculum_schedule(epoch, n_epoch)
+            # --- Get curriculum ---
+            curriculum = get_curriculum_schedule(epoch, n_epoch) # Example fixed curriculum
 
-            n_batches += 1
-            
-            # Move batch to device
-            batch = {k: v.to(device) for k, v in batch.items()}
-            
-            # Unpack batch
-            depth = batch['depth']
-            image = batch['image']
-            segmentation = batch['segmentation']
-            
-            # Forward through network
-            
-            
+            # --- Prepare Batch Data ---
+            # Move tensors to device
+            depth = batch['depth'].to(device, non_blocking=True)
+            image_processed = batch['image'].to(device, non_blocking=True)
+            segmentation = batch['segmentation'].to(device, non_blocking=True)
+            object_bbox = batch['object_bbox'].to(device, non_blocking=True)
+            object_label = batch['object_label']
+
+            # --- Forward Pass (UNet only) ---
+            with autocast(): # Apply autocast to model forward pass
+                 pixel_embeddings, current_temp_text, current_temp_image = model(depth) # Get pixel embeddings (B, D, H, W)
+                 # Temperatures are accessed via properties later
+
+            # --- Prepare Data for Image Contrastive Loss ---
+            area_embeddings = None
+            image_embeddings = None
             with autocast():
-                output, temperature = model(depth)
-                loss, loss_info = unwrap_model(model).compute_loss(
-                    output,
-                    segmentation,
-                    candidate_text_embeddings,
-                    temperature,
-                    label_similarity_sets=similarity_sets,
-                    pct_medium=curriculum['pct_medium'],
-                    pct_hard=curriculum['pct_hard'],
-                    pct_rand=curriculum['pct_rand'],
+                area_embeddings, image_embeddings = prepare_image_contrast_data(
+                    # Pass the PROCESSED image batch
+                    image_processed_batch=image_processed,
+                    # Pass the bbox tensor from the dataloader
+                    object_bbox_batch=object_bbox,
+                    # Pass the label tensor from the dataloader
+                    object_label_batch=object_label,
+                    segmentation_batch=segmentation, # Pass processed segmentation
+                    pixel_embeddings_batch=pixel_embeddings, # Pass model output
+                    clip_image_encoder=clip_model,
+                    clip_processor=clip_processor,
+                    device=device
                 )
-            
-            # Zero gradients, backpropagate, and update weights
-            loss = loss / accumulation_steps  # Normalize loss
+
+            # --- Compute Loss ---
+            # Ensure pixel_embeddings have requires_grad=True if needed for smoothness loss
+            # DDP model might handle this, but good to be aware.
+            # pixel_embeddings.requires_grad_(True) # Uncomment if smoothness loss needs explicit grad enable
+
+            with autocast(): # Apply autocast to loss computation
+                 loss, loss_info = unwrap_model(model).compute_loss(
+                      pixel_embeddings=pixel_embeddings,
+                      target_indices=segmentation,
+                      candidate_text_embeddings=candidate_text_embeddings,
+                      label_similarity_sets=similarity_sets,
+                      # Image contrastive args (can be None if prepare failed)
+                      area_embeddings=area_embeddings,
+                      image_embeddings=image_embeddings,
+                      # Loss weights
+                      W_text=w_text,
+                      W_image=w_image,
+                      W_smooth=w_smooth,
+                      # Text contrastive args
+                      k_distractors=50, # Example value
+                      pct_medium=curriculum['pct_medium'],
+                      pct_hard=curriculum['pct_hard'],
+                      pct_rand=curriculum['pct_rand']
+                 )
+
+            # --- Backpropagation ---
+            # Normalize loss for accumulation
+            loss = loss / accumulation_steps
             scaler.scale(loss).backward()
 
-            if (n_batches % accumulation_steps) == 0:
-                scaler.step(optimizer)
-                scaler.update()
-                optimizer.zero_grad()
-                train_step += 1
-                n_optimizer_steps += 1
-                
-                total_loss += loss.item()
-                
-                
-                
-                # Logging and validation
-                if (train_step % n_step_per_summary) == 0 and local_rank == 0:
-                    log_training_summary(
-                        train_summary_writer=train_summary_writer,
-                        train_step=train_step,
-                        image_samples=image,
-                        depth_samples=depth,
-                        ground_truth_segmentation_samples=segmentation,
-                        output_segmentation_samples=output,
-                        candidate_labels=candidate_labels,
-                        loss_info=loss_info,
-                        n_sample_per_summary=n_sample_per_summary
-                    )
-                    
-                    train_summary_writer.add_scalars("train/curriculum", {
-                        "pct_medium": curriculum["pct_medium"],
-                        "pct_hard": curriculum["pct_hard"],
-                        "pct_rand": curriculum["pct_rand"],
-                    }, global_step=train_step)
-                    
-                    # Validate model
-                    with torch.no_grad():
-                        model.eval()
-                        best_results = validate_model(model=unwrap_model(model),
+            # --- Optimizer Step ---
+            if (i + 1) % accumulation_steps == 0 or (i + 1) == len(train_dataloader):
+                 # Gradient clipping (optional but recommended)
+                 # scaler.unscale_(optimizer) # Needed before clip_grad_norm_
+                 # torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0) # Example clip value
+
+                 scaler.step(optimizer)
+                 scaler.update()
+                 optimizer.zero_grad()
+                 train_step += 1 # Increment global step counter
+
+                 # Log accumulated loss (use .item() for scalar value)
+                 current_loss_scalar = loss.item() * accumulation_steps # Get loss for this step
+                 total_loss_accum += current_loss_scalar
+                 n_batches_processed += 1
+                 batch_iterator.set_postfix({"Loss": f"{current_loss_scalar:.4f}"}) # Update tqdm bar
+
+
+                 # --- Logging, Validation, Checkpointing ---
+                 if local_rank == 0: # Perform only on rank 0
+                      # Log training stats
+                      if train_step % n_step_per_summary == 0:
+                            train_summary_writer.add_scalar('Loss/train_step', current_loss_scalar, train_step)
+                            train_summary_writer.add_scalar('Loss/text_contrast', loss_info['text_contrastive_loss'], train_step)
+                            train_summary_writer.add_scalar('Loss/image_contrast', loss_info['image_contrastive_loss'], train_step)
+                            train_summary_writer.add_scalar('Loss/smoothness', loss_info['smoothness_loss'], train_step)
+                            train_summary_writer.add_scalar('Params/temperature_text', loss_info['temperature_text'], train_step)
+                            train_summary_writer.add_scalar('Params/temperature_image', loss_info['temperature_image'], train_step)
+                            train_summary_writer.add_scalar('Params/learning_rate', optimizer.param_groups[0]['lr'], train_step)
+                            train_summary_writer.add_scalars("train/curriculum", {
+                                "pct_medium": curriculum["pct_medium"],
+                                "pct_hard": curriculum["pct_hard"],
+                                "pct_rand": curriculum["pct_rand"],
+                            }, global_step=train_step)
+
+                            # Add image logging if needed (visualize_batch_predictions)
+                            # Might need adaptation for new data structures
+                            # visualize_batch_predictions(...)
+
+                      # Validate model
+                      if train_step >= validation_start_step and train_step % n_step_per_summary == 0: # Or use dedicated validation frequency
+                            model.eval() # Switch to eval mode
+                            # Validation requires adaptation if image loss part is validated
+                            best_results = validate_model(model=unwrap_model(model),
+                                                          clip_model=clip_model,
+                                                          clip_processor=clip_processor,
                                     candidate_text_embeddings=candidate_text_embeddings,
                                     candidate_labels=candidate_labels,
                                     equivalence_tensor=equivalence_tensor,
@@ -375,35 +422,48 @@ def train_depth_clip_model(
                                     n_sample_per_summary=n_sample_per_summary,
                                     log_path=log_path
                         )
-                        model.train()
-                
-                # Save checkpoints
-                if (train_step % n_step_per_checkpoint) == 0 and local_rank == 0:
-                    save_checkpoint_and_log_progress(
-                        unwrap_model(model), model_checkpoint_path, train_step,
-                        n_train_step, start_step, total_loss  / max(1, n_optimizer_steps),
-                        time_start, log_path, optimizer
-                    )
-                
-            
-    
-        log(f"Rank {local_rank} | Epoch {epoch} | Step {train_step} | Loss : {total_loss / max(1, n_optimizer_steps)} | LR: {optimizer.param_groups[0]['lr']}", log_path)
-        
-        # Update learning rate scheduler
+                            model.train() # Switch back to train mode
+
+                      # Save checkpoints
+                      if train_step % n_step_per_checkpoint == 0:
+                            avg_loss_epoch = total_loss_accum / max(1, n_batches_processed)
+                            save_checkpoint_and_log_progress(
+                                 unwrap_model(model), # Save unwrapped model state
+                                 model_checkpoint_path, train_step,
+                                 n_train_step, start_step, avg_loss_epoch, # Log average loss
+                                 time_start, log_path, optimizer
+                            )
+
+        # End of Epoch
+        avg_loss_epoch = total_loss_accum / max(1, n_batches_processed)
+        if local_rank == 0:
+             log(f"Rank {local_rank} | Epoch {epoch} END | Step {train_step} | Avg Loss: {avg_loss_epoch:.7f} | LR: {optimizer.param_groups[0]['lr']}", log_path)
+             if train_summary_writer: train_summary_writer.add_scalar('Loss/train_epoch', avg_loss_epoch, epoch)
+
+
+        # Update learning rate scheduler (step per epoch)
         scheduler.step()
-    
-    # Save final model
+
+    # --- End of Training ---
     if local_rank == 0:
+        log('Training finished.', log_path)
+        if n_batches_processed > 0: # Avoid division by zero if training was short
+            avg_loss_final = total_loss_accum / n_batches_processed
+        else:
+            avg_loss_final = 0.0
+        # Save final model
         save_checkpoint_and_log_progress(
-            model, model_checkpoint_path, train_step,
-            n_train_step, train_step - n_train_step, total_loss,
+            unwrap_model(model), model_checkpoint_path, train_step,
+            n_train_step, start_step, avg_loss_final,
             time_start, log_path, optimizer
         )
-    
-    if dist.is_initialized():
-        dist.barrier()  # wait for all processes
-        dist.destroy_process_group()
+        if train_summary_writer: train_summary_writer.close()
+        if val_summary_writer: val_summary_writer.close()
 
+    # Cleanup DDP
+    if dist.is_initialized():
+        dist.barrier()
+        dist.destroy_process_group()
 
 
 def restore_model_if_needed(model, restore_path_model, optimizer):
