@@ -12,7 +12,6 @@ from utils.src.decoder import DepthDecoder
 from torch.cuda.amp import autocast
 import numpy as np
 
-# ### Helper function for masked average pooling (can be placed inside the class or outside) ###
 def masked_average_pooling(pixel_embeddings, segmentation_map, object_indices):
     """
     Pools pixel embeddings based on segmentation masks for specified object indices.
@@ -53,7 +52,6 @@ def masked_average_pooling(pixel_embeddings, segmentation_map, object_indices):
             # Calculate average if pixels exist
             if pixel_count > 0:
                 area_embeddings[i] = summed_embeddings / pixel_count
-            # else: area_embeddings[i] remains zeros
 
     return area_embeddings
 
@@ -71,16 +69,14 @@ class DepthUNet(nn.Module):
                  use_batch_norm=False,
                  use_instance_norm=False,
                  temperature_text=0.07,
-                 temperature_image=0.1): # ### Added image temperature ###
+                 temperature_image=0.1):
         super(DepthUNet, self).__init__()
 
         self.device = device
 
-        # ### Separate temperatures for text and image contrastive losses ###
         self.log_temperature_text = nn.Parameter(torch.log(torch.tensor(temperature_text)))
         self.log_temperature_image = nn.Parameter(torch.log(torch.tensor(temperature_image)))
 
-        # --- (Rest of __init__ remains the same) ---
         if unet_type == 'resnet':
             decoder_filters = encoder_filters[::-1]
             
@@ -114,14 +110,10 @@ class DepthUNet(nn.Module):
         with autocast():
             target_shape = depth_map.shape[2:]
             _, encoder_features, final_feature_map = self.depth_encoder(depth_map)
-            # ### Renamed output for clarity ###
             pixel_embeddings = self.depth_decoder(final_feature_map, encoder_features, target_shape)
             current_temp_text = torch.exp(self.log_temperature_text)
             current_temp_image = torch.exp(self.log_temperature_image)
         
-        # ### Return pixel embeddings and BOTH temperatures ###
-        # ### Note: Returning temperature directly is less common than accessing via property ###
-        # ### We will use properties self.temperature_text and self.temperature_image later ###
         return pixel_embeddings, current_temp_text, current_temp_image
 
     def predict(self, depth_maps, candidate_text_embeddings, segmentation, num_negatives=300, top_k=5):
@@ -185,18 +177,17 @@ class DepthUNet(nn.Module):
 
     def compute_loss(
         self,
-        pixel_embeddings, # ### Renamed from 'pred' ###
-        target_indices, # Ground truth segmentation map
+        pixel_embeddings,
+        target_indices,
         candidate_text_embeddings,
         label_similarity_sets,
-        area_embeddings, # Tensor of area embeddings (N_instances, D)
-        image_embeddings, # Tensor of corresponding CLIP image embeddings (N_instances, D)
-        # ### Loss weights ###
+        area_embeddings,
+        image_embeddings,
         W_text = 1.0,
-        W_image = 0.5, # Example weight
-        W_smooth = 2e2, # Example weight (formerly lambda_smooth)
+        W_image = 0.5,
+        W_smooth = 2e2,
         # --- Parameters for text contrastive loss ---
-        percent_image_sampling=0.7, # Percentage of pixels to sample for text loss
+        percent_image_sampling=0.7,
         k_distractors=50,
         pct_medium=0.0,
         pct_hard=0.75,
@@ -213,7 +204,7 @@ class DepthUNet(nn.Module):
             B, D, H, W = pixel_embeddings.shape
             C = candidate_text_embeddings.shape[0]
             device = pixel_embeddings.device
-            num_samples = int(percent_image_sampling * H * W) # Renamed var
+            num_samples = int(percent_image_sampling * H * W)
 
             # Flatten and sample pixels
             pred_flat = pixel_embeddings.reshape(B, D, -1)
@@ -320,7 +311,6 @@ class DepthUNet(nn.Module):
             image_embeddings_norm = F.normalize(image_embeddings, dim=1)
 
             # Calculate pairwise similarities (logits)
-            # Logits matrix: Rows = Area Embeddings, Columns = Image Embeddings
             logits_image = area_embeddings_norm @ image_embeddings_norm.T # Shape: (N_instances, N_instances)
             logits_image /= self.temperature_image # Use image temperature
 
@@ -339,13 +329,8 @@ class DepthUNet(nn.Module):
         # --- 3. Smoothness Loss (Existing Logic, applied to UNet output) ---
         smoothness_loss = torch.tensor(0.0, device=pixel_embeddings.device)
         if W_smooth > 0:
-             # Use pixel_embeddings before normalization for smoothness
-             # Ensure pixel_embeddings require grad if they don't already
-             # if not pixel_embeddings.requires_grad: pixel_embeddings.requires_grad_(True)
-
              tv_h = F.l1_loss(pixel_embeddings[:, :, :, :-1], pixel_embeddings[:, :, :, 1:])
              tv_v = F.l1_loss(pixel_embeddings[:, :, :-1, :], pixel_embeddings[:, :, 1:, :])
-             # No need to multiply by weight here, done in total loss
              smoothness_loss = tv_h + tv_v
 
 
@@ -380,20 +365,12 @@ class DepthUNet(nn.Module):
         """ Get the temperature for image contrastive loss. """
         return torch.exp(self.log_temperature_image)
 
-    # ### Deprecated single temperature property ###
-    # @property
-    # def temperature(self):
-    #     return torch.exp(self.log_temperature)
-
-    # --- (train, eval, save_model, restore_model, restore_depth_encoder remain mostly the same) ---
-    # Ensure save/restore handles the two temperature parameters correctly
     def save_model(self, checkpoint_path, step, optimizer=None):
          checkpoint = { 'train_step': step }
          encoder = self.depth_encoder.module if hasattr(self.depth_encoder, "module") else self.depth_encoder
          decoder = self.depth_decoder.module if hasattr(self.depth_decoder, "module") else self.depth_decoder
          checkpoint["encoder"] = encoder.state_dict()
          checkpoint["decoder"] = decoder.state_dict()
-         # ### Save both temperatures ###
          checkpoint["log_temperature_text"] = self.log_temperature_text.data
          checkpoint["log_temperature_image"] = self.log_temperature_image.data
          if optimizer is not None:
@@ -409,17 +386,14 @@ class DepthUNet(nn.Module):
         if optimizer is not None and 'optimizer' in checkpoint:
             optimizer.load_state_dict(checkpoint['optimizer'])
         train_step = checkpoint.get('train_step', 0)
-        # ### Restore both temperatures, provide default if missing ###
         default_log_temp_text = torch.log(torch.tensor(0.07))
         default_log_temp_image = torch.log(torch.tensor(0.1))
         self.log_temperature_text = nn.Parameter(checkpoint.get("log_temperature_text", default_log_temp_text))
         self.log_temperature_image = nn.Parameter(checkpoint.get("log_temperature_image", default_log_temp_image))
         return train_step, optimizer if optimizer else None
 
-    # ... (rest of the methods: train, eval, restore_depth_encoder) ...
     def train(self, mode=True):
         """ Sets model to training mode. """
-        # Handle frozen encoder correctly
         self.depth_encoder.train(mode and not getattr(self, 'freeze_encoder', False))
         self.depth_decoder.train(mode)
         return self

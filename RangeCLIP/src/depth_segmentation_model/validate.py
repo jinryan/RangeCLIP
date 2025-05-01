@@ -82,15 +82,15 @@ def validate_model(
                 candidate_text_embeddings=candidate_text_embeddings,
                 segmentation=segmentation,
                 num_negatives=50,
-                top_k=5,  # set your k here
+                top_k=5,
             )
 
             B, k, H, W = pred_topk.shape
-            gt_flat = segmentation.view(-1)  # [B*H*W]
+            gt_flat = segmentation.view(-1)
             
-            pred_segmentation = pred_topk[:, 0]  # Top-1 prediction
-            top1_flat = pred_segmentation.contiguous().view(-1)  # [B*H*W]
-            topk_flat = pred_topk.permute(0, 2, 3, 1).reshape(-1, k)  # [B*H*W, k]
+            pred_segmentation = pred_topk[:, 0]
+            top1_flat = pred_segmentation.contiguous().view(-1)
+            topk_flat = pred_topk.permute(0, 2, 3, 1).reshape(-1, k)
 
             # === Top-1 pixel accuracy using equivalence ===
             correct_top1_mask = equivalence_tensor[gt_flat, top1_flat]
@@ -98,7 +98,6 @@ def validate_model(
             total_pixels += correct_top1_mask.numel()
 
             # === Top-k pixel accuracy (any of top-k match the GT) ===
-            # Expand gt to [B*H*W, 1] and compare with [B*H*W, k]
             gt_flat_exp = gt_flat.unsqueeze(1).expand_as(topk_flat)
             correct_topk_mask = equivalence_tensor[gt_flat_exp, topk_flat]  # [B*H*W, k]
             correct_pixels_topk += correct_topk_mask.any(dim=1).sum().item()
@@ -117,10 +116,10 @@ def validate_model(
                 
             # === mIoU - Top-k ===
             # Step 1: Expand equivalence map to [N, k] to compare with all k predictions
-            topk_equiv = equiv_class_map[topk_flat]  # [N, k]
+            topk_equiv = equiv_class_map[topk_flat]
 
             # Create an oracle prediction mask using top-k
-            oracle_pred = top1_flat.clone()  # Start with top-1 predictions
+            oracle_pred = top1_flat.clone()
             for label in unique_equiv_labels:
                 label_val = label.item()
                 gt_mask = (gt_equiv == label_val)
@@ -153,34 +152,28 @@ def validate_model(
             
             with autocast():
                 area_embeddings, image_embeddings = prepare_image_contrast_data(
-                    # Pass the PROCESSED image batch
                     image_processed_batch=image_processed,
-                    # Pass the bbox tensor from the dataloader
                     object_bbox_batch=object_bbox,
-                    # Pass the label tensor from the dataloader
                     object_label_batch=object_label,
-                    segmentation_batch=segmentation, # Pass processed segmentation
-                    pixel_embeddings_batch=pixel_embeddings, # Pass model output
+                    segmentation_batch=segmentation,
+                    pixel_embeddings_batch=pixel_embeddings,
                     clip_image_encoder=clip_model,
                     clip_processor=clip_processor,
                     device=device
                 )
             # === Compute loss ===
-            with autocast(): # Apply autocast to loss computation
+            with autocast():
                  loss, loss_info = unwrap_model(model).compute_loss(
                       pixel_embeddings=pixel_embeddings,
                       target_indices=segmentation,
                       candidate_text_embeddings=candidate_text_embeddings,
                       label_similarity_sets=similarity_sets,
-                      # Image contrastive args (can be None if prepare failed)
                       area_embeddings=area_embeddings,
                       image_embeddings=image_embeddings,
-                      # Loss weights
                       W_text=w_text,
                       W_image=w_image,
                       W_smooth=w_smooth,
-                      # Text contrastive args
-                      k_distractors=50, # Example value
+                      k_distractors=50,
                       pct_medium=curriculum['pct_medium'],
                       pct_hard=curriculum['pct_hard'],
                       pct_rand=curriculum['pct_rand']
@@ -211,7 +204,7 @@ def validate_model(
 
     # Equivalence-aware metrics
     gt_equiv_all = equiv_class_map[segmentation.view(-1)]
-    valid_labels = set(gt_equiv_all.tolist())  # Or union of all GTs from all batches
+    valid_labels = set(gt_equiv_all.tolist())
 
     miou_top1 = compute_mIoU(intersection_top1, union_top1, valid_labels)
     miou_topk = compute_mIoU(intersection_topk, union_topk, valid_labels)

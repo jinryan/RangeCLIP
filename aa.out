@@ -162,3 +162,44 @@ Rank 0 | Epoch 20 END | Step 9880 | Avg Loss: 1.9320542 | LR: 2e-05
 [Val] Step 10000 | Loss: 2.0220, Text Contrastive: 1.6029, Image Contrastive: 0.6219, Smoothness: 0.0005
 Best validation loss: 2.0220 at step 10000
 Step= 10000/114535  Loss=1.9572301  Time Elapsed=1.50h  Time Remaining=39.08h
+Warning: Not enough instances (<=1) or missing embeddings for image contrastive loss.
+Warning: Not enough instances (<=1) or missing embeddings for image contrastive loss.
+Rank 0 | Epoch 21 END | Step 10074 | Avg Loss: 1.9118486 | LR: 2.0000000000000003e-06
+Warning: Not enough instances (<=1) or missing embeddings for image contrastive loss.
+Warning: Not enough instances (<=1) or missing embeddings for image contrastive loss.
+Rank 0 | Epoch 22 END | Step 10268 | Avg Loss: 1.8526262 | LR: 2.0000000000000003e-06
+Warning: Not enough instances (<=1) or missing embeddings for image contrastive loss.
+Warning: Not enough instances (<=1) or missing embeddings for image contrastive loss.
+Rank 0 | Epoch 23 END | Step 10462 | Avg Loss: 1.9018341 | LR: 2.0000000000000003e-06
+[Val] [Step 10500] Top-1 pixel accuracy (equiv): 0.5435
+[Val] [Step 10500] Top-k pixel accuracy (equiv): 0.8415
+[Val] [Step 10500] Top-1 mIoU (equiv): 0.1970
+[Val] [Step 10500] Top-k mIoU (equiv): 0.6617
+[Val] Step 10500 | # of labels in Top-1 mIoU: 897
+[Val] Step 10500 | # of labels in Top-k mIoU: 897
+[Val] Step 10500 | Loss: 2.0148, Text Contrastive: 1.5939, Image Contrastive: 0.6216, Smoothness: 0.0006
+Best validation loss: 2.0220 at step 10000
+Warning: Not enough instances (<=1) or missing embeddings for image contrastive loss.
+Warning: Not enough instances (<=1) or missing embeddings for image contrastive loss.
+Rank 0 | Epoch 24 END | Step 10656 | Avg Loss: 1.9006813 | LR: 2.0000000000000003e-06
+Warning: Not enough instances (<=1) or missing embeddings for image contrastive loss.
+Warning: Not enough instances (<=1) or missing embeddings for image contrastive loss.
+Rank 0 | Epoch 25 END | Step 10850 | Avg Loss: 1.8642202 | LR: 2.0000000000000003e-06
+[Val] [Step 11000] Top-1 pixel accuracy (equiv): 0.5434
+[Val] [Step 11000] Top-k pixel accuracy (equiv): 0.8434
+[Val] [Step 11000] Top-1 mIoU (equiv): 0.1980
+[Val] [Step 11000] Top-k mIoU (equiv): 0.6711
+[Val] Step 11000 | # of labels in Top-1 mIoU: 888
+[Val] Step 11000 | # of labels in Top-k mIoU: 888
+[Val] Step 11000 | Loss: 2.0089, Text Contrastive: 1.5942, Image Contrastive: 0.6140, Smoothness: 0.0005
+Best validation loss: 2.0089 at step 11000
+Step= 11000/114535  Loss=1.8742732  Time Elapsed=1.87h  Time Remaining=38.71h
+Warning: Not enough instances (<=1) or missing embeddings for image contrastive loss.
+Warning: Not enough instances (<=1) or missing embeddings for image contrastive loss.
+Rank 0 | Epoch 26 END | Step 11044 | Avg Loss: 1.8559963 | LR: 2.0000000000000003e-06
+Warning: Not enough instances (<=1) or missing embeddings for image contrastive loss.
+Warning: Not enough instances (<=1) or missing embeddings for image contrastive loss.
+Rank 0 | Epoch 27 END | Step 11238 | Avg Loss: 1.7798923 | LR: 2.0000000000000003e-06
+Warning: Not enough instances (<=1) or missing embeddings for image contrastive loss.
+Warning: Not enough instances (<=1) or missing embeddings for image contrastive loss.
+Rank 0 | Epoch 28 END | Step 11432 | Avg Loss: 1.8263628 | LR: 2.0000000000000003e-06
