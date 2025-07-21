@@ -321,7 +321,7 @@ class DepthUNet(nn.Module):
             image_contrastive_loss = F.cross_entropy(logits_image, image_contrast_labels)
         elif W_image > 0:
             # Not enough instances in the batch/data provided for contrast
-            print("Warning: Not enough instances (<=1) or missing embeddings for image contrastive loss.")
+            # print("Warning: Not enough instances (<=1) or missing embeddings for image contrastive loss.")
             dummy = torch.tensor(1.0, device=pixel_embeddings.device, requires_grad=True)
             image_contrastive_loss = dummy * self.temperature_image * 0.0
 
