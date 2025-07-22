@@ -4,6 +4,9 @@ DepthCLIP is a research framework that explores **open-vocabulary semantic segme
 
 While CLIP has shown strong zero-shot generalization on RGB imagery, its extension to depth data — crucial for low-light, texture-poor, or RGB-scarce environments — remains underexplored. DepthCLIP bridges this gap with a **ResNet-UNet architecture** and a **hybrid contrastive loss** that combines pixel-text and area-image alignment.
 
+Refer the following pdf for a more comprehensive report.
+[DepthCLIP.pdf](https://github.com/user-attachments/files/21361883/Jin_Ryan_490_Report.pdf)
+
 ---
 
 ## Features
